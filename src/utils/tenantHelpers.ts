@@ -1,4 +1,5 @@
 import axios from "axios";
+import { School } from "@/types/types";
 
 export const getTenantFromUrl = () => {
   const hostname = window.location.hostname;
@@ -19,7 +20,9 @@ export const getSchoolSlug = () => {
   return getTenantFromUrl();
 };
 
-export const getSchoolBySubdomain = async (subdomain: string) => {
+export const getSchoolBySubdomain = async (
+  subdomain: string
+): Promise<School | null> => {
   try {
     const response = await axios.get(`/api/schools/${subdomain}`);
     return response.data;

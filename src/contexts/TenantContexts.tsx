@@ -1,14 +1,6 @@
 import { getTenantFromUrl, getSchoolBySubdomain } from "@/utils/tenantHelpers";
 import { createContext, useContext, useEffect, useState } from "react";
-
-interface School {
-  id: string;
-  name: string;
-  subdomain: string;
-  logo: string;
-  primaryColor?: string;
-  secondaryColor?: string;
-}
+import { School } from "@/types/types";
 
 interface TenantContextType {
   school: School;
