@@ -8,12 +8,15 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Menu, GraduationCap, Users, School, DollarSign, BookOpen } from "lucide-react";
+  Menu,
+  GraduationCap,
+  Users,
+  School,
+  DollarSign,
+  BookOpen,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Navbar = () => {
@@ -85,28 +88,37 @@ const Navbar = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <a href="#pricing" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <a
+                    href="#pricing"
+                    className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  >
                     Pricing
                   </a>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <a href="#why-tlearn" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <a
+                    href="#why-tlearn"
+                    className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  >
                     Why TLearn
                   </a>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <a href="#contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <a
+                    href="#contact"
+                    className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  >
                     Contact
                   </a>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
 
-            <Button variant="success" size="sm">
+            {/* <Button variant="success" size="sm">
               Start Free Trial
-            </Button>
+            </Button> */}
           </div>
 
           {/* Mobile Menu */}
@@ -125,7 +137,9 @@ const Navbar = () => {
 
                 <div className="space-y-3">
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-muted-foreground px-2">Features</p>
+                    <p className="text-sm font-semibold text-muted-foreground px-2">
+                      Features
+                    </p>
                     {features.map((feature) => (
                       <a
                         key={feature.title}
@@ -136,7 +150,9 @@ const Navbar = () => {
                         <feature.icon className="h-5 w-5 text-primary mt-0.5" />
                         <div>
                           <p className="font-medium text-sm">{feature.title}</p>
-                          <p className="text-xs text-muted-foreground">{feature.description}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {feature.description}
+                          </p>
                         </div>
                       </a>
                     ))}
@@ -168,10 +184,14 @@ const Navbar = () => {
                     <Users className="h-5 w-5 text-primary" />
                     <span className="font-medium text-sm">Contact</span>
                   </a>
-
-                  <Button variant="success" className="w-full mt-4" onClick={() => setIsOpen(false)}>
+                  {/* 
+                  <Button
+                    variant="success"
+                    className="w-full mt-4"
+                    onClick={() => setIsOpen(false)}
+                  >
                     Start Free Trial
-                  </Button>
+                  </Button> */}
                 </div>
               </nav>
             </SheetContent>

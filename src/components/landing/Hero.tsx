@@ -6,23 +6,26 @@ const Hero = () => {
   return (
     <section className="relative bg-gradient-hero overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE2djRoLTR2LTRoNHptLTEyIDEydi00aDR2NGgtNHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-40"></div>
-      
+
       <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left animate-fade-in">
             <div className="inline-block mb-4 px-4 py-2 bg-accent/20 rounded-full">
-              <span className="text-sm font-semibold text-accent">🎓 Nigeria's Most Affordable EdTech</span>
+              <span className="text-sm font-semibold text-accent">
+                🎓 Nigeria's Most Affordable EdTech
+              </span>
             </div>
-            
+
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
               Transform Screen Time Into{" "}
               <span className="text-accent">Learning Time</span>
             </h1>
-            
+
             <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto lg:mx-0">
-              Curriculum-aligned digital learning for Primary to Senior Secondary School students. 
-              Turn unproductive hours into educational excellence.
+              Curriculum-aligned digital learning for Primary to Senior
+              Secondary School students. Turn unproductive hours into
+              educational excellence.
             </p>
 
             {/* Trust Indicators */}
@@ -43,11 +46,14 @@ const Hero = () => {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button variant="success" size="lg" className="group">
+              {/* <Button variant="success" size="lg" className="group">
                 Start Free Trial
                 <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button variant="outline" size="lg">
+              </Button> */}
+              <Button
+                className="border-2 border-white hover:scale-105 transition-transform hover:bg-primary/5"
+                size="lg"
+              >
                 Schools - Learn More
               </Button>
             </div>
