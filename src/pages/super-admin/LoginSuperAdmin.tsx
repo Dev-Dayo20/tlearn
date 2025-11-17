@@ -1,21 +1,29 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GraduationCap } from "lucide-react";
 import loginHero from "@/assets/loginHero.webp";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSuperAdminLogin } from "@/hooks/useSuperAdminLogin";
+import { LoginSuperAdminData } from "@/utils/validation";
+import { loginSuperAdminSchema } from "@/utils/validation";
+import { Loader2 } from "lucide-react";
 
 const LoginSuperAdmin = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { mutate: login, isPending } = useSuperAdminLogin();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // For now, just navigate to dashboard
-    navigate("/dashboard");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSuperAdminData>({
+    resolver: zodResolver(loginSuperAdminSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const onSubmit = (data: LoginSuperAdminData) => {
+    login(data);
   };
   return (
     <>
@@ -63,7 +71,7 @@ const LoginSuperAdmin = () => {
             </div>
 
             {/* Login form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email address</Label>
@@ -71,11 +79,16 @@ const LoginSuperAdmin = () => {
                     id="email"
                     type="email"
                     placeholder="admin@tlearn.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-11"
+                    className={`h-11 ${errors.email ? "border-red-500" : ""}`}
+                    disabled={isPending}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -84,11 +97,18 @@ const LoginSuperAdmin = () => {
                     id="password"
                     type="password"
                     placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-11"
+                    {...register("password")}
+                    className={`h-11 ${
+                      errors.password ? "border-red-500" : ""
+                    }`}
+                    disabled={isPending}
                   />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -96,14 +116,23 @@ const LoginSuperAdmin = () => {
                 <Button
                   type="submit"
                   className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium"
+                  disabled={isPending}
                 >
-                  Sign In
+                  {isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
 
                 <div className="text-center">
                   <button
                     type="button"
-                    className="text-sm text-primary hover:underline"
+                    className="text-sm text-primary hover:underline disabled:opacity-50"
+                    disabled={isPending}
                   >
                     Forgot password?
                   </button>

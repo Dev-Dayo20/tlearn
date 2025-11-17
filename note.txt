@@ -406,3 +406,35 @@ export default function SuperAdminLogin() {
   );
 }
 
+return (
+  <form onSubmit={handleLogin}>
+    <input type="email" value={email} onChange={...} />
+    <input type="password" value={password} onChange={...} />
+    
+    <button 
+      type="submit" 
+      disabled={isLoading}
+      className={isLoading ? "opacity-50 cursor-not-allowed" : ""}
+    >
+      {isLoading ? (
+        <>
+          <Spinner /> 
+          {retryCount > 0 ? `Retrying... (${retryCount})` : "Logging in..."}
+        </>
+      ) : (
+        "Login"
+      )}
+    </button>
+    
+    {error && (
+      <div className="error-message">
+        {error}
+        {retryCount >= 2 && (
+          <button onClick={() => window.location.reload()}>
+            Refresh Page
+          </button>
+        )}
+      </div>
+    )}
+  </form>
+);
