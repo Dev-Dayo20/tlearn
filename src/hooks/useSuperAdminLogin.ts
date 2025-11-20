@@ -1,7 +1,12 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
-import { loginSuperAdmin } from "@/services/api/super-admin/super-admin";
+import {
+  loginSuperAdmin,
+  getMetrics,
+  getChartData,
+  getRecentActivities,
+} from "@/services/api/super-admin/super-admin";
 import { useAuthStore } from "@/store/authStore";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
 
@@ -12,7 +17,7 @@ interface ValidationError {
 }
 
 interface ErrorResponse {
-  error: string;
+  message: string;
   details?: ValidationError[];
 }
 
@@ -47,7 +52,7 @@ export const useSuperAdminLogin = () => {
             toast.error(`${err.param}: ${err.msg}`, { duration: 5000 });
           });
         } else {
-          toast.error(data.error || "Validation failed", { duration: 5000 });
+          toast.error(data.message || "Validation failed", { duration: 5000 });
         }
         return;
       }
@@ -70,5 +75,26 @@ export const useSuperAdminLogin = () => {
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
     },
+  });
+};
+
+export const useDashboardMetrics = () => {
+  return useQuery({
+    queryKey: ["dashboard", "metrics"],
+    queryFn: getMetrics,
+  });
+};
+
+export const useGetChartData = () => {
+  return useQuery({
+    queryKey: ["dashboard", "activities"],
+    queryFn: getChartData,
+  });
+};
+
+export const useRecentActivities = () => {
+  return useQuery({
+    queryKey: ["dashboard", "activities"],
+    queryFn: getRecentActivities,
   });
 };

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { isTokenExpired } from "@/utils/token";
 
 interface User {
   id: number;
@@ -16,11 +17,12 @@ interface AuthState {
   login: (token: string, user: User) => void;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
+  checkTokenExpiry: () => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Initial state
       user: null,
       token: null,
@@ -47,6 +49,20 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           user: state.user ? { ...state.user, ...userData } : null,
         })),
+
+      checkTokenExpiry: () => {
+        const { token, logout } = get();
+
+        if (!token) {
+          return false;
+        }
+
+        if (isTokenExpired(token)) {
+          logout();
+          return true;
+        }
+        return false;
+      },
     }),
     {
       name: "auth-storage",
@@ -59,3 +75,14 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
+if (typeof window !== "undefined") {
+  const checkInterval = setInterval(() => {
+    const store = useAuthStore.getState();
+    if (store.isAuthenticated) {
+      store.checkTokenExpiry();
+    } else {
+      clearInterval(checkInterval);
+    }
+  }, 60000);
+}

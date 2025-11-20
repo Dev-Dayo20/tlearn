@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
+import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,7 +11,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredRole,
 }) => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, checkTokenExpiry } = useAuthStore();
+
+  useEffect(() => {
+    checkTokenExpiry();
+  }, [checkTokenExpiry]);
 
   if (!isAuthenticated) {
     if (requiredRole === "SUPER_ADMIN") {

@@ -20,7 +20,7 @@ import {
 import { GraduationCap } from "lucide-react";
 
 const menuItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/super-admin/dashboard", icon: LayoutDashboard },
   { title: "Schools", url: "/dashboard/schools", icon: School },
   { title: "Users", url: "/dashboard/users", icon: Users },
   { title: "Reports", url: "/dashboard/reports", icon: FileText },
