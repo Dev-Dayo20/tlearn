@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 import {
@@ -6,6 +6,8 @@ import {
   getMetrics,
   getChartData,
   getRecentActivities,
+  addSchool,
+  getSchools,
 } from "@/services/api/super-admin/super-admin";
 import { useAuthStore } from "@/store/authStore";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
@@ -96,5 +98,36 @@ export const useRecentActivities = () => {
   return useQuery({
     queryKey: ["dashboard", "activities"],
     queryFn: getRecentActivities,
+  });
+};
+
+export const useAddSchool = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addSchool,
+    onSuccess: (data) => {
+      toast.success(`School ${data.school.name} added successfully`, {
+        duration: 5000,
+      });
+      queryClient.invalidateQueries({ queryKey: ["schools", "list"] });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to add new school. Please try again.";
+      toast.error(errorMessage, { duration: 5000 });
+    },
+    onSettled: () => {
+      // Invalidate or refetch queries if needed
+    },
+  });
+};
+
+export const useGetSchools = () => {
+  return useQuery({
+    queryKey: ["schools", "list"],
+    queryFn: getSchools,
   });
 };

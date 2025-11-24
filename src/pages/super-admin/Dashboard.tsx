@@ -55,33 +55,33 @@ const Dashboard = () => {
           <>
             <MetricCard
               title="Total Schools"
-              value={metrics?.metric.totalSchools || 0}
+              value={metrics?.totalSchools || 0}
               icon={School}
-              description={`${metrics?.metric.activeSchools}`}
+              description={`${metrics?.activeSchools}`}
               trend={{
-                value: `+${metrics.metric?.recentSchools || 0}`,
+                value: `+${metrics?.recentSchools || 0}`,
                 isPositive: true,
               }}
             />
             <MetricCard
               title="Total Students"
-              value={metrics.metric.totalStudents || 0}
+              value={metrics?.totalStudents || 0}
               icon={Users}
               description="Across all schools"
             />
             <MetricCard
               title="Total videos"
-              value={metrics.metric?.totalVideos || 0}
+              value={metrics?.totalVideos || 0}
               icon={Video}
               description="Learning Contents"
             />
             <MetricCard
               title="Growth Rate"
-              value={metrics.metric?.growthRate || "0%"}
+              value={metrics?.growthRate || "0%"}
               icon={TrendingUp}
               description="Last 30 days"
               trend={{
-                value: metrics.metric?.growthRate || "0%",
+                value: metrics?.growthRate || "0%",
                 isPositive: true,
               }}
             />
@@ -168,48 +168,6 @@ const Dashboard = () => {
                 No recent activities
               </p>
             )}
-            {/* <div className="space-y-4">
-              {[
-                {
-                  school: "Lincoln High School",
-                  action: "New enrollment",
-                  time: "2 min ago",
-                },
-                {
-                  school: "Jefferson Academy",
-                  action: "Updated profile",
-                  time: "15 min ago",
-                },
-                {
-                  school: "Washington Elementary",
-                  action: "Added 3 teachers",
-                  time: "1 hour ago",
-                },
-                {
-                  school: "Roosevelt Middle",
-                  action: "Generated report",
-                  time: "2 hours ago",
-                },
-              ].map((activity, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 pb-4 last:pb-0 border-b last:border-0 border-border"
-                >
-                  <div className="w-2 h-2 rounded-full bg-accent mt-2" />
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-foreground">
-                      {activity.school}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {activity.action}
-                    </p>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {activity.time}
-                  </span>
-                </div>
-              ))}
-            </div> */}
           </CardContent>
         </Card>
       </div>

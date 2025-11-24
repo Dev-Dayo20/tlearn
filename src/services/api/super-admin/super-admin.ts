@@ -5,8 +5,13 @@ import {
   DashboardMetrics,
   ChartData,
   Activity,
+  ActivitiesResponse,
+  AddSchoolDataResponse,
+  SchoolArray,
+  GetSchoolsResponse,
 } from "@/types/types";
 import { useAuthStore } from "@/store/authStore";
+import { SchoolData } from "@/utils/validation";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:2000/tlearn";
@@ -77,22 +82,9 @@ export const getMetrics = async (): Promise<DashboardMetrics> => {
         response.data.message || "Error getting the dashboard metrics"
       );
     }
-    return {
-      success: response.data.success,
-      metric: {
-        totalSchools: response.data.totalSchools,
-        activeSchools: response.data.activeSchools,
-        inactiveSchools: response.data.inactiveSchools,
-        totalStudents: response.data.totalSchools,
-        totalAdmins: response.data.totalAdmins,
-        totalVideos: response.data.totalVideos,
-        activeSubscriptions: response.data.activeSubscriptions,
-        growthRate: response.data.growthRate,
-        recentSchools: response.data.recentSchools,
-      },
-    };
+    return response.data.metrics as DashboardMetrics;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error(
       error.response?.data?.message ||
         error.message ||
@@ -107,8 +99,7 @@ export const getChartData = async (): Promise<ChartData[]> => {
     if (response.status !== 200) {
       throw new Error("Failed to fetch chart data");
     }
-    const data = response.data.json();
-    return data.ChartData;
+    return response.data.ChartData as ChartData[];
   } catch (error) {
     console.log(error);
     throw new Error("Failed to fetch chart data");
@@ -117,15 +108,52 @@ export const getChartData = async (): Promise<ChartData[]> => {
 
 export const getRecentActivities = async (): Promise<Activity[]> => {
   try {
-    const response = await api.get("/super-admin/dashboard/recent-activities");
-    if (response.status !== 200) {
+    const response = await api.get<ActivitiesResponse>(
+      "/super-admin/dashboard/recent-activities"
+    );
+
+    if (response.status !== 200 || !response.data.success) {
       throw new Error("Failed to fetch recent activities");
     }
-    const data = response.data.json();
-    return data;
+    console.log("Recent Activities Response:", response.data);
+    return response.data?.activities || [];
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch recent activities");
+  }
+};
+
+export const addSchool = async (
+  schoolData: SchoolData
+): Promise<AddSchoolDataResponse> => {
+  try {
+    const response = await api.post("/super-admin/create-school", schoolData);
+    if (response.status !== 201) {
+      throw new Error("Failed to add new school");
+    }
+    return response.data as AddSchoolDataResponse;
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to fetch recent activities");
+    throw new Error(
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to add new school"
+    );
+  }
+};
+
+export const getSchools = async (): Promise<SchoolArray[]> => {
+  try {
+    const response = await api.get<GetSchoolsResponse>("/super-admin/schools");
+
+    if (response.status !== 200 || !response.data.success) {
+      throw new Error("Failed to fetch schools");
+    }
+
+    return response.data.schools || [];
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch schools");
   }
 };
 
