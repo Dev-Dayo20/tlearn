@@ -8,6 +8,8 @@ import {
   getRecentActivities,
   addSchool,
   getSchools,
+  toggleSchoolStatus,
+  deleteSchool,
 } from "@/services/api/super-admin/super-admin";
 import { useAuthStore } from "@/store/authStore";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
@@ -129,5 +131,45 @@ export const useGetSchools = () => {
   return useQuery({
     queryKey: ["schools", "list"],
     queryFn: getSchools,
+  });
+};
+
+export const useToggleSchoolStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      schoolId,
+      isActive,
+    }: {
+      schoolId: number;
+      isActive: boolean;
+    }) => {
+      return toggleSchoolStatus(schoolId, isActive);
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["schools"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update school status");
+    },
+  });
+};
+
+export const useDeleteSchool = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (schoolId: number) => {
+      return deleteSchool(schoolId);
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["schools"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete school");
+    },
   });
 };

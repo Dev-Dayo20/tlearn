@@ -31,7 +31,7 @@ export const schoolDataSchema = z
       .min(1, "Address is required")
       .min(5, "Address must be at least 5 characters")
       .max(200, "Address must be less than 200 characters"),
-    logo: z.string(),
+    logo: z.instanceof(File).optional().or(z.string().optional()),
     adminName: z
       .string()
       .min(1, "Admin name is required")

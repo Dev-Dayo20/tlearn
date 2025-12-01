@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Eye, CheckCircle, Ban, Trash2, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +9,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { StatusBadge } from "@/utils/statusbadge";
 import { formatDate } from "@/utils/dateFormatter";
@@ -18,6 +29,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  useToggleSchoolStatus,
+  useDeleteSchool,
+} from "@/hooks/useSuperAdminLogin";
 
 interface SchoolsTableProps {
   schools: SchoolArray[];
@@ -30,17 +45,38 @@ export function SchoolsTable({
   isLoading,
   onViewSchool,
 }: SchoolsTableProps) {
-  const handleSchoolDetails = (schoolId: number) => {
-    console.log("View details for school:", schoolId);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [schoolToDelete, setSchoolToDelete] = useState<SchoolArray | null>(
+    null
+  );
+
+  const { mutate: toggleStatus, isPending: isToggling } =
+    useToggleSchoolStatus();
+  const { mutate: deleteSchool, isPending: isDeleting } = useDeleteSchool();
+
+  const handleToggleStatus = (school: SchoolArray) => {
+    toggleStatus({ schoolId: school.id, isActive: !school.isActive });
   };
 
-  const handleToggleStatus = (schoolId: number, currentStatus: boolean) => {
-    console.log("Toggle status for school:", schoolId);
+  const handleDeleteClick = (school: SchoolArray) => {
+    setSchoolToDelete(school);
+    setDeleteDialogOpen(true);
   };
 
-  const handleDeleteSchool = (schoolId: number) => {
-    console.log("Delete school:", schoolId);
+  const handleDeleteConfirm = () => {
+    if (schoolToDelete) {
+      deleteSchool(schoolToDelete.id, {
+        onSuccess: () => {
+          setDeleteDialogOpen(false);
+          setSchoolToDelete(null);
+        },
+      });
+    }
   };
+
+  // const handleSchoolDetails = (schoolId: number) => {
+  //   console.log("View details for school:", schoolId);
+  // };
 
   // Mobile Card View
   const MobileSchoolCard = ({ school }: { school: SchoolArray }) => (
@@ -63,18 +99,25 @@ export function SchoolsTable({
                 View Details
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleToggleStatus(school.id, school.isActive)}
+                onClick={() => handleToggleStatus(school)}
+                disabled={isToggling}
               >
                 {school.isActive ? (
-                  <Ban className="w-4 h-4 mr-2" />
+                  <>
+                    <Ban className="w-4 h-4 mr-2" />
+                    Deactivate
+                  </>
                 ) : (
-                  <CheckCircle className="w-4 h-4 mr-2" />
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Activate
+                  </>
                 )}
-                {school.isActive ? "Deactivate" : "Activate"}
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => handleDeleteSchool(school.id)}
+                onClick={() => handleDeleteClick(school)}
                 className="text-red-600"
+                disabled={isDeleting}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete
@@ -188,9 +231,8 @@ export function SchoolsTable({
                           variant="ghost"
                           size="sm"
                           title={school.isActive ? "Deactivate" : "Activate"}
-                          onClick={() =>
-                            handleToggleStatus(school.id, school.isActive)
-                          }
+                          onClick={() => handleToggleStatus(school)}
+                          disabled={isToggling}
                         >
                           {school.isActive ? (
                             <CheckCircle className="w-4 h-4 text-green-600" />
@@ -202,8 +244,9 @@ export function SchoolsTable({
                           variant="ghost"
                           size="sm"
                           title="Delete"
-                          className="hover:text-red-600"
-                          onClick={() => handleDeleteSchool(school.id)}
+                          onClick={() => handleDeleteClick(school)}
+                          className="text-red-600"
+                          disabled={isDeleting}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -216,6 +259,31 @@ export function SchoolsTable({
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete{" "}
+              <strong>{schoolToDelete?.name}</strong> and all associated data
+              including users, classes, and videos. This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

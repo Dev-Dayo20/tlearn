@@ -12,6 +12,7 @@ import LoginSuperAdmin from "./pages/super-admin/LoginSuperAdmin";
 import DashboardLayout from "./pages/super-admin/DashboardLayout";
 import Dashboard from "./pages/super-admin/Dashboard";
 import School from "./pages/super-admin/SchoolPage";
+import UsersPage from "./pages/super-admin/UsersPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ const App = () => (
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="school" element={<School />} />
+            <Route path="users" element={<UsersPage />} />
           </Route>
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
