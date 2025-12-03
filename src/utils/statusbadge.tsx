@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-
 import { CheckCircle, Ban } from "lucide-react";
 
 interface StatustBadgeProps {

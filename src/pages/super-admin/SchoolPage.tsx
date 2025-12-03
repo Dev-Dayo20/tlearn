@@ -6,6 +6,7 @@ import {
   AlertCircle,
   Plus,
   Search,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,19 +23,25 @@ import { SchoolDetailDrawer } from "@/components/super-admin/school-section/Scho
 import { AddSchoolDialog } from "@/components/super-admin/school-section/AddSchoolDialog";
 import { useGetSchools, useDashboardMetrics } from "@/hooks/useSuperAdminLogin";
 import { SchoolArray } from "@/types/types";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const SchoolPage = () => {
-  const { data: schools, isLoading: schoolsLoading } = useGetSchools();
-  const { data: metrics, isLoading: metricsLoading } = useDashboardMetrics();
-
-  // Drawer state
   const [selectedSchool, setSelectedSchool] = useState<SchoolArray | null>(
     null
   );
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  // Add School Dialog state
   const [addSchoolDialogOpen, setAddSchoolDialogOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const { data: schools, isLoading: schoolsLoading } = useGetSchools(
+    debouncedSearchTerm,
+    statusFilter
+  );
+  const { data: metrics, isLoading: metricsLoading } = useDashboardMetrics();
 
   // Handler to open drawer with selected school
   const handleViewSchool = (school: SchoolArray) => {
@@ -49,6 +56,13 @@ const SchoolPage = () => {
       setTimeout(() => setSelectedSchool(null), 300);
     }
   };
+
+  const handleClearFilters = () => {
+    setSearchTerm("");
+    setStatusFilter("all");
+  };
+
+  const hasActiveFilters = searchTerm.trim() !== "" || statusFilter !== "all";
 
   return (
     <div className="space-y-6">
@@ -104,21 +118,30 @@ const SchoolPage = () => {
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search by school name or email..."
+            placeholder="Search by school name, email, or subdomain..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full"
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="All">All Status</SelectItem>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Suspended">Suspended</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
 
@@ -133,6 +156,23 @@ const SchoolPage = () => {
               <SelectItem value="high">High School</SelectItem>
             </SelectContent>
           </Select>
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearFilters}
+              className="whitespace-nowrap bg-violet-50 hover:bg-violet-100 text-violet-700 hover:text-violet-800 border-violet-200 hover:border-violet-300"
+            >
+              <X className="w-4 h-4 mr-1" />
+              Clear Filters
+            </Button>
+          )}
+
+          {hasActiveFilters && (
+            <span className="text-sm text-muted-foreground">
+              {schools?.length || 0} result{schools?.length !== 1 ? "s" : ""}
+            </span>
+          )}
         </div>
       </div>
 

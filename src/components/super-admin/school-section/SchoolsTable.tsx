@@ -74,10 +74,6 @@ export function SchoolsTable({
     }
   };
 
-  // const handleSchoolDetails = (schoolId: number) => {
-  //   console.log("View details for school:", schoolId);
-  // };
-
   // Mobile Card View
   const MobileSchoolCard = ({ school }: { school: SchoolArray }) => (
     <Card className="shadow-sm">
@@ -264,7 +260,9 @@ export function SchoolsTable({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Are you sure you want to delete this school?
+            </AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete{" "}
               <strong>{schoolToDelete?.name}</strong> and all associated data

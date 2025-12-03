@@ -91,14 +91,14 @@ export const useDashboardMetrics = () => {
 
 export const useGetChartData = () => {
   return useQuery({
-    queryKey: ["dashboard", "activities"],
+    queryKey: ["dashboard", "charts"],
     queryFn: getChartData,
   });
 };
 
 export const useRecentActivities = () => {
   return useQuery({
-    queryKey: ["dashboard", "activities"],
+    queryKey: ["dashboard", "recent-activities"],
     queryFn: getRecentActivities,
   });
 };
@@ -127,10 +127,11 @@ export const useAddSchool = () => {
   });
 };
 
-export const useGetSchools = () => {
+export const useGetSchools = (search: string = "", status: string = "all") => {
   return useQuery({
-    queryKey: ["schools", "list"],
-    queryFn: getSchools,
+    queryKey: ["schools", search, status],
+    queryFn: () => getSchools(search, status),
+    staleTime: 30000, // 30 seconds
   });
 };
 
@@ -150,6 +151,7 @@ export const useToggleSchoolStatus = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["schools"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "metrics"] });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update school status");
@@ -167,6 +169,7 @@ export const useDeleteSchool = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["schools"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "metrics"] });
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to delete school");

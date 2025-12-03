@@ -172,10 +172,18 @@ export const addSchool = async (
   }
 };
 
-export const getSchools = async (): Promise<SchoolArray[]> => {
+export const getSchools = async (
+  search?: string,
+  status?: string
+): Promise<SchoolArray[]> => {
   try {
-    const response = await api.get<GetSchoolsResponse>("/super-admin/schools");
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (status && status !== "all") params.append("status", status);
 
+    const response = await api.get<GetSchoolsResponse>(
+      `/super-admin/schools?${params.toString()}`
+    );
     if (response.status !== 200 || !response.data.success) {
       throw new Error("Failed to fetch schools");
     }
