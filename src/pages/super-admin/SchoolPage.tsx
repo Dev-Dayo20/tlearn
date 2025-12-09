@@ -7,6 +7,8 @@ import {
   Plus,
   Search,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,14 +36,21 @@ const SchoolPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const { data: schools, isLoading: schoolsLoading } = useGetSchools(
+  const { data: schoolsData, isLoading: schoolsLoading } = useGetSchools(
     debouncedSearchTerm,
-    statusFilter
+    statusFilter,
+    currentPage,
+    pageSize
   );
-  const { data: metrics, isLoading: metricsLoading } = useDashboardMetrics();
+  const { data: metrics } = useDashboardMetrics();
+
+  const schools = schoolsData?.schools || [];
+  const pagination = schoolsData?.pagination;
 
   // Handler to open drawer with selected school
   const handleViewSchool = (school: SchoolArray) => {
@@ -60,6 +69,11 @@ const SchoolPage = () => {
   const handleClearFilters = () => {
     setSearchTerm("");
     setStatusFilter("all");
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const hasActiveFilters = searchTerm.trim() !== "" || statusFilter !== "all";
@@ -156,6 +170,7 @@ const SchoolPage = () => {
               <SelectItem value="high">High School</SelectItem>
             </SelectContent>
           </Select>
+
           {hasActiveFilters && (
             <Button
               variant="outline"
@@ -173,21 +188,91 @@ const SchoolPage = () => {
               {schools?.length || 0} result{schools?.length !== 1 ? "s" : ""}
             </span>
           )}
+
+          {pagination && (
+            <span className="text-sm text-muted-foreground ml-auto">
+              Showing{" "}
+              {schools.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-
+              {Math.min(currentPage * pageSize, pagination.totalSchools)} of{" "}
+              {pagination.totalSchools} schools
+            </span>
+          )}
         </div>
       </div>
 
       {/* Schools Table */}
       <SchoolsTable
-        schools={schools || []}
+        schools={schools}
         isLoading={schoolsLoading}
         onViewSchool={handleViewSchool}
       />
 
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between border-t pt-4">
+          <div className="text-sm text-muted-foreground">
+            Page {pagination.currentPage} of {pagination.totalPages}
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={!pagination.hasPreviousPage}
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" />
+              Previous
+            </Button>
+
+            {/* Page numbers */}
+            <div className="hidden sm:flex gap-1">
+              {Array.from(
+                { length: Math.min(5, pagination.totalPages) },
+                (_, i) => {
+                  let pageNum;
+                  if (pagination.totalPages <= 5) {
+                    pageNum = i + 1;  
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= pagination.totalPages - 2) {
+                    pageNum = pagination.totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={pageNum === currentPage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(pageNum)}
+                      className="w-9"
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                }
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={!pagination.hasNextPage}
+            >
+              Next
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
       {/* School Detail Drawer Placeholder */}
       <SchoolDetailDrawer
         school={selectedSchool}
         open={drawerOpen}
         onOpenChange={handleCloseDrawer}
+        // 192.163.213.23
       />
 
       {/* Add School Dialog Placeholder */}

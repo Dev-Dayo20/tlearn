@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/sonner";
 import {
@@ -10,9 +15,12 @@ import {
   getSchools,
   toggleSchoolStatus,
   deleteSchool,
+  getUserMetrics,
+  getAllUsers,
 } from "@/services/api/super-admin/super-admin";
 import { useAuthStore } from "@/store/authStore";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
+import { GetSchoolsResponse } from "@/types/types";
 
 interface ValidationError {
   msg: string;
@@ -112,7 +120,8 @@ export const useAddSchool = () => {
       toast.success(`School ${data.school.name} added successfully`, {
         duration: 5000,
       });
-      queryClient.invalidateQueries({ queryKey: ["schools", "list"] });
+      queryClient.invalidateQueries({ queryKey: ["schools"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "metrics"] });
     },
     onError: (error: any) => {
       const errorMessage =
@@ -121,17 +130,20 @@ export const useAddSchool = () => {
         "Failed to add new school. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
     },
-    onSettled: () => {
-      // Invalidate or refetch queries if needed
-    },
   });
 };
 
-export const useGetSchools = (search: string = "", status: string = "all") => {
+export const useGetSchools = (
+  search: string = "",
+  status: string = "all",
+  page: number = 1,
+  limit: number = 10
+) => {
   return useQuery({
-    queryKey: ["schools", search, status],
-    queryFn: () => getSchools(search, status),
+    queryKey: ["schools", search, status, page, limit],
+    queryFn: () => getSchools(search, status, page, limit),
     staleTime: 30000, // 30 seconds
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -174,5 +186,25 @@ export const useDeleteSchool = () => {
     onError: (error: Error) => {
       toast.error(error.message || "Failed to delete school");
     },
+  });
+};
+
+export const useUserMetrics = () => {
+  return useQuery({
+    queryKey: ["users", "metrics"],
+    queryFn: getUserMetrics,
+  });
+};
+
+export const useGetAllUsers = (
+  search: string,
+  role: string,
+  page: number,
+  pageSize: number
+) => {
+  return useQuery({
+    queryKey: ["users", search, role, page, pageSize],
+    queryFn: () => getAllUsers(search, role, page, pageSize),
+    staleTime: 30000, // 30 seconds
   });
 };

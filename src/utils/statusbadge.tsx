@@ -20,19 +20,18 @@ export const getStatusBadgeColor = (status: string) => {
 
 export function StatusBadge({ isActive }: StatustBadgeProps) {
   if (isActive) {
-    if (isActive) {
-      return (
-        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Active
-        </Badge>
-      );
-    }
     return (
-      <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-        <Ban className="w-3 h-3 mr-1" />
-        Inactive
+      <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+        <CheckCircle className="w-3 h-3 mr-1" />
+        Active
       </Badge>
     );
   }
+
+  return (
+    <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
+      <Ban className="w-3 h-3 mr-1" />
+      Inactive
+    </Badge>
+  );
 }

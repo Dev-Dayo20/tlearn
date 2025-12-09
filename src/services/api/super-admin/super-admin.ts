@@ -9,9 +9,13 @@ import {
   AddSchoolDataResponse,
   SchoolArray,
   GetSchoolsResponse,
+  GetUserMetricsResponse,
+  GetAllUsersResponse,
 } from "@/types/types";
 import { useAuthStore } from "@/store/authStore";
 import { SchoolData, AddSchoolPayload } from "@/utils/validation";
+import { Toast } from "@/components/ui/toast";
+import { toast } from "sonner";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:2000/tlearn";
@@ -43,6 +47,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && error.config.headers.Authorization) {
       useAuthStore.getState().logout();
       window.location.href = "/super-admin/login";
+      toast.error("Session espired. Please login again", { duration: 5000 });
     }
     return Promise.reject(error);
   }
@@ -174,21 +179,24 @@ export const addSchool = async (
 
 export const getSchools = async (
   search?: string,
-  status?: string
-): Promise<SchoolArray[]> => {
+  status?: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<GetSchoolsResponse> => {
   try {
     const params = new URLSearchParams();
+
     if (search) params.append("search", search);
     if (status && status !== "all") params.append("status", status);
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
 
-    const response = await api.get<GetSchoolsResponse>(
-      `/super-admin/schools?${params.toString()}`
-    );
+    const response = await api.get(`/super-admin/schools?${params.toString()}`);
     if (response.status !== 200 || !response.data.success) {
       throw new Error("Failed to fetch schools");
     }
 
-    return response.data.schools || [];
+    return response.data;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch schools");
@@ -220,6 +228,54 @@ export const deleteSchool = async (
   }
 
   return response.data;
+};
+
+export const getUserMetrics = async (): Promise<GetUserMetricsResponse> => {
+  try {
+    const response = await api.get("/super-admin/users/metrics");
+    if (!response.data.success) {
+      throw new Error(
+        response.data.message || "Error getting the user metrics"
+      );
+    }
+    return response.data as GetUserMetricsResponse;
+  } catch (error) {
+    console.error(error);
+    throw new Error(
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch user metrics"
+    );
+  }
+};
+
+export const getAllUsers = async (
+  search?: string,
+  role?: string,
+  page: number = 1,
+  pageSize: number = 10
+): Promise<GetAllUsersResponse> => {
+  try {
+    const params = new URLSearchParams();
+
+    if (search) params.append("search", search);
+    if (role && role !== "all") params.append("role", role);
+    params.append("page", page.toString());
+    params.append("pageSize", pageSize.toString());
+
+    const response = await api.get(`/super-admin/users?${params.toString()}`);
+    if (!response?.data.success) {
+      throw new Error(response?.data?.message || "Error getting all users");
+    }
+    return response?.data as GetAllUsersResponse;
+  } catch (error) {
+    console.error(error);
+    throw new Error(
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to fetch all users"
+    );
+  }
 };
 
 export default api;

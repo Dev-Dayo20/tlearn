@@ -34,7 +34,7 @@ const Hero = () => {
             <div className="flex flex-wrap gap-6 mb-10 justify-center lg:justify-start text-primary-foreground/80">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-success" />
-                <span className="font-semibold">₦500/month</span>
+                <span className="font-semibold">₦1000/month</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-success" />
