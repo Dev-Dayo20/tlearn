@@ -20,6 +20,19 @@ interface AuthState {
   checkTokenExpiry: () => boolean;
 }
 
+// Helper functions for redirect path (outside of Zustand)
+export const saveRedirectPath = (path: string) => {
+  localStorage.setItem("redirect-path", path);
+};
+
+export const getRedirectPath = (): string | null => {
+  return localStorage.getItem("redirect-path");
+};
+
+export const clearRedirectPath = () => {
+  localStorage.removeItem("redirect-path");
+};
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -27,6 +40,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
+      redirectPath: null,
 
       // Login action
       login: (token, user) =>
@@ -58,6 +72,9 @@ export const useAuthStore = create<AuthState>()(
         }
 
         if (isTokenExpired(token)) {
+          const currentPath = window.location.pathname + window.location.search;
+          saveRedirectPath(currentPath);
+
           logout();
           return true;
         }

@@ -117,11 +117,20 @@ export function UserTable({
     return (
       <Card className="shadow-card">
         <CardContent className="p-8 text-center text-muted-foreground">
-          No schools found
+          {role !== "all" ? (
+            role === "ADMIN" ? (
+              "No School Admin Found"
+            ) : (
+              "No Students Found"
+            )
+          ) : (
+            <>No users Found</>
+          )}
         </CardContent>
       </Card>
     );
   }
+
   return (
     <>
       {/* Mobile View */}

@@ -23,6 +23,7 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
 import { GetSchoolsResponse } from "@/types/types";
+import { getRedirectPath, clearRedirectPath } from "@/store/authStore";
 
 interface ValidationError {
   msg: string;
@@ -37,7 +38,8 @@ interface ErrorResponse {
 
 export const useSuperAdminLogin = () => {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+
+  const { login } = useAuthStore();
 
   return useMutation({
     mutationFn: loginSuperAdmin,
@@ -51,7 +53,14 @@ export const useSuperAdminLogin = () => {
         });
       }
       toast.success(`Welcome Back ${data.adminName}`, { duration: 5000 });
-      navigate("/super-admin/dashboard");
+
+      const redirectPath = getRedirectPath();
+      if (redirectPath && redirectPath !== "/super-admin/login") {
+        clearRedirectPath();
+        navigate(redirectPath);
+      } else {
+        navigate("/super-admin/dashboard");
+      }
     },
     onError: (error: any) => {
       // console.error("Login error:", error);

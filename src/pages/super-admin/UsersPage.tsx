@@ -178,7 +178,7 @@ const UsersPage = () => {
 
           <div className="flex gap-2">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => handlePageClick(currentPage - 1)}
               disabled={!pagination.hasPreviousPage}
@@ -203,7 +203,7 @@ const UsersPage = () => {
                   return (
                     <Button
                       key={pageNum}
-                      variant={pageNum === currentPage ? "default" : "outline"}
+                      variant={pageNum === currentPage ? "default" : "ghost"}
                       size="sm"
                       onClick={() => handlePageClick(pageNum)}
                     >
@@ -214,7 +214,7 @@ const UsersPage = () => {
               )}
             </div>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => handlePageClick(currentPage + 1)}
               disabled={!pagination?.hasNextPage}
