@@ -26,9 +26,9 @@ export default function DashboardLayout() {
         {/* Main Content Area - Scrollable */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
           {/* Header with sidebar trigger */}
-          <DashboardHeader />
           <div className="sticky top-0 z-10 bg-background border-b px-4 py-3 md:px-6">
-            <SidebarTrigger />
+            <DashboardHeader />
+            {/* <SidebarTrigger /> */}
           </div>
 
           {/* Page Content - This scrolls */}

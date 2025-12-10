@@ -27,10 +27,12 @@ import { useGetAllUsers } from "@/hooks/useSuperAdminLogin";
 import { UserTable } from "@/components/super-admin/user-section/UserTable";
 import { UsersDrawer } from "@/components/super-admin/user-section/UserDetailDrawer";
 
+type RoleType = "STUDENT" | "ADMIN" | "all";
+
 const UsersPage = () => {
   const [selectedUser, setSelectedUser] = useState<UsersArray | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [role, setRole] = useState("all");
+  const [role, setRole] = useState<RoleType>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -131,7 +133,7 @@ const UsersPage = () => {
         <Select
           value={role}
           onValueChange={(value) => {
-            setRole(value);
+            setRole(value as RoleType);
             setCurrentPage(1);
           }}
         >
@@ -163,6 +165,7 @@ const UsersPage = () => {
       <UserTable
         users={users}
         isLoading={usersLoading}
+        role={role}
         onViewUser={handleViewUsers}
       />
 

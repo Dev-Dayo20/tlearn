@@ -230,6 +230,8 @@ export const deleteSchool = async (
   return response.data;
 };
 
+// ======== USER APIS =========
+
 export const getUserMetrics = async (): Promise<GetUserMetricsResponse> => {
   try {
     const response = await api.get("/super-admin/users/metrics");
@@ -274,6 +276,26 @@ export const getAllUsers = async (
       error.response?.data?.message ||
         error.message ||
         "Failed to fetch all users"
+    );
+  }
+};
+
+export const toggleUserStatus = async (
+  userId: number,
+  isActive: boolean
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    const response = await api.patch(`/super-admin/users/${userId}/status`, {
+      isActive,
+    });
+    if (!response.data.success) {
+      throw new Error(response?.data?.message || "Failed to update user");
+    }
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(
+      error.response?.data?.message || error?.message || "Failed to update user"
     );
   }
 };

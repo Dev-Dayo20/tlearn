@@ -1,5 +1,6 @@
 import {
   keepPreviousData,
+  QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
@@ -17,6 +18,7 @@ import {
   deleteSchool,
   getUserMetrics,
   getAllUsers,
+  toggleUserStatus,
 } from "@/services/api/super-admin/super-admin";
 import { useAuthStore } from "@/store/authStore";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
@@ -206,5 +208,24 @@ export const useGetAllUsers = (
     queryKey: ["users", search, role, page, pageSize],
     queryFn: () => getAllUsers(search, role, page, pageSize),
     staleTime: 30000, // 30 seconds
+  });
+};
+
+export const useToggleUser = () => {
+  const QueryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      userId,
+      isActive,
+    }: {
+      userId: number;
+      isActive: boolean;
+    }) => {
+      return toggleUserStatus(userId, isActive);
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message);
+      QueryClient.invalidateQueries({ queryKey: ["users"] });
+    },
   });
 };

@@ -28,6 +28,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { UsersArray } from "@/types/types";
 import { formatDate } from "@/utils/dateFormatter";
+import { useToggleUser } from "@/hooks/useSuperAdminLogin";
 
 interface UsersProps {
   user: UsersArray | null;
@@ -37,6 +38,12 @@ interface UsersProps {
 
 export function UsersDrawer({ user, open, onChange }: UsersProps) {
   if (!user) return null;
+
+  const { mutate: toggleUser, isPending: isToggling } = useToggleUser();
+
+  const handleToggleUser = (user: UsersArray) => {
+    toggleUser({ userId: user.id, isActive: !user.isActive });
+  };
   return (
     <>
       <Sheet open={open} onOpenChange={onChange}>
@@ -103,9 +110,23 @@ export function UsersDrawer({ user, open, onChange }: UsersProps) {
             <Separator />
             <div className="space-y-3">
               <h4 className="font-semibold">Actions</h4>
-              <Button variant="destructive" className="w-full gap-2">
-                <Ban className="w-4 h-4" />
-                Deactivate User
+              <Button
+                variant="ghost"
+                className="w-full gap-2"
+                onClick={() => handleToggleUser(user)}
+                disabled={isToggling}
+              >
+                {user?.isActive ? (
+                  <>
+                    <Ban className="w-4 h-4" />
+                    Deactivate User
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Activate School
+                  </>
+                )}
               </Button>
             </div>
           </div>

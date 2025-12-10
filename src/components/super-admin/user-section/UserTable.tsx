@@ -23,14 +23,26 @@ import {
 import { UsersArray } from "@/types/types";
 import { StatusBadge } from "@/utils/statusbadge";
 import { formatDate } from "@/utils/dateFormatter";
+import { useToggleUser } from "@/hooks/useSuperAdminLogin";
 
 interface UserTableProps {
   users: UsersArray[];
   isLoading: boolean;
+  role: "STUDENT" | "ADMIN" | "all";
   onViewUser: (user: UsersArray) => void;
 }
 
-export function UserTable({ users, isLoading, onViewUser }: UserTableProps) {
+export function UserTable({
+  users,
+  isLoading,
+  role,
+  onViewUser,
+}: UserTableProps) {
+  const { mutate: toggleUser, isPending: isToggling } = useToggleUser();
+
+  const handleToggleUser = (user: UsersArray) => {
+    toggleUser({ userId: user.id, isActive: !user.isActive });
+  };
   // Mobile Card View
   const MobileUsersView = ({ user }: { user: UsersArray }) => {
     return (
@@ -171,6 +183,8 @@ export function UserTable({ users, isLoading, onViewUser }: UserTableProps) {
                           variant="ghost"
                           size="sm"
                           title={user?.isActive ? "Deactivate" : "Activate"}
+                          disabled={isToggling}
+                          onClick={() => handleToggleUser(user)}
                         >
                           {user?.isActive ? (
                             <CheckCircle className="w-4 h-4 text-green-600" />
