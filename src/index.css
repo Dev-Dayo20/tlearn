@@ -43,16 +43,16 @@
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(232 59% 30%) 0%, hsl(232 59% 40%) 100%);
     --gradient-success: linear-gradient(135deg, hsl(141 70% 39%) 0%, hsl(141 70% 49%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(232 59% 30%) 0%, hsl(232 59% 25%) 50%, hsl(141 70% 39%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(232, 59%, 30%) 0%, hsl(232 59% 25%) 50%, hsl(141 70% 39%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(47 100% 51%) 0%, hsl(47 100% 61%) 100%);
 
-    --sidebar-background: 232 59% 30%;
+    --sidebar-background: 196 99% 37%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 47 100% 51%;
-    --sidebar-primary-foreground: 232 59% 30%;
-    --sidebar-accent: 232 59% 35%;
+    --sidebar-primary-foreground: 196 99% 37%;
+    --sidebar-accent:  47 100% 51%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 232 59% 25%;
+    --sidebar-border: 196 99% 25%;
     --sidebar-ring: 47 100% 51%;
     
     /* Shadows */

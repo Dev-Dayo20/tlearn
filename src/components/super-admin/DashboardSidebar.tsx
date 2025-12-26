@@ -57,8 +57,8 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/dashboard"}
-                      className="flex items-center gap-3 px-6 py-3 text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
-                      activeClassName="bg-sidebar-accent text-sidebar-foreground font-medium border-l-4 border-sidebar-primary"
+                      className="flex items-center gap-3 px-6 py-3 text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+                      activeClassName="bg-sidebar-accent text-black font-medium border-l-4 border-sidebar-primary"
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!isCollapsed && <span>{item.title}</span>}

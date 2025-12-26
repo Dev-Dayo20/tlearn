@@ -4,11 +4,15 @@ import { School } from "@/types/types";
 export const getTenantFromUrl = () => {
   const hostname = window.location.hostname;
   const parts = hostname.split(".");
+  // console.log("Hostname:", hostname);
+  // console.log("Hostname parts:", parts);
 
   // If subdomain exists
   if (parts.length >= 3 && parts[0] !== "www") {
+    // console.log("Subdomain detected:", parts[0]);
     return parts[0];
   }
+  // console.log("No subdomain - main site");
   return null;
 };
 

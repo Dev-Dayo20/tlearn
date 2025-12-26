@@ -41,7 +41,7 @@ export function DashboardHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2">
               <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-primary text-primary-foreground">
+                <AvatarFallback className="bg-sidebar text-primary-foreground">
                   <User className="w-4 h-4" />
                 </AvatarFallback>
               </Avatar>

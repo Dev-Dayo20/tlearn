@@ -124,7 +124,7 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
       adminPassword: data.adminPassword,
       logo: logoFile ? logoFile : undefined,
     };
-    console.log(sanitizedata);
+    // console.log(sanitizedata);
 
     addSchool(sanitizedata, {
       onSuccess: () => {

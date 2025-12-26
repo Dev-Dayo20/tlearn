@@ -73,7 +73,7 @@ const SchoolPage = () => {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const hasActiveFilters = searchTerm.trim() !== "" || statusFilter !== "all";
@@ -91,7 +91,7 @@ const SchoolPage = () => {
           </p>
         </div>
         <Button
-          className="gap-2 w-full sm:w-auto"
+          className="gap-2 w-full sm:w-auto bg-sidebar hover:bg-sidebar-accent text-white hover:text-black"
           onClick={() => setAddSchoolDialogOpen(true)}
         >
           <Plus className="w-4 h-4" />
@@ -232,7 +232,7 @@ const SchoolPage = () => {
                 (_, i) => {
                   let pageNum;
                   if (pagination.totalPages <= 5) {
-                    pageNum = i + 1;  
+                    pageNum = i + 1;
                   } else if (currentPage <= 3) {
                     pageNum = i + 1;
                   } else if (currentPage >= pagination.totalPages - 2) {
