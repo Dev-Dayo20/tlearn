@@ -5,7 +5,7 @@ const Pricing = () => {
   const plans = [
     {
       name: "Monthly Plan",
-      price: "₦1000",
+      price: "₦1,000",
       period: "per student/month",
       description: "Perfect for trying out TLearn",
       features: [
@@ -42,7 +42,8 @@ const Pricing = () => {
             Simple, Affordable Pricing
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose the plan that works for you. Schools get special bulk discounts.
+            Choose the plan that works for you. Schools get special bulk
+            discounts.
           </p>
         </div>
 
@@ -51,7 +52,9 @@ const Pricing = () => {
             <div
               key={index}
               className={`relative bg-card rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-scale-in ${
-                plan.popular ? "border-2 border-success" : "border border-border"
+                plan.popular
+                  ? "border-2 border-success"
+                  : "border border-border"
               }`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -65,11 +68,17 @@ const Pricing = () => {
               )}
 
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {plan.name}
+                </h3>
                 <p className="text-muted-foreground mb-4">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-2">
-                  <span className="text-5xl font-bold text-primary">{plan.price}</span>
-                  <span className="text-muted-foreground">/{plan.period.split('/')[1]}</span>
+                  <span className="text-5xl font-bold text-primary">
+                    {plan.price}
+                  </span>
+                  <span className="text-muted-foreground">
+                    /{plan.period.split("/")[1]}
+                  </span>
                 </div>
               </div>
 
@@ -96,9 +105,12 @@ const Pricing = () => {
         </div>
 
         <div className="text-center bg-card rounded-xl p-8 max-w-3xl mx-auto shadow-md border border-border">
-          <h3 className="text-xl font-bold text-foreground mb-2">School Bulk Discounts Available</h3>
+          <h3 className="text-xl font-bold text-foreground mb-2">
+            School Bulk Discounts Available
+          </h3>
           <p className="text-muted-foreground mb-4">
-            Enrolling multiple students? Contact us for special school pricing and custom packages.
+            Enrolling multiple students? Contact us for special school pricing
+            and custom packages.
           </p>
           <Button variant="outline" size="lg">
             Contact for School Pricing
