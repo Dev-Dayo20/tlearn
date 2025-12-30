@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { create } from "zustand";
-import { School } from "@/types/types";
+import { School, SchoolDomainResponse } from "@/types/types";
 import { getTenantFromUrl, getSchoolBySubdomain } from "@/utils/tenantHelpers";
 
 interface SchoolContexts {
-  school: School;
+  school: SchoolDomainResponse | null;
   isLoading: boolean;
   isMainSite: boolean;
   initializeSchool: () => Promise<void>;

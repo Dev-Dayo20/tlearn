@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "SUPER_ADMIN" | "ADMIN" | "STUDENT";
+  requiredRole?: "SUPER_ADMIN" | "ADMIN" | "STUDENT" | "TEACHER";
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -22,10 +22,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       return <Navigate to="/super-admin/login" replace />;
     }
     if (requiredRole === "ADMIN") {
-      return <Navigate to="/school/login" replace />;
+      return <Navigate to="/school-admin/login" replace />;
     }
     if (requiredRole === "STUDENT") {
       return <Navigate to="/student/login" replace />;
+    }
+    if (requiredRole === "TEACHER") {
+      return <Navigate to="/teacher/login" replace />;
     }
     return <Navigate to="/" replace />;
   }

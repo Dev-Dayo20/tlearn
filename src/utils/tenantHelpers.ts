@@ -1,5 +1,5 @@
 import axios from "axios";
-import { School } from "@/types/types";
+import { School, SchoolDomainResponse } from "@/types/types";
 
 export const getTenantFromUrl = () => {
   const hostname = window.location.hostname;
@@ -12,7 +12,12 @@ export const getTenantFromUrl = () => {
     // console.log("Subdomain detected:", parts[0]);
     return parts[0];
   }
-  // console.log("No subdomain - main site");
+  //  Get subdomain from localhost for development
+  if (hostname.includes("localhost") && parts.length >= 2) {
+    return parts[0];
+  }
+  // No subdomain
+  // console.log("No subdomain detected");
   return null;
 };
 
@@ -26,9 +31,10 @@ export const getSchoolSlug = () => {
 
 export const getSchoolBySubdomain = async (
   subdomain: string
-): Promise<School | null> => {
+): Promise<SchoolDomainResponse> => {
   try {
-    const response = await axios.get(`/api/schools/${subdomain}`);
+    const response = await axios.get(`/tlearn/sch-admin/school/${subdomain}`);
+    // console.log("Fetched school data:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching school data:", error);

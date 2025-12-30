@@ -7,6 +7,9 @@ import Unauthorized from "./pages/Unauthorized";
 import { MainSiteRoutes } from "./routes/MainSiteRoutes";
 import { useSchoolStore } from "./store/SchoolStore";
 import { useInitializeSchool } from "./hooks/useInitializeSchool";
+import { SchoolRoutes } from "./routes/SchoolRoutes";
+import SchoolSkeletonLoader from "./components/admin/SchoolSkeletonLoader";
+import SchoolNotFound from "./components/admin/SchoolNotFound";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,10 +27,10 @@ const queryClient = new QueryClient({
 const App = () => {
   useInitializeSchool();
   const { school, isLoading, isMainSite } = useSchoolStore();
-
   // console.log("Debug:", { school, isLoading, isMainSite });
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <SchoolSkeletonLoader />;
   }
 
   return (
@@ -35,18 +38,14 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-
         <BrowserRouter>
           <Routes>
             {isMainSite ? (
               MainSiteRoutes()
             ) : school ? (
-              <Route
-                path="*"
-                element={<div>School Portal - {school.name}</div>}
-              />
+              SchoolRoutes(school)
             ) : (
-              <Route path="*" element={<Unauthorized />} />
+              <Route path="*" element={<SchoolNotFound />} />
             )}
           </Routes>
           {/* {isMainSite ? <MainSiteRoutes /> : <Navigate to="/unauthorized" />} */}

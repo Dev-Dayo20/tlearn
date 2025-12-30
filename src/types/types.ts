@@ -1,10 +1,16 @@
 export interface School {
-  id: string;
+  id: number;
   name: string;
   subdomain: string;
   logo: string;
   primaryColor?: string;
   secondaryColor?: string;
+}
+
+export interface SchoolDomainResponse {
+  success: boolean;
+  message: string;
+  school: School | null;
 }
 
 export interface LoginResponseSuperAdmin {
@@ -162,3 +168,6 @@ export interface GetAllUsersResponse {
   users: UsersArray[];
   pagination: UsersPaginationInfo;
 }
+
+// SCHOOL ADMIN TYPES
+export type UserRoles = "TEACHER" | "ADMIN" | "STUDENT";
