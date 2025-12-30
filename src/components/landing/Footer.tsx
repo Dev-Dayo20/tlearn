@@ -1,4 +1,14 @@
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import tlearn from "@/assets/tlearn.png";
+import tlearnWhite from "@/assets/tlearnWhite.png";
 
 const Footer = () => {
   const quickLinks = [
@@ -30,30 +40,38 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer className="bg-prim text-primary-foreground">
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-success rounded-lg flex items-center justify-center">
-                <span className="text-success-foreground font-bold text-xl">TL</span>
-              </div>
-              <span className="text-2xl font-bold">TLearn</span>
+              <img
+                src={tlearnWhite}
+                alt="TLearn Logo"
+                className="h-20 sm:h-16 max-w-[220px] w-auto object-contain"
+              />
             </div>
             <p className="text-primary-foreground/80 mb-6 max-w-sm">
-              Nigeria's most affordable EdTech platform, transforming screen time into productive learning for students from Primary to SSS.
+              Nigeria's most affordable EdTech platform, transforming screen
+              time into productive learning for students from Primary to SSS.
             </p>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Mail className="w-4 h-4" />
-                <a href="mailto:info@tlearn.ng" className="hover:text-accent transition-colors">
+                <a
+                  href="mailto:info@tlearn.ng"
+                  className="hover:text-accent transition-colors"
+                >
                   info@tlearn.ng
                 </a>
               </div>
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Phone className="w-4 h-4" />
-                <a href="tel:+2341234567890" className="hover:text-accent transition-colors">
+                <a
+                  href="tel:+2341234567890"
+                  className="hover:text-accent transition-colors"
+                >
                   +234 123 456 7890
                 </a>
               </div>
@@ -121,7 +139,7 @@ const Footer = () => {
           <div className="text-sm text-primary-foreground/60">
             © {new Date().getFullYear()} TLearn. All rights reserved.
           </div>
-          
+
           <div className="flex items-center gap-4">
             {socialLinks.map((social, index) => {
               const Icon = social.icon;
@@ -139,10 +157,16 @@ const Footer = () => {
           </div>
 
           <div className="flex gap-6 text-sm">
-            <a href="#privacy" className="text-primary-foreground/60 hover:text-accent transition-colors">
+            <a
+              href="#privacy"
+              className="text-primary-foreground/60 hover:text-accent transition-colors"
+            >
               Privacy Policy
             </a>
-            <a href="#terms" className="text-primary-foreground/60 hover:text-accent transition-colors">
+            <a
+              href="#terms"
+              className="text-primary-foreground/60 hover:text-accent transition-colors"
+            >
               Terms of Service
             </a>
           </div>

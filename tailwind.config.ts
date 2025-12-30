@@ -31,6 +31,10 @@ export default {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
+        prim: {
+          DEFAULT: "hsl(var(--prim))",
+          foreground: "hsl(var(--prim-foreground))",
+        },
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

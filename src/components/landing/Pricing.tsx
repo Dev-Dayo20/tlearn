@@ -5,7 +5,7 @@ const Pricing = () => {
   const plans = [
     {
       name: "Monthly Plan",
-      price: "₦500",
+      price: "₦1000",
       period: "per student/month",
       description: "Perfect for trying out TLearn",
       features: [

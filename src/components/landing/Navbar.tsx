@@ -18,6 +18,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import tlearn from "@/assets/tlearn.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,8 +50,11 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <a href="#" className="flex items-center space-x-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold text-primary">TLearn</span>
+            <img
+              src={tlearn}
+              alt="TLearn Logo"
+              className="h-14 sm:h-16 max-w-[160px] w-auto object-contain"
+            />
           </a>
 
           {/* Desktop Navigation */}
