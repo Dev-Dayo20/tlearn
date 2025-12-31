@@ -8,15 +8,45 @@ export const getTenantFromUrl = () => {
   // console.log("Hostname:", hostname);
   // console.log("Hostname parts:", parts);
 
-  // If subdomain exists
-  if (parts.length >= 3 && parts[0] !== "www") {
-    // console.log("Subdomain detected:", parts[0]);
-    return parts[0];
+  // Handle localhost development
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    console.log("Localhost - main site");
+    return null;
   }
-  //  Get subdomain from localhost for development
+
+  // Handle localhost with subdomain (e.g., school1.localhost)
   if (hostname.includes("localhost") && parts.length >= 2) {
+    console.log("Localhost subdomain detected:", parts[0]);
     return parts[0];
   }
+
+  // Handle Vercel domains
+  if (hostname.includes("vercel.app")) {
+    // tlearn-ten.vercel.app = MAIN SITE (3 parts)
+    if (parts.length === 3) {
+      console.log("Vercel main site detected");
+      return null;
+    }
+    // school1.tlearn-ten.vercel.app = SCHOOL SUBDOMAIN (4 parts)
+    if (parts.length === 4) {
+      console.log("Vercel subdomain detected:", parts[0]);
+      return parts[0];
+    }
+    return null;
+  }
+
+  // If it's just domain.com or www.domain.com = main site
+  if (parts.length === 2 || (parts.length === 3 && parts[0] === "www")) {
+    console.log("Production main site detected");
+    return null;
+  }
+
+  // If it's subdomain.domain.com = school subdomain
+  if (parts.length === 3 && parts[0] !== "www") {
+    console.log("Production subdomain detected:", parts[0]);
+    return parts[0];
+  }
+
   // No subdomain
   // console.log("No subdomain detected");
   return null;
@@ -34,9 +64,7 @@ export const getSchoolBySubdomain = async (
   subdomain: string
 ): Promise<SchoolDomainResponse> => {
   try {
-    const response = await axiosInstance.get(
-      `/tlearn/sch-admin/school/${subdomain}`
-    );
+    const response = await axiosInstance.get(`/sch-admin/school/${subdomain}`);
     console.log("Fetched school data:", response.data);
     return response.data;
   } catch (error) {

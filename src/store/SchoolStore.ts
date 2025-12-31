@@ -17,15 +17,19 @@ export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
 
   initializeSchool: async () => {
     set({ isLoading: true });
+
     const subdomain = getTenantFromUrl();
-    // console.log("🔍 Subdomain from URL:", subdomain);
+    console.log("🔍 Subdomain from URL:", subdomain);
+
     if (!subdomain) {
       console.log("✅ Setting main site to TRUE");
       set({ isLoading: false, isMainSite: true, school: null });
       console.log("✅ After set - checking state:", get());
       return;
     }
+
     try {
+      console.log("📡 Fetching school data for:", subdomain);
       const schoolData = await getSchoolBySubdomain(subdomain);
       set({ school: schoolData, isLoading: false, isMainSite: false });
     } catch (error) {
