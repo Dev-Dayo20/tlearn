@@ -27,7 +27,9 @@ const queryClient = new QueryClient({
 const App = () => {
   useInitializeSchool();
   const { school, isLoading, isMainSite } = useSchoolStore();
-  // console.log("Debug:", { school, isLoading, isMainSite });
+  console.log("Debug:", { school, isLoading, isMainSite });
+  console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
+  console.log("Main Site URL:", import.meta.env.VITE_MAIN_SITE_URL);
 
   if (isLoading) {
     return <SchoolSkeletonLoader />;

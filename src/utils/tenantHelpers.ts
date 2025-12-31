@@ -1,5 +1,6 @@
 import axios from "axios";
 import { School, SchoolDomainResponse } from "@/types/types";
+import axiosInstance from "@/lib/axios";
 
 export const getTenantFromUrl = () => {
   const hostname = window.location.hostname;
@@ -33,7 +34,9 @@ export const getSchoolBySubdomain = async (
   subdomain: string
 ): Promise<SchoolDomainResponse> => {
   try {
-    const response = await axios.get(`/tlearn/sch-admin/school/${subdomain}`);
+    const response = await axiosInstance.get(
+      `/tlearn/sch-admin/school/${subdomain}`
+    );
     // console.log("Fetched school data:", response.data);
     return response.data;
   } catch (error) {
