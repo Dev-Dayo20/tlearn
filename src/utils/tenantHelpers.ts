@@ -10,13 +10,13 @@ export const getTenantFromUrl = () => {
 
   // Handle localhost development
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    console.log("Localhost - main site");
+    // console.log("Localhost - main site");
     return null;
   }
 
   // Handle localhost with subdomain (e.g., school1.localhost)
   if (hostname.includes("localhost") && parts.length >= 2) {
-    console.log("Localhost subdomain detected:", parts[0]);
+    // console.log("Localhost subdomain detected:", parts[0]);
     return parts[0];
   }
 
@@ -24,12 +24,12 @@ export const getTenantFromUrl = () => {
   if (hostname.includes("vercel.app")) {
     // tlearn-ten.vercel.app = MAIN SITE (3 parts)
     if (parts.length === 3) {
-      console.log("Vercel main site detected");
+      // console.log("Vercel main site detected");
       return null;
     }
     // school1.tlearn-ten.vercel.app = SCHOOL SUBDOMAIN (4 parts)
     if (parts.length === 4) {
-      console.log("Vercel subdomain detected:", parts[0]);
+      // console.log("Vercel subdomain detected:", parts[0]);
       return parts[0];
     }
     return null;
@@ -37,13 +37,13 @@ export const getTenantFromUrl = () => {
 
   // If it's just domain.com or www.domain.com = main site
   if (parts.length === 2 || (parts.length === 3 && parts[0] === "www")) {
-    console.log("Production main site detected");
+    // console.log("Production main site detected");
     return null;
   }
 
   // If it's subdomain.domain.com = school subdomain
   if (parts.length === 3 && parts[0] !== "www") {
-    console.log("Production subdomain detected:", parts[0]);
+    // console.log("Production subdomain detected:", parts[0]);
     return parts[0];
   }
 
@@ -65,10 +65,10 @@ export const getSchoolBySubdomain = async (
 ): Promise<SchoolDomainResponse> => {
   try {
     const response = await axiosInstance.get(`/sch-admin/school/${subdomain}`);
-    console.log("Fetched school data:", response.data);
+    // console.log("Fetched school data:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching school data:", error);
+    // console.error("Error fetching school data:", error);
     return null;
   }
 };
