@@ -20,9 +20,9 @@ export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
     const subdomain = getTenantFromUrl();
     // console.log("🔍 Subdomain from URL:", subdomain);
     if (!subdomain) {
-      // console.log("✅ Setting main site to TRUE");
+      console.log("✅ Setting main site to TRUE");
       set({ isLoading: false, isMainSite: true, school: null });
-      // console.log("✅ After set - checking state:", get());
+      console.log("✅ After set - checking state:", get());
       return;
     }
     try {

@@ -37,7 +37,7 @@ export const getSchoolBySubdomain = async (
     const response = await axiosInstance.get(
       `/tlearn/sch-admin/school/${subdomain}`
     );
-    // console.log("Fetched school data:", response.data);
+    console.log("Fetched school data:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching school data:", error);
