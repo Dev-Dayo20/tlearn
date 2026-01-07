@@ -55,9 +55,9 @@ const Hero = () => {
               <Button
                 className="bg-accent text-black border-2 border-white hover:scale-105 transition-transform hover:bg-primary/5 hover:text-white"
                 size="lg"
-                // onClick={() => {
-                //   navigate("/super-admin/login");
-                // }}
+                onClick={() => {
+                  navigate("/super-admin/login");
+                }}
               >
                 Schools - Learn More
               </Button>

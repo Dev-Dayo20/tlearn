@@ -2,8 +2,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginSchoolAdmin from "@/pages/admin/LoginSchoolAdmin";
 import { School, SchoolDomainResponse } from "@/types/types";
 import { ProtectedRoute } from "@/utils/ProtectedRoute";
+
 import { DashboardLayout } from "@/pages/admin/DashboardLayout";
 import SchoolNotFound from "@/components/admin/SchoolNotFound";
+import Dashboard from "@/pages/admin/Dashboard";
+import Students from "@/pages/admin/Students";
+import Classes from "@/pages/admin/Classes";
+import Materials from "@/pages/admin/Materials";
 
 export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
   if (!school) {
@@ -23,7 +28,7 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
 
       {/* School admin protected routes */}
       <Route
-        path="/school-admin/*"
+        path="/school-admin"
         element={
           <ProtectedRoute requiredRole="ADMIN">
             <DashboardLayout />
@@ -31,14 +36,10 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
         }
       >
         <Route index element={<Navigate to="dashboard" replace />} />
-        <Route
-          path="dashboard"
-          element={<div>School Admin Dashboard for {school.school.name}</div>}
-        />
-        <Route
-          path="students"
-          element={<div>Students Page for {school.school.name}</div>}
-        />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="students" element={<Students school={school} />} />
+        <Route path="classes" element={<Classes school={school} />} />
+        <Route path="materials" element={<Materials school={school} />} />
         <Route
           path="teachers"
           element={<div>Teachers Page for {school.school.name}</div>}

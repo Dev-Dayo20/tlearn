@@ -5,7 +5,7 @@ import { isTokenExpired } from "@/utils/token";
 interface User {
   id: number;
   email: string;
-  role: "SUPER_ADMIN" | "ADMIN" | "STUDENT";
+  role: "SUPER_ADMIN" | "ADMIN" | "STUDENT" | "TEACHER";
   name?: string;
 }
 

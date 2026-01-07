@@ -1,70 +1,59 @@
-import { Bell, Search, Moon, Sun, User } from "lucide-react";
+import { Bell, Search, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-export function DashboardHeader() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+interface TopbarProps {
+  title: string;
+  subtitle?: string;
+}
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+export function Topbar({ title, subtitle }: TopbarProps) {
+  const [isDark, setIsDark] = useState(false);
+
+  const toggleTheme = () => {
+    setIsDark(!isDark);
     document.documentElement.classList.toggle("dark");
   };
 
   return (
-    <header className=" flex h-16 items-center justify-between rounded-2xl bg-card px-6 shadow-soft">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between rounded-2xl bg-card px-6 shadow-soft">
       <div>
-        <h1 className="text-xl font-bold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Welcome back Admin</p>
+        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+        {subtitle && (
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Search */}
+        <div className="relative hidden md:block">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search..."
+            className="w-64 rounded-xl border-border bg-secondary pl-10 focus:bg-card"
+          />
+        </div>
+
         {/* Theme Toggle */}
         <Button
           variant="ghost"
           size="icon"
-          onClick={toggleDarkMode}
+          onClick={toggleTheme}
           className="rounded-xl"
         >
-          {isDarkMode ? (
+          {isDark ? (
             <Sun className="h-5 w-5 text-muted-foreground" />
           ) : (
             <Moon className="h-5 w-5 text-muted-foreground" />
           )}
         </Button>
 
-        {/* Profile Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2">
-              <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-sidebar text-primary-foreground">
-                  <User className="w-4 h-4" />
-                </AvatarFallback>
-              </Avatar>
-              <span className="hidden md:inline text-sm font-medium">
-                Super Admin
-              </span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem>Preferences</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Sign Out</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Notifications */}
+        <Button variant="ghost" size="icon" className="relative rounded-xl">
+          <Bell className="h-5 w-5 text-muted-foreground" />
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-accent" />
+        </Button>
       </div>
     </header>
   );

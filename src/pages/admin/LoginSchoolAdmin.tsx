@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +19,14 @@ import loginHero from "@/assets/loginHero.webp";
 import { UserRoles } from "@/types/types";
 import RoleSwitcher from "@/components/RoleSwitcher";
 import { School, SchoolDomainResponse } from "@/types/types";
+
+import { useSchUsersAuth } from "@/hooks/useSchAdmHooks";
+import {
+  adminLoginSchema,
+  teacherLoginSchema,
+  studentLoginSchema,
+  type SchoolLoginData,
+} from "@/schema/schLoginSchema";
 
 const roleConfig = {
   ADMIN: {
@@ -53,7 +63,50 @@ export default function LoginSchoolAdmin({
 }: SchoolAdminLoginProps) {
   const [currentRole, setCurrentRole] = useState<UserRoles>("ADMIN");
   const [showPassword, setShowPassword] = useState(false);
+
   const config = roleConfig[currentRole];
+
+  const { mutate: login, isPending } = useSchUsersAuth(school?.school.id);
+
+  // Get the right schema based on role
+  const getSchema = () => {
+    switch (currentRole) {
+      case "ADMIN":
+        return adminLoginSchema;
+      case "TEACHER":
+        return teacherLoginSchema;
+      case "STUDENT":
+        return studentLoginSchema;
+    }
+  };
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SchoolLoginData>({
+    resolver: zodResolver(getSchema()),
+    defaultValues:
+      currentRole === "STUDENT"
+        ? { studentId: "", role: "STUDENT" }
+        : { email: "", password: "", role: currentRole },
+  });
+
+  // Reset form when role changes
+  const handleRoleChange = (role: UserRoles) => {
+    setCurrentRole(role);
+    reset(
+      role === "STUDENT"
+        ? { studentId: "", role: "STUDENT" }
+        : { email: "", password: "", role }
+    );
+  };
+
+  const onSubmit = (data: SchoolLoginData) => {
+    login(data);
+    // console.log("Submitted data:", data);
+  };
 
   return (
     <div className="relative flex min-h-screen overflow-hidden">
@@ -120,9 +173,10 @@ export default function LoginSchoolAdmin({
             <div className="mb-5 sm:mb-6">
               <RoleSwitcher
                 currentRole={currentRole}
-                onRoleChange={setCurrentRole}
+                onRoleChange={handleRoleChange}
               />
             </div>
+
             {/* LOGIN FORM HERE */}
             <div className="animate-fade-in space-y-6">
               <div className="space-y-2 text-center">
@@ -134,7 +188,7 @@ export default function LoginSchoolAdmin({
                 </p>
               </div>
 
-              <form action="">
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-4">
                   <Label
                     htmlFor="identifier"
@@ -156,12 +210,28 @@ export default function LoginSchoolAdmin({
                         config.identifierType === "email" ? "email" : "text"
                       }
                       placeholder={config.emailPlaceholder}
-                      // value={identifier}
-                      // onChange={(e) => setIdentifier(e.target.value)}
                       className="pl-10"
-                      required
+                      disabled={isPending}
+                      {...register(
+                        currentRole === "STUDENT" ? "studentId" : "email"
+                      )}
                     />
                   </div>
+                  {(errors as any).email && (
+                    <p className="text-sm text-red-500">
+                      {(errors as any).email.message}
+                    </p>
+                  )}
+                  {(errors as any).studentId && (
+                    <p className="text-sm text-red-500">
+                      {(errors as any).studentId.message}
+                    </p>
+                  )}
+                  {(errors as any).password && (
+                    <p className="text-sm text-red-500">
+                      {(errors as any).password.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* PASSWORD INPUT */}
@@ -191,15 +261,14 @@ export default function LoginSchoolAdmin({
                           id="password"
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
-                          // value={password}
-                          // onChange={(e) => setPassword(e.target.value)}
                           className="pl-10 pr-10"
-                          required
+                          disabled={isPending}
+                          {...register("password")}
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors"
+                          className="absolute inset-y-0 right-0 flex items-center pr-3"
                         >
                           {showPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -208,12 +277,21 @@ export default function LoginSchoolAdmin({
                           )}
                         </button>
                       </div>
+                      {(errors as any).password && (
+                        <p className="text-sm text-red-500">
+                          {(errors as any).password.message}
+                        </p>
+                      )}
                     </>
                   )}
                 </div>
                 {/* Add submit button */}
-                <Button type="submit" className="w-full mt-4">
-                  Sign In
+                <Button
+                  type="submit"
+                  className="w-full mt-4"
+                  disabled={isPending}
+                >
+                  {isPending ? "Signing in..." : "Sign In"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>

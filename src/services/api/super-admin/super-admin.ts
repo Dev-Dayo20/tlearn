@@ -16,6 +16,7 @@ import { useAuthStore } from "@/store/authStore";
 import { SchoolData, AddSchoolPayload } from "@/utils/validation";
 import { Toast } from "@/components/ui/toast";
 import { toast } from "sonner";
+import { getTenantFromUrl } from "@/utils/tenantHelpers";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:2000/tlearn";
@@ -25,12 +26,21 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+  // ✅ Add subdomain header for school routes
+  if (config.url?.includes("/sch-admin/")) {
+    const subdomain = getTenantFromUrl();
+    if (subdomain) {
+      config.headers["x-school-subdomain"] = subdomain;
+    }
+    console.log("🌐 Added X-School-Subdomain header:", subdomain);
   }
   return config;
 });
