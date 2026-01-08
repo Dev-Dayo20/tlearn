@@ -52,7 +52,7 @@ const Hero = () => {
                 Start Free Trial
                 <ArrowRight className="group-hover:translate-x-1 transition-transform" />
               </Button> */}
-              <Button
+              {/* <Button
                 className="bg-accent text-black border-2 border-white hover:scale-105 transition-transform hover:bg-primary/5 hover:text-white"
                 size="lg"
                 onClick={() => {
@@ -60,7 +60,7 @@ const Hero = () => {
                 }}
               >
                 Schools - Learn More
-              </Button>
+              </Button> */}
             </div>
           </div>
 

@@ -13,6 +13,8 @@ import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
 import { getRedirectPath, clearRedirectPath } from "@/store/authStore";
 import { SchoolLoginData } from "@/schema/schLoginSchema";
 
+import { createClass } from "@/services/api/admin/schLoginApi";
+
 export const useSchUsersAuth = (schoolId: number) => {
   const navigate = useNavigate();
   const { user, login } = useAuthStore();
@@ -46,6 +48,20 @@ export const useSchUsersAuth = (schoolId: number) => {
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
       console.error("Login error:", error);
+    },
+  });
+};
+
+export const useCreateClass = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createClass,
+    onSuccess: () => {
+      toast.success("Class created successfully");
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to create class");
     },
   });
 };

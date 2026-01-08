@@ -21,7 +21,11 @@ import {
 import { SchoolArray } from "@/types/types";
 import { useAddSchool } from "@/hooks/useSuperAdminLogin";
 import { toast } from "@/components/ui/sonner";
-import { sanitizeText, sanitizeSubdomain } from "@/utils/sanitize";
+import {
+  sanitizeText,
+  sanitizeSubdomain,
+  sanitizeEmail,
+} from "@/utils/sanitize";
 import {
   useToggleSchoolStatus,
   useDeleteSchool,
@@ -117,7 +121,7 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
     const sanitizedata: AddSchoolPayload = {
       schoolName: sanitizeText(data.schoolName),
       subdomain: sanitizeSubdomain(data.subdomain),
-      schoolEmail: sanitizeText(data.schoolEmail),
+      schoolEmail: sanitizeEmail(data.schoolEmail),
       address: sanitizeText(data.address),
       adminEmail: sanitizeText(data.adminEmail),
       adminName: sanitizeText(data.adminName),
@@ -132,7 +136,7 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
         setLogoFile(null);
         setLogoPreview(null);
         onOpenChange(false);
-        toast.success("School registered successfully!");
+        toast.success("School registered successfully!", );
       },
       onError: (error: any) => {
         if (
