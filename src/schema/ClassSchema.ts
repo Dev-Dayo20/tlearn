@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createClassSchema = z.object({
-  ClassName: z.string().min(1, "Class name is required").trim(),
+  name: z.string().min(1, "Class name is required").trim(),
   teacher: z.string().optional(),
   arms: z.array(z.string().min(1)).optional(), // Array of arm names
 });

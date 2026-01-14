@@ -10,6 +10,7 @@ export const loginSchool = async (data: SchoolLoginData, schoolId: number) => {
 };
 
 export const createClass = async (data: ClassType) => {
-  const response = await api.post("", data);
+  const response = await api.post("/sch-admin/class", data);
+  // console.log(response);
   return response.data;
 };

@@ -61,6 +61,7 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
         onClose();
       },
     });
+    // console.log(data);
   };
 
   return (
@@ -74,20 +75,18 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
             Set up a new class with teacher and subject assignments.
           </DialogDescription>
         </DialogHeader>
-        <form action="">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="className">Class Name</Label>
               <Input
                 id="className"
                 placeholder="e.g., Primary 1, JSS 1..."
-                {...register("ClassName")}
+                {...register("name")}
                 disabled={isPending}
               />
-              {errors.ClassName && (
-                <p className="text-sm text-red-500">
-                  {errors.ClassName.message}
-                </p>
+              {errors.name && (
+                <p className="text-sm text-red-500">{errors.name.message}</p>
               )}
             </div>
 

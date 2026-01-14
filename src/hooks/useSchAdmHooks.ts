@@ -61,7 +61,7 @@ export const useCreateClass = () => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to create class");
+      toast.error(error.response?.data?.error || "Failed to create class");
     },
   });
 };
