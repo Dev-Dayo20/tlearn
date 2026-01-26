@@ -101,6 +101,7 @@ export const useCreateStudent = () => {
         dateOfBirth: data.dateOfBirth
           ? new Date(data.dateOfBirth).toISOString()
           : null,
+        profilePicture: data.profilePicture || null,
       };
       return createStudent(processedData);
     },

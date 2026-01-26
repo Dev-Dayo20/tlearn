@@ -6,7 +6,7 @@ export const createStudentSchema = z.object({
   classId: z.number().int().positive(),
   armId: z.number().int().positive().optional(),
   dateOfBirth: z.string().optional().or(z.literal("")), // Optional date of birth
-  profilePicture: z.string().url().optional().or(z.literal("")), // Optional URL
+  profilePicture: z.string().url().nullable().optional().or(z.literal("")),
 });
 
 export type CreateStudentType = z.infer<typeof createStudentSchema>;

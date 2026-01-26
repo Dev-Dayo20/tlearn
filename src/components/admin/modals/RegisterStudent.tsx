@@ -8,8 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -35,14 +33,23 @@ import {
 } from "@/schema/createStudentSchema";
 import { useCreateStudent } from "@/hooks/useSchAdmHooks";
 import { useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { toast } from "@/components/ui/sonner";
 
 interface RegisterStudentModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
 export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+
   const { mutate: createStudent, isPending } = useCreateStudent();
 
   const form = useForm<CreateStudentType>({
@@ -65,21 +72,76 @@ export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        toast.error("Please upload a valid image file (JPEG, PNG, or WebP)");
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error("Image size must be less than 5MB");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        const result = reader.result as string;
-        setPhotoPreview(result);
-        form.setValue("profilePicture", result);
+        setPhotoPreview(reader.result as string);
+        setPhotoFile(file);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const onSubmit = (data: CreateStudentType) => {
-    createStudent(data, {
+  const uploadPhotoToCloudinary = async (): Promise<string | null> => {
+    if (!photoFile) return null;
+
+    setIsUploadingPhoto(true);
+    const formData = new FormData();
+    formData.append("file", photoFile);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "tlearn/schools");
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      toast.error("Failed to upload profile picture");
+      return null;
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  };
+
+  const onSubmit = async (data: CreateStudentType) => {
+    let profilePictureUrl: string | null = null;
+
+    if (photoFile) {
+      profilePictureUrl = await uploadPhotoToCloudinary();
+      if (!profilePictureUrl) return;
+    }
+
+    const submitData = {
+      ...data,
+      profilePicture: profilePictureUrl || null,
+    };
+
+    createStudent(submitData, {
       onSuccess: () => {
         form.reset();
         setPhotoPreview(null);
+        setPhotoFile(null);
         onClose();
       },
     });
@@ -119,6 +181,7 @@ export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
                   onChange={handlePhotoChange}
                   className="hidden"
                   id="photo-input"
+                  disabled={isPending || isUploadingPhoto}
                 />
                 <label
                   htmlFor="photo-input"
@@ -135,7 +198,10 @@ export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name *</FormLabel>
+                  <FormLabel>
+                    Full Name
+                    <span className="ml-1 text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Enter student name" {...field} />
                   </FormControl>
@@ -150,7 +216,10 @@ export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
               name="classId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Class *</FormLabel>
+                  <FormLabel>
+                    Class
+                    <span className="ml-1 text-red-500">*</span>
+                  </FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(Number(value));
@@ -231,13 +300,23 @@ export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
                 variant="outline"
                 onClick={onClose}
                 className="flex-1"
-                disabled={isPending}
+                disabled={isPending || isUploadingPhoto}
               >
                 Cancel
               </Button>
-              <Button type="submit" className="flex-1" disabled={isPending}>
-                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isPending ? "Registering..." : "Register Student"}
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={isPending || isUploadingPhoto}
+              >
+                {(isPending || isUploadingPhoto) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {isPending
+                  ? "Registering..."
+                  : isUploadingPhoto
+                    ? "Uploading photo..."
+                    : "Register Student"}
               </Button>
             </div>
           </form>
