@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -21,25 +21,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { createClassSchema, ClassType } from "@/schema/ClassSchema";
 import { useCreateClass } from "@/hooks/useSchAdmHooks";
-import { sanitizeText } from "@/utils/sanitize";
+import api from "@/services/api/super-admin/super-admin";
+
+import { TeacherForDropdownRes } from "@/types/types";
 
 interface CreateClassModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+const fetchTeachers = async (): Promise<TeacherForDropdownRes> => {
+  const res = await api.get("/sch-admin/teachers");
+  return res.data;
+};
+
 export function CreateClass({ open, onClose }: CreateClassModalProps) {
   const [hasArms, setHasArms] = useState(false);
   const [arms, setArms] = useState([""]);
+  const [subjects, setSubjects] = useState([""]);
+
   const queryClient = useQueryClient();
+
+  const { data: teacherData, isLoading: loadingTeachers } = useQuery({
+    queryKey: ["teachers"],
+    queryFn: fetchTeachers,
+  });
 
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
     formState: { errors },
   } = useForm<ClassType>({
@@ -50,8 +64,10 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
 
   const onSubmit = (data: ClassType) => {
     const payload = {
-      ...data,
-      arms: hasArms ? arms.filter((a) => a.trim()) : [],
+      name: data.name.trim(),
+      teacher: data.teacherId ? Number(data.teacherId) : undefined,
+      arms: hasArms ? arms.filter((a) => a.trim()).map((a) => a.trim()) : [],
+      subjects: subjects.filter((s) => s.trim()),
     };
     addClass(payload, {
       onSuccess: () => {
@@ -93,15 +109,23 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
             {/* ASSIGN TEACHER */}
             <div className="space-y-2">
               <Label htmlFor="className">Assign Teacher</Label>
-              <Input
-                id="className"
-                placeholder="e.g., Mr. Usman, Mal.Ibrahim..."
-                {...register("teacher")}
-                disabled={isPending}
-              />
-              {errors.teacher && (
-                <p className="text-sm text-red-500">{errors.teacher.message}</p>
-              )}
+              <Select onValueChange={(value) => setValue("teacherId", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a teacher" />
+                </SelectTrigger>
+                <SelectContent>
+                  {loadingTeachers && (
+                    <SelectItem value="loading">Loading teachers...</SelectItem>
+                  )}
+
+                  {!loadingTeachers &&
+                    teacherData?.teachers?.map((teacher) => (
+                      <SelectItem key={teacher.id} value={String(teacher.id)}>
+                        {teacher.name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Arms Toggle */}
@@ -175,7 +199,7 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-prim hover:bg-accent hover:text-black"
+              className="flex-1 bg-prim hover:bg-sky-400 hover:text-white"
               disabled={isPending}
             >
               {isPending ? "Creating..." : "Create Class"}

@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,25 +12,45 @@ import {
 } from "@/components/ui/select";
 import { Search, Plus, Grid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Users,
+  Clock,
+  BookOpen,
+  MoreVertical,
+  Component,
+  ListVideo,
+} from "lucide-react";
 
 import { SchoolDomainResponse } from "@/types/types";
 import { CreateClass } from "@/components/admin/modals/CreateClass";
+import { useGetClasses } from "@/hooks/useSchAdmHooks";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface ClassProps {
   school: SchoolDomainResponse;
 }
+
 const Classes = ({ school }: ClassProps) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [page, setPage] = useState(1);
+
+  const debouncedSearchTerm = useDebounce(searchQuery, 500);
+  const navigate = useNavigate();
+
+  // Fetch classes with filters
+  const { data, isLoading, error } = useGetClasses(
+    debouncedSearchTerm,
+    page,
+    12, // pageSize
+    statusFilter === "all" ? undefined : statusFilter === "active",
+  );
 
   return (
     <>
       <div>
-        {/* <h5 className="text-2xl md:text-xl font-bold tracking-tight text-foreground">
-          Students
-        </h5> */}
         <p className="text-sm md:text-base text-muted-foreground mt-1">
           Manage all classes
         </p>
@@ -43,19 +64,18 @@ const Classes = ({ school }: ClassProps) => {
             <Input
               placeholder="Search classes..."
               className="pl-10"
-              value=""
-              //   onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Select value="">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="upcoming">Upcoming</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -67,7 +87,7 @@ const Classes = ({ school }: ClassProps) => {
                 "rounded-md p-2 transition-colors",
                 viewMode === "grid"
                   ? "bg-card shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Grid className="h-4 w-4" />
@@ -78,7 +98,7 @@ const Classes = ({ school }: ClassProps) => {
                 "rounded-md p-2 transition-colors",
                 viewMode === "list"
                   ? "bg-card shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               <List className="h-4 w-4" />
@@ -91,21 +111,119 @@ const Classes = ({ school }: ClassProps) => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex justify-center py-12">
+          <div className="text-muted-foreground">Loading classes...</div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="flex justify-center py-12">
+          <div className="text-destructive">Failed to load classes</div>
+        </div>
+      )}
+
       {/* Classes Grid */}
-      <div
-        className={cn(
-          "grid gap-4",
-          viewMode === "grid"
-            ? "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-            : "grid-cols-1"
-        )}
-      ></div>
+      {!isLoading && !error && (
+        <div
+          className={cn(
+            "grid gap-4",
+            viewMode === "grid"
+              ? "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+              : "grid-cols-1",
+          )}
+        >
+          {data?.classes?.map((cls) => (
+            <div
+              key={cls.id}
+              className="rounded-2xl border bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-card"
+            >
+              <div className="mb-4 flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold">{cls.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {cls.school.name}
+                  </p>
+                </div>
+                <span
+                  className={cn(
+                    "text-xs px-2 py-1 rounded-full",
+                    cls.isActive
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700",
+                  )}
+                >
+                  {cls.isActive ? "Active" : "Inactive"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span className="text-xs text-muted-foreground">
+                  {cls._count.students} students
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Component className="h-4 w-4" />
+                <span className="text-xs text-muted-foreground">
+                  {cls._count.arms} arms
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <ListVideo className="h-4 w-4" />
+                <span className="text-xs text-muted-foreground">
+                  {cls._count.videos} vidoes
+                </span>
+              </div>
+              <Button
+                variant="secondary"
+                className="w-full mt-3"
+                onClick={() => navigate(`/school-admin/classes/${cls.id}`)}
+              >
+                View Class
+              </Button>
+            </div>
+          ))}
+
+          {/* Empty State */}
+          {data?.classes?.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-12">
+              <p className="text-muted-foreground">No classes found</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {data?.pagination && data.pagination.totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2">
+          <Button
+            variant="outline"
+            disabled={!data.pagination.hasPreviousPage}
+            onClick={() => setPage(page - 1)}
+          >
+            Previous
+          </Button>
+          <div className="flex items-center px-4">
+            Page {data.pagination.currentPage} of {data.pagination.totalPages}
+          </div>
+          <Button
+            variant="outline"
+            disabled={!data.pagination.hasNextPage}
+            onClick={() => setPage(page + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Create Modal */}
       <CreateClass
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
       />
+      <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-primary/5 transition-transform duration-300 group-hover:scale-150" />
     </>
   );
 };

@@ -12,8 +12,14 @@ import { loginSchool } from "@/services/api/admin/schLoginApi";
 import { sanitizeText, sanitizeEmail } from "@/utils/sanitize";
 import { getRedirectPath, clearRedirectPath } from "@/store/authStore";
 import { SchoolLoginData } from "@/schema/schLoginSchema";
+import { CreateStudentType } from "@/schema/createStudentSchema";
 
-import { createClass } from "@/services/api/admin/schLoginApi";
+import {
+  createClass,
+  fetchClasses,
+  getClasses,
+} from "@/services/api/admin/schLoginApi";
+import { createStudent } from "@/services/api/admin/schLoginApi";
 
 export const useSchUsersAuth = (schoolId: number) => {
   const navigate = useNavigate();
@@ -43,7 +49,7 @@ export const useSchUsersAuth = (schoolId: number) => {
     },
     onError: (error: any) => {
       const errorMessage =
-        error.response?.data?.message ||
+        error.response?.data?.error ||
         error.message ||
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
@@ -62,6 +68,52 @@ export const useCreateClass = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || "Failed to create class");
+    },
+  });
+};
+
+export const useGetClasses = (
+  search?: string,
+  page: number = 1,
+  pageSize: number = 10,
+  isActive?: boolean,
+) => {
+  return useQuery({
+    queryKey: ["classes", search, page, pageSize, isActive],
+    queryFn: () => fetchClasses(search, page, pageSize, isActive),
+  });
+};
+
+export const useFetchClassesList = () => {
+  return useQuery({
+    queryKey: ["classesList"],
+    queryFn: getClasses,
+  });
+};
+
+export const useCreateStudent = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateStudentType) => {
+      // Convert date to ISO-8601 DateTime if provided
+      const processedData = {
+        ...data,
+        dateOfBirth: data.dateOfBirth
+          ? new Date(data.dateOfBirth).toISOString()
+          : null,
+      };
+      return createStudent(processedData);
+    },
+    onSuccess: () => {
+      toast.success("Student registered successfully");
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to register student";
+      toast.error(errorMessage);
     },
   });
 };

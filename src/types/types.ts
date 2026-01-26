@@ -171,3 +171,46 @@ export interface GetAllUsersResponse {
 
 // SCHOOL ADMIN TYPES
 export type UserRoles = "TEACHER" | "ADMIN" | "STUDENT";
+
+export interface Classes {
+  id: number;
+  name: string;
+  schoolId: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  school: {
+    id: number;
+    name: string;
+  };
+  _count: {
+    students: number;
+    videos: number;
+    arms: number;
+  };
+}
+
+export interface ClassesFetchRes {
+  success: boolean;
+  classes: Classes[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+interface TeacherForDropdown {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface TeacherForDropdownRes {
+  success: boolean;
+  teachers: TeacherForDropdown[];
+}

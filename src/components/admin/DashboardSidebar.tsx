@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "@/components/super-admin/NavLinks";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -15,6 +16,8 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+import { useAuthStore } from "@/store/authStore";
 
 const navItems = [
   {
@@ -34,6 +37,13 @@ interface SidebarProps {
 export function Sidebar({ onWidthChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const logOut = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logOut();
+    navigate("/school-admin/login");
+  };
 
   useEffect(() => {
     const width = collapsed ? 80 : 256;
@@ -102,7 +112,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
             onClick={() => setMobileOpen(false)}
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent",
-              collapsed && !mobileOpen && "justify-center px-2"
+              collapsed && !mobileOpen && "justify-center px-2",
             )}
             activeClassName="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary"
           >
@@ -119,7 +129,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
         <div
           className={cn(
             "flex items-center gap-3 rounded-xl p-2",
-            collapsed && !mobileOpen && "justify-center"
+            collapsed && !mobileOpen && "justify-center",
           )}
         >
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-sm font-semibold text-sidebar-foreground">
@@ -136,7 +146,10 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
             </div>
           )}
           {(!collapsed || mobileOpen) && (
-            <button className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground">
+            <button
+              onClick={handleLogout}
+              className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            >
               <LogOut className="h-4 w-4" />
             </button>
           )}
@@ -168,7 +181,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
       <aside
         className={cn(
           "fixed left-0 top-0 z-50 h-screen w-64 bg-sidebar transition-transform duration-300 ease-in-out lg:hidden",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {sidebarContent}
@@ -178,7 +191,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
       <aside
         className={cn(
           "fixed left-0 top-0 z-40 hidden h-screen bg-sidebar transition-all duration-300 ease-in-out lg:block",
-          collapsed ? "w-20" : "w-64"
+          collapsed ? "w-20" : "w-64",
         )}
       >
         {sidebarContent}

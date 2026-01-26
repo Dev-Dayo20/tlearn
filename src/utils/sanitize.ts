@@ -9,7 +9,7 @@ export function sanitizeHtml(dirty: string): string {
 
 export function sanitizeText(input: string): string {
   return DOMPurify.sanitize(input, {
-    ALLOWED_TAGS: [], // No HTML allowed
+    ALLOWED_TAGS: [], 
     ALLOWED_ATTR: [],
   });
 }

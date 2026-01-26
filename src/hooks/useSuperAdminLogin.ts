@@ -81,19 +81,19 @@ export const useSuperAdminLogin = () => {
       }
 
       // Check if it's authentication error (401)
-      // if (error.response?.status === 401) {
-      //   toast.error("Invalid email or password");
-      //   return;
-      // }
+      if (error.response?.status === 401) {
+        toast.error("Invalid email or password");
+        return;
+      }
 
       // Check if it's authorization error (403)
-      // if (error.response?.status === 403) {
-      //   toast.error("Access denied. Super Admin only.");
-      //   return;
-      // }
+      if (error.response?.status === 403) {
+        toast.error("Access denied. Super Admin only.");
+        return;
+      }
 
       const errorMessage =
-        error.response?.data?.message ||
+        error.response?.data?.error ||
         error.message ||
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
@@ -136,7 +136,7 @@ export const useAddSchool = () => {
     },
     onError: (error: any) => {
       const errorMessage =
-        error.response?.data?.message ||
+        error.response?.data?.error ||
         error.message ||
         "Failed to add new school. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
