@@ -227,9 +227,11 @@ export interface Student {
   studentId: string;
   profilePicture: string | null;
   dateOfBirth: string | null;
+  isActive: boolean;
   class: ClassOrArm | null;
   arm: ClassOrArm | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface StudentPaginationInfo {
