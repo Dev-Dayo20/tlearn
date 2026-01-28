@@ -214,3 +214,36 @@ export interface TeacherForDropdownRes {
   success: boolean;
   teachers: TeacherForDropdown[];
 }
+
+export interface ClassOrArm {
+  id: number;
+  name: string;
+}
+
+export interface Student {
+  id: number;
+  name: string;
+  email: string | null;
+  studentId: string;
+  profilePicture: string | null;
+  dateOfBirth: string | null;
+  class: ClassOrArm | null;
+  arm: ClassOrArm | null;
+  createdAt: string;
+}
+
+export interface StudentPaginationInfo {
+  currentPage: number;
+  pageSize: number;
+  totalStudents: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface StudentsResponse {
+  success: boolean;
+  message: string;
+  students: Student[];
+  pagination: StudentPaginationInfo;
+}
