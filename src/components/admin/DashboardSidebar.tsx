@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
+import { LogoutConfirmModal } from "./modals/LogoutConfirmModal";
 
 const navItems = [
   {
@@ -36,12 +37,18 @@ interface SidebarProps {
 export function Sidebar({ onWidthChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const logOut = useAuthStore((state) => state.logout);
 
   const navigate = useNavigate();
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleConfirmLogout = () => {
     logOut();
-    navigate("/super-admin/login");
+    navigate("/school-admin/login");
+    setIsLogoutModalOpen(false);
   };
 
   useEffect(() => {
@@ -146,7 +153,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
           )}
           {(!collapsed || mobileOpen) && (
             <button
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
               className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               <LogOut className="h-4 w-4" />
@@ -195,6 +202,12 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
       >
         {sidebarContent}
       </aside>
+
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+      />
     </>
   );
 }

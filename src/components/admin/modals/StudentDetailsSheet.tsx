@@ -6,6 +6,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +36,8 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
   onClose,
   student,
 }) => {
+  const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
+
   if (!student) return null;
 
   return (
@@ -37,15 +45,25 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
       <SheetContent className="sm:max-w-[450px] p-0 overflow-y-auto">
         <SheetHeader className="p-6 bg-prim/5 border-b sticky top-0 z-10 backdrop-blur-sm">
           <div className="flex items-center gap-4">
-            <Avatar className="w-16 h-16 border-4 border-background shadow-lg">
-              <AvatarImage
-                src={student.profilePicture || ""}
-                alt={student.name}
-              />
-              <AvatarFallback className="bg-prim/10 text-prim font-black text-xl">
-                {student.name.substring(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <div
+              className="relative group cursor-pointer"
+              onClick={() => setIsPreviewOpen(true)}
+            >
+              <Avatar className="w-16 h-16 border-4 border-background shadow-lg transition-transform duration-300 group-hover:scale-105 active:scale-95">
+                <AvatarImage
+                  src={student.profilePicture || ""}
+                  alt={student.name}
+                />
+                <AvatarFallback className="bg-prim/10 text-prim font-black text-xl">
+                  {student.name.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-[10px] text-white font-bold uppercase tracking-tighter">
+                  View
+                </span>
+              </div>
+            </div>
             <div className="space-y-1">
               <SheetTitle className="text-2xl font-bold capitalize">
                 {student.name}
@@ -198,6 +216,22 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
           </div>
         </div>
       </SheetContent>
+
+      {/* Profile Picture Preview Dialog */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-none shadow-none sm:rounded-3xl">
+          <DialogHeader className="sr-only">
+            <DialogTitle>{student.name}'s Profile Picture</DialogTitle>
+          </DialogHeader>
+          <div className="relative flex items-center justify-center bg-black/50 backdrop-blur-md p-4 min-h-[300px]">
+            <img
+              src={student.profilePicture || ""}
+              alt={student.name}
+              className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </Sheet>
   );
 };
