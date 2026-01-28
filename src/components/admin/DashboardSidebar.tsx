@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "@/components/super-admin/NavLinks";
-import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -16,8 +15,6 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-import { useAuthStore } from "@/store/authStore";
 
 const navItems = [
   {
@@ -37,13 +34,6 @@ interface SidebarProps {
 export function Sidebar({ onWidthChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const logOut = useAuthStore((state) => state.logout);
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    logOut();
-    navigate("/school-admin/login");
-  };
 
   useEffect(() => {
     const width = collapsed ? 80 : 256;
@@ -146,10 +136,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
             </div>
           )}
           {(!collapsed || mobileOpen) && (
-            <button
-              onClick={handleLogout}
-              className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
-            >
+            <button className="rounded-lg p-2 text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground">
               <LogOut className="h-4 w-4" />
             </button>
           )}

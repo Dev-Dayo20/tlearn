@@ -17,7 +17,7 @@ export function Topbar({ title, subtitle }: TopbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between rounded-2xl bg-card px-6 shadow-soft">
+    <header className="flex h-16 items-center justify-between rounded-2xl bg-card px-6 shadow-soft">
       <div>
         <h1 className="text-xl font-semibold text-foreground">{title}</h1>
         {subtitle && (

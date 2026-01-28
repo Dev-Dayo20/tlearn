@@ -15,12 +15,13 @@ export const DashboardLayout = () => {
   const [sidebarWidth, setSidebarWidth] = useState(256);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflowX = "hidden"; // Only hide horizontal scroll
+    document.body.style.overflowY = "auto"; // Allow vertical scroll
     document.body.style.height = "100%";
 
     return () => {
-      // Restore scroll when leaving dashboard
-      document.body.style.overflow = "";
+      document.body.style.overflowX = "";
+      document.body.style.overflowY = "";
       document.body.style.height = "";
     };
   }, []);
@@ -40,14 +41,17 @@ export const DashboardLayout = () => {
     <div className="min-h-screen bg-background">
       <Sidebar onWidthChange={handleWidthChange} />
       <main
-        className="min-h-screen transition-all duration-300"
+        className=" transition-all duration-300 "
         style={{ marginLeft: isDesktop ? sidebarWidth : 0 }}
       >
-        <div className="min-h-screen overflow-x-hidden p-4 pt-16 sm:p-6 sm:pt-6 lg:pt-6">
+        {/* Fixed Header */}
+        <div className="sticky top-0 z-30 bg-background px-4 py-4 sm:px-6">
           <Topbar title={"Dashboard"} subtitle={"Welcome back, Admin!"} />
-          <div className="mt-6">
-            <Outlet />
-          </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="px-4 pb-6 sm:px-6">
+          <Outlet />
         </div>
       </main>
     </div>

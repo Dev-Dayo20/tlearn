@@ -102,7 +102,7 @@ const ClassDetail = () => {
       : 0;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 pb-16 md:pb-20">
       {/* Back Button */}
       <Button
         variant="ghost"
