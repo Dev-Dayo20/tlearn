@@ -19,7 +19,7 @@ export function QuickActions({
       </h3>
       <div className="space-y-3">
         <Button
-          variant="default"
+          variant="prim"
           className="w-full justify-start gap-3"
           onClick={onRegisterStudent}
         >

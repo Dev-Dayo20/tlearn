@@ -1,7 +1,7 @@
 import api from "@/services/api/super-admin/super-admin";
 import { SchoolLoginData } from "@/schema/schLoginSchema";
 import { ClassType } from "@/schema/ClassSchema";
-import { ClassesFetchRes } from "@/types/types";
+import { ClassesFetchRes, DashboardStats } from "@/types/types";
 import { URLSearchParams } from "url";
 import { CreateStudentType } from "@/schema/createStudentSchema";
 
@@ -42,5 +42,34 @@ export const getClasses = async () => {
 
 export const createStudent = async (data: CreateStudentType) => {
   const response = await api.post("/sch-admin/register/students", data);
+  return response.data;
+};
+
+export const fetchMaterials = async (params: any) => {
+  const response = await api.get("/sch-admin/materials", { params });
+  return response.data;
+};
+
+export const uploadMaterial = async (formData: FormData) => {
+  const response = await api.post("/sch-admin/materials/create", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const updateMaterial = async (id: number, data: any) => {
+  const response = await api.patch(`/sch-admin/materials/${id}`, data);
+  return response.data;
+};
+
+export const deleteMaterial = async (id: number) => {
+  const response = await api.delete(`/sch-admin/materials/${id}`);
+  return response.data;
+};
+
+export const fetchDashboardStats = async (): Promise<DashboardStats> => {
+  const response = await api.get("/sch-admin/dashboard/stats");
   return response.data;
 };

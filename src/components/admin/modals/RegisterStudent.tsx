@@ -17,7 +17,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, User, Loader2 } from "lucide-react";
+import {
+  Upload,
+  User,
+  Loader2,
+  Camera,
+  Calendar,
+  GraduationCap,
+  AlertCircle,
+} from "lucide-react";
 import {
   Form,
   FormControl,
@@ -26,14 +34,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { cn } from "@/lib/utils";
 import {
   createStudentSchema,
   CreateStudentType,
 } from "@/schema/createStudentSchema";
-import { useCreateStudent } from "@/hooks/useSchAdmHooks";
-import { useFetchClassesList } from "@/hooks/useSchAdmHooks";
-import { toast } from "@/components/ui/sonner";
+import { useCreateStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { toast } from "sonner";
 
 interface RegisterStudentModalProps {
   open: boolean;
@@ -149,174 +156,240 @@ export function RegisterStudents({ open, onClose }: RegisterStudentModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            Register New Student
-          </DialogTitle>
-          <DialogDescription>
-            Add a new student to the system. Fill in all required fields.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-2xl p-0 overflow-y-auto max-h-[95vh] rounded-3xl border-none shadow-2xl">
+        {/* Header Section */}
+        <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8 border-b border-muted/50 sticky top-0 z-10 backdrop-blur-md">
+          <DialogHeader className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                <GraduationCap className="w-8 h-8" />
+              </div>
+              <div>
+                <DialogTitle className="text-3xl font-black tracking-tight text-foreground">
+                  Register Student
+                </DialogTitle>
+                <DialogDescription className="text-base font-medium text-muted-foreground mt-1">
+                  Onboard a new student to your academic community.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Profile Photo Upload */}
-            <div className="flex justify-center">
-              <div className="group relative">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary transition-colors group-hover:bg-secondary/80 overflow-hidden">
-                  {photoPreview ? (
-                    <img
-                      src={photoPreview}
-                      alt="Preview"
-                      className="h-24 w-24 object-cover"
-                    />
-                  ) : (
-                    <User className="h-10 w-10 text-muted-foreground" />
-                  )}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-8 space-y-8"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+              {/* Profile Photo Upload - Side Column */}
+              <div className="md:col-span-4 flex flex-col items-center gap-4">
+                <div className="group relative">
+                  <div
+                    className={cn(
+                      "flex h-40 w-40 items-center justify-center rounded-3xl bg-muted/30 border-2 border-dashed border-muted-foreground/20 overflow-hidden transition-all duration-300 group-hover:border-primary/40",
+                      photoPreview &&
+                        "border-solid border-primary/20 bg-background",
+                    )}
+                  >
+                    {photoPreview ? (
+                      <img
+                        src={photoPreview}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground/40">
+                        <User className="h-12 w-12" />
+                        <span className="text-[10px] font-black uppercase tracking-wider">
+                          No Photo
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                    id="photo-input"
+                    disabled={isPending || isUploadingPhoto}
+                  />
+                  <label
+                    htmlFor="photo-input"
+                    className="absolute -bottom-3 -right-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:scale-110 hover:-rotate-12 cursor-pointer active:scale-95"
+                  >
+                    <Camera className="h-6 w-6" />
+                  </label>
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoChange}
-                  className="hidden"
-                  id="photo-input"
-                  disabled={isPending || isUploadingPhoto}
+                <div className="text-center">
+                  <h4 className="text-sm font-bold text-foreground">
+                    Student Photo
+                  </h4>
+                  <p className="text-[10px] text-muted-foreground/60 font-medium max-w-[120px] mt-1">
+                    Upload a clear passport photograph (JPG, PNG).
+                  </p>
+                </div>
+              </div>
+
+              {/* Form Fields - Main Column */}
+              <div className="md:col-span-8 space-y-6">
+                {/* Full Name */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
+                        Full Name <span className="text-rose-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. John Doe Adewale"
+                          className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="font-bold text-rose-500" />
+                    </FormItem>
+                  )}
                 />
-                <label
-                  htmlFor="photo-input"
-                  className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-110 cursor-pointer"
-                >
-                  <Upload className="h-4 w-4" />
-                </label>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Class Selection */}
+                  <FormField
+                    control={form.control}
+                    name="classId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
+                          Class <span className="text-rose-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(Number(value));
+                            form.setValue("armId", undefined);
+                          }}
+                          value={field.value?.toString()}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold">
+                              <SelectValue placeholder="Select Class" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="rounded-2xl shadow-xl">
+                            {classes?.map((cls: any) => (
+                              <SelectItem
+                                key={cls.id}
+                                value={cls.id.toString()}
+                                className="rounded-xl font-medium"
+                              >
+                                {cls.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="font-bold text-rose-500" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Arm Selection */}
+                  <FormField
+                    control={form.control}
+                    name="armId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
+                          Arm
+                        </FormLabel>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(value ? Number(value) : undefined)
+                          }
+                          value={field.value?.toString() || ""}
+                          disabled={arms.length === 0}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold disabled:opacity-50">
+                              <SelectValue
+                                placeholder={
+                                  arms.length > 0 ? "Select Arm" : "No Arms"
+                                }
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="rounded-2xl shadow-xl">
+                            {arms.map((arm: any) => (
+                              <SelectItem
+                                key={arm.id}
+                                value={arm.id.toString()}
+                                className="rounded-xl font-medium"
+                              >
+                                {arm.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage className="font-bold text-rose-500" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Date of Birth */}
+                <FormField
+                  control={form.control}
+                  name="dateOfBirth"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
+                        Date of Birth
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type="date"
+                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold pl-12"
+                            {...field}
+                          />
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
+                        </div>
+                      </FormControl>
+                      <FormMessage className="font-bold text-rose-500" />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
-            {/* Student Name */}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Full Name
-                    <span className="ml-1 text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter student name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Class Selection */}
-            <FormField
-              control={form.control}
-              name="classId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Class
-                    <span className="ml-1 text-red-500">*</span>
-                  </FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(Number(value));
-                      form.setValue("armId", undefined);
-                    }}
-                    value={field.value?.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a class" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {classes?.map((cls: any) => (
-                        <SelectItem key={cls.id} value={cls.id.toString()}>
-                          {cls.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Arm Selection (Optional) */}
-            {arms.length > 0 && (
-              <FormField
-                control={form.control}
-                name="armId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Arm</FormLabel>
-                    <Select
-                      onValueChange={(value) =>
-                        field.onChange(value ? Number(value) : undefined)
-                      }
-                      value={field.value?.toString() || ""}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select an arm (optional)" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {arms.map((arm: any) => (
-                          <SelectItem key={arm.id} value={arm.id.toString()}>
-                            {arm.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {/* Date of Birth (Optional) */}
-            <FormField
-              control={form.control}
-              name="dateOfBirth"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             {/* Submit Buttons */}
-            <div className="flex gap-2 pt-4">
+            <div className="pt-8 border-t border-muted/50 flex flex-col sm:flex-row gap-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 onClick={onClose}
-                className="flex-1"
+                className="flex-1 h-12 rounded-2xl font-bold hover:bg-muted transition-all"
                 disabled={isPending || isUploadingPhoto}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="flex-1"
+                className="flex-[2] h-12 rounded-2xl font-black bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
                 disabled={isPending || isUploadingPhoto}
               >
-                {(isPending || isUploadingPhoto) && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isPending || isUploadingPhoto ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    {isPending ? "Registering..." : "Uploading photo..."}
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-5 w-5" />
+                    Complete Registration
+                  </>
                 )}
-                {isPending
-                  ? "Registering..."
-                  : isUploadingPhoto
-                    ? "Uploading photo..."
-                    : "Register Student"}
               </Button>
             </div>
           </form>

@@ -48,6 +48,7 @@ import api from "@/services/api/super-admin/super-admin";
 import { useDebounce } from "@/hooks/useDebounce";
 import { StudentsResponse, Student } from "@/types/types";
 import { StudentDetailsSheet } from "@/components/admin/modals/StudentDetailsSheet";
+import { RegisterStudents } from "@/components/admin/modals/RegisterStudent";
 import { StatusBadge } from "@/utils/statusbadge";
 import { StudentStats } from "./StudentStats";
 import {
@@ -58,6 +59,7 @@ import {
 import { StudentEmptyState } from "./StudentEmptyState";
 import { Download, FileDown, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { fetchDashboardStats } from "@/services/api/admin/schLoginApi";
 
 // Fetch students with pagination and filters
 const fetchStudents = async (
@@ -84,6 +86,7 @@ const StudentsLists = () => {
   const [selectedArm, setSelectedArm] = useState<string>("");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const pageSize = 10;
 
   // Reset to page 1 when search or filters change
@@ -110,8 +113,15 @@ const StudentsLists = () => {
       ),
   });
 
+  const { data: statsData, isLoading: isStatsLoading } = useQuery({
+    queryKey: ["dashboardStats"],
+    queryFn: fetchDashboardStats,
+  });
+
   const students = data?.students || [];
   const pagination = data?.pagination;
+  const stats = statsData?.stats;
+  const distributions = statsData?.distributions;
 
   const handleViewDetails = (student: Student) => {
     setSelectedStudent(student);
@@ -136,53 +146,47 @@ const StudentsLists = () => {
       ];
       const rows = students.map((s) => [
         `"${s.name}"`,
-        `"${s.studentId}"`,
-        `"${s.email || "N/A"}"`,
-        `"${s.class?.name || "N/A"}"`,
-        `"${s.arm?.name || "N/A"}"`,
+        `"${s.studentId || ""}"`,
+        `"${s.email || ""}"`,
+        `"${s.class?.name || ""}"`,
+        `"${s.arm?.name || ""}"`,
         `"${s.isActive ? "Active" : "Inactive"}"`,
-        `"${s.dateOfBirth ? new Date(s.dateOfBirth).toLocaleDateString("en-GB") : "N/A"}"`,
+        `"${s.dateOfBirth || ""}"`,
       ]);
 
       const csvContent = [
         headers.join(","),
-        ...rows.map((r) => r.join(",")),
+        ...rows.map((row) => row.join(",")),
       ].join("\n");
+
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
       link.setAttribute(
         "download",
         `students_export_${new Date().toISOString().split("T")[0]}.csv`,
       );
+      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      toast.success("Student list exported successfully!");
     } catch (error) {
-      console.error("CSV Export Error:", error);
-      toast.error("Failed to export student list");
+      toast.error("Failed to export data");
     }
   };
 
   return (
     <div className="space-y-6">
-      {isLoading ? (
+      {isLoading || isStatsLoading ? (
         <StudentStatsSkeleton />
       ) : (
         <StudentStats
-          totalStudents={pagination?.totalStudents || 0}
-          activeStudents={students.filter((s) => s.isActive).length} // This should ideally come from backend
-          inactiveStudents={students.filter((s) => !s.isActive).length}
-          newEnrollments={5} // Placeholder
-          classDistribution={[
-            { name: "Primary 1", value: 40 },
-            { name: "JSS 1", value: 30 },
-            { name: "Others", value: 30 },
-          ]}
+          totalStudents={stats?.totalStudents || pagination?.totalStudents || 0}
+          activeStudents={stats?.activeStudents || 0}
+          inactiveStudents={stats?.inactiveStudents || 0}
+          newEnrollments={stats?.newEnrollments || 0}
+          classDistribution={distributions?.classDistribution || []}
         />
       )}
 
@@ -226,6 +230,15 @@ const StudentsLists = () => {
               <SelectItem value="13">Tiger</SelectItem>
             </SelectContent>
           </Select>
+          <div className="h-8 w-px bg-muted mx-1 hidden md:block" />
+          <Button
+            variant="prim"
+            onClick={() => setIsRegisterModalOpen(true)}
+            className="h-11 rounded-xl px-6 hover:bg-sky-500/90 text-white font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] w-full md:w-auto"
+          >
+            <Plus className="h-4.5 w-4.5 mr-2" />
+            Add Student
+          </Button>
         </div>
       </div>
 
@@ -262,6 +275,7 @@ const StudentsLists = () => {
                             setSelectedClass("");
                             setSelectedArm("");
                           }}
+                          onAddStudent={() => setIsRegisterModalOpen(true)}
                         />
                       </div>
                     </TableCell>
@@ -404,6 +418,7 @@ const StudentsLists = () => {
               setSelectedClass("");
               setSelectedArm("");
             }}
+            onAddStudent={() => setIsRegisterModalOpen(true)}
           />
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -613,6 +628,11 @@ const StudentsLists = () => {
         open={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
         student={selectedStudent}
+      />
+
+      <RegisterStudents
+        open={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
       />
     </div>
   );

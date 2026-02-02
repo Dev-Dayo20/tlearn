@@ -21,14 +21,14 @@ const Students = ({ school }: StudentsProps) => {
             View and manage all students in {school.school?.name}
           </p>
         </div>
-        <Button
+        {/* <Button
           onClick={() => setShowRegisterModal(true)}
           variant="prim"
           className="w-full sm:w-auto"
         >
           <UserPlus className="w-4 h-4 mr-2" />
           Add Student
-        </Button>
+        </Button> */}
       </div>
 
       <StudentsLists />

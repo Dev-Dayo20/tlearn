@@ -76,8 +76,9 @@ export const StudentEmptyState = ({
         ) : (
           <>
             <Button
+              variant="prim"
               onClick={onAddStudent}
-              className="rounded-xl px-8 h-12 font-bold bg-primary shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
+              className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"
             >
               <UserPlus className="mr-2 h-5 w-5" />
               Add First Student

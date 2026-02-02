@@ -249,3 +249,57 @@ export interface StudentsResponse {
   students: Student[];
   pagination: StudentPaginationInfo;
 }
+
+export interface DashboardStats {
+  success: boolean;
+  stats: {
+    totalStudents: number;
+    activeStudents: number;
+    inactiveStudents: number;
+    newEnrollments: number;
+    totalClasses: number;
+    totalMaterials: number;
+  };
+  distributions: {
+    classDistribution: { name: string; value: number }[];
+    armDistribution: { name: string; value: number }[];
+    subjectDistribution: { name: string; value: number }[];
+  };
+  recentMaterials: {
+    id: number;
+    title: string;
+    uploadedAt: string;
+    class: { name: string };
+    subject: { name: string } | null;
+  }[];
+}
+
+export type MaterialType = "video" | "document" | "quiz";
+
+export interface Material {
+  id: number;
+  title: string;
+  description: string;
+  url: string;
+  type?: MaterialType;
+  uploadedAt: string;
+  classId: number;
+  armId?: number | null;
+  subjectId?: number | null;
+  class?: { name: string };
+  arm?: { name: string };
+  subject?: { name: string } | null;
+  duration?: string;
+}
+
+export interface MaterialsResponse {
+  success: boolean;
+  message: string;
+  materials: Material[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
