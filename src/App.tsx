@@ -10,6 +10,7 @@ import { useInitializeSchool } from "./hooks/useInitializeSchool";
 import { SchoolRoutes } from "./routes/SchoolRoutes";
 import SchoolSkeletonLoader from "./components/admin/SchoolSkeletonLoader";
 import SchoolNotFound from "./components/admin/SchoolNotFound";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,36 +25,36 @@ const queryClient = new QueryClient({
   },
 });
 
+import { useNetworkListener } from "./hooks/useNetworkListener";
+
 const App = () => {
+  useNetworkListener();
   useInitializeSchool();
   const { school, isLoading, isMainSite } = useSchoolStore();
-  // console.log("Debug:", { school, isLoading, isMainSite });
-  // console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
-  // console.log("Main Site URL:", import.meta.env.VITE_MAIN_SITE_URL);
 
   if (isLoading) {
     return <SchoolSkeletonLoader />;
   }
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {isMainSite ? (
-              MainSiteRoutes()
-            ) : school ? (
-              SchoolRoutes(school)
-            ) : (
-              <Route path="*" element={<SchoolNotFound />} />
-            )}
-          </Routes>
-          {/* {isMainSite ? <MainSiteRoutes /> : <Navigate to="/unauthorized" />} */}
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="system" storageKey="tlearn-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner position="top-right" expand={true} richColors />
+          <BrowserRouter>
+            <Routes>
+              {isMainSite ? (
+                MainSiteRoutes()
+              ) : school ? (
+                SchoolRoutes(school)
+              ) : (
+                <Route path="*" element={<SchoolNotFound />} />
+              )}
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

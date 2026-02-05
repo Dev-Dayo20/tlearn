@@ -1,6 +1,5 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
-import { useEffect } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,11 +10,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredRole,
 }) => {
-  const { isAuthenticated, user, checkTokenExpiry } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
-  useEffect(() => {
-    checkTokenExpiry();
-  }, [checkTokenExpiry]);
+  // Note: We don't check token expiry here anymore.
+  // The refresh token interceptor in super-admin.ts handles expired tokens automatically.
+  // The background interval in authStore.ts still logs out idle users every 60s.
 
   if (!isAuthenticated) {
     if (requiredRole === "SUPER_ADMIN") {

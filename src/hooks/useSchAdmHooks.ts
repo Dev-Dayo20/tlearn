@@ -28,8 +28,8 @@ export const useSchUsersAuth = (schoolId: number) => {
   return useMutation({
     mutationFn: (data: SchoolLoginData) => loginSchool(data, schoolId),
     onSuccess: (data) => {
-      if (data.token) {
-        login(data.token, {
+      if (data.accessToken) {
+        login(data.accessToken, {
           id: data.user.id,
           email: sanitizeEmail(data.user.email) || "",
           role: data.user.role as "ADMIN" | "STUDENT" | "TEACHER",

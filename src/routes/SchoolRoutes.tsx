@@ -10,6 +10,8 @@ import Students from "@/pages/admin/Students";
 import Classes from "@/pages/admin/Classes";
 import Materials from "@/pages/admin/Materials";
 import ClassDetail from "@/pages/admin/ClassDetails";
+import Analytics from "@/pages/admin/Analytics";
+import Settings from "@/pages/admin/Settings";
 
 export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
   if (!school) {
@@ -42,6 +44,10 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
         <Route path="classes" element={<Classes school={school} />} />
         <Route path="classes/:id" element={<ClassDetail />} />
         <Route path="materials" element={<Materials school={school} />} />
+        {/* Analytics Route */}
+        <Route path="analytics" element={<Analytics />} />
+        {/* Settings Route */}
+        <Route path="settings" element={<Settings />} />
         <Route
           path="teachers"
           element={<div>Teachers Page for {school.school.name}</div>}

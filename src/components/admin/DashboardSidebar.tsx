@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
+import { logoutUser } from "@/services/api/super-admin/super-admin";
 import { LogoutConfirmModal } from "./modals/LogoutConfirmModal";
 
 const navItems = [
@@ -38,16 +39,13 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const logOut = useAuthStore((state) => state.logout);
 
-  const navigate = useNavigate();
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
   };
 
   const handleConfirmLogout = () => {
-    logOut();
-    navigate("/school-admin/login");
+    logoutUser();
     setIsLogoutModalOpen(false);
   };
 

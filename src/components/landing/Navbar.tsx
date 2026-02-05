@@ -16,12 +16,20 @@ import {
   School,
   DollarSign,
   BookOpen,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import tlearn from "@/assets/tlearn.png";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   const features = [
     {
@@ -71,7 +79,7 @@ const Navbar = () => {
                             <a
                               href={feature.href}
                               className={cn(
-                                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
                               )}
                             >
                               <div className="flex items-center gap-2">
@@ -120,9 +128,23 @@ const Navbar = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* <Button variant="success" size="sm">
-              Start Free Trial
-            </Button> */}
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="rounded-full"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+              {/* <Button variant="success" size="sm">
+                Start Free Trial
+              </Button> */}
+            </div>
           </div>
 
           {/* Mobile Menu */}

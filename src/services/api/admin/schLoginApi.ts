@@ -1,7 +1,11 @@
 import api from "@/services/api/super-admin/super-admin";
 import { SchoolLoginData } from "@/schema/schLoginSchema";
 import { ClassType } from "@/schema/ClassSchema";
-import { ClassesFetchRes, DashboardStats } from "@/types/types";
+import {
+  ClassesFetchRes,
+  DashboardStats,
+  StudentAnalyticsResponse,
+} from "@/types/types";
 import { URLSearchParams } from "url";
 import { CreateStudentType } from "@/schema/createStudentSchema";
 
@@ -71,5 +75,12 @@ export const deleteMaterial = async (id: number) => {
 
 export const fetchDashboardStats = async (): Promise<DashboardStats> => {
   const response = await api.get("/sch-admin/dashboard/stats");
+  return response.data;
+};
+
+export const fetchStudentAnalytics = async (
+  id: string,
+): Promise<StudentAnalyticsResponse> => {
+  const response = await api.get(`/sch-admin/students/${id}/analytics`);
   return response.data;
 };

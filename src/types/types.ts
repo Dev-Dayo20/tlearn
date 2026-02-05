@@ -303,3 +303,43 @@ export interface MaterialsResponse {
     totalPages: number;
   };
 }
+
+export interface StudentAnalyticsResponse {
+  success: boolean;
+  message: string;
+  analytics: {
+    student: {
+      id: string;
+      name: string;
+      class: string;
+      avatar: string;
+      enrollmentStatus: string;
+      email: string;
+      phone: string;
+      joinedDate: string;
+      progress: number;
+    };
+    studentDetails: {
+      progressTimeline: {
+        week: string;
+        progress: number;
+        completion: number;
+      }[];
+      subjectPerformance: {
+        subject: string;
+        score: number;
+        fullMark: number;
+      }[];
+      completedMaterials: {
+        title: string;
+        date: string;
+        score: number;
+      }[];
+      pendingMaterials: {
+        title: string;
+        dueDate: string;
+      }[];
+      teacherNotes: any[];
+    };
+  };
+}

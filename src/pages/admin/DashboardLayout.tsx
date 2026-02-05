@@ -3,6 +3,7 @@ import { useEffect, ReactNode, useState, useCallback } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Sidebar } from "@/components/admin/DashboardSidebar";
 import { Topbar } from "@/components/admin/DashboardHeader";
+import { NetworkBanner } from "@/components/NetworkBanner";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -39,6 +40,7 @@ export const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <NetworkBanner />
       <Sidebar onWidthChange={handleWidthChange} />
       <main
         className=" transition-all duration-300 "

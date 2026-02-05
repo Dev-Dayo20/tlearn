@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { isTokenExpired } from "@/utils/token";
+import { encryptedStorage } from "@/utils/encryptedStorage";
 
 interface User {
   id: number;
@@ -15,6 +16,7 @@ interface AuthState {
   isAuthenticated: boolean;
 
   login: (token: string, user: User) => void;
+  setToken: (token: string) => void;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
   checkTokenExpiry: () => boolean;
@@ -50,6 +52,9 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         }),
 
+      // Update token only
+      setToken: (token) => set({ token }),
+
       // Logout action
       logout: () =>
         set({
@@ -65,17 +70,15 @@ export const useAuthStore = create<AuthState>()(
         })),
 
       checkTokenExpiry: () => {
-        const { token, logout } = get();
+        const { token } = get();
 
         if (!token) {
           return false;
         }
 
         if (isTokenExpired(token)) {
-          const currentPath = window.location.pathname + window.location.search;
-          saveRedirectPath(currentPath);
-
-          logout();
+          // We don't call logout() here anymore because we want to allow
+          // the refresh token interceptor to handle it when an API call is made.
           return true;
         }
         return false;
@@ -83,23 +86,12 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      // Only persist these fields
+      storage: createJSONStorage(() => encryptedStorage),
       partialize: (state) => ({
         token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );
-
-if (typeof window !== "undefined") {
-  const checkInterval = setInterval(() => {
-    const store = useAuthStore.getState();
-    if (store.isAuthenticated) {
-      store.checkTokenExpiry();
-    } else {
-      clearInterval(checkInterval);
-    }
-  }, 60000);
-}

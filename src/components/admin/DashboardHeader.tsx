@@ -8,12 +8,13 @@ interface TopbarProps {
   subtitle?: string;
 }
 
+import { useTheme } from "@/contexts/ThemeContext";
+
 export function Topbar({ title, subtitle }: TopbarProps) {
-  const [isDark, setIsDark] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle("dark");
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -42,7 +43,7 @@ export function Topbar({ title, subtitle }: TopbarProps) {
           onClick={toggleTheme}
           className="rounded-xl"
         >
-          {isDark ? (
+          {theme === "dark" ? (
             <Sun className="h-5 w-5 text-muted-foreground" />
           ) : (
             <Moon className="h-5 w-5 text-muted-foreground" />

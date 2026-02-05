@@ -12,14 +12,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
+import { logoutUser } from "@/services/api/super-admin/super-admin";
 
 export function DashboardHeader() {
-  const logOut = useAuthStore((state) => state.logout);
-
   const navigate = useNavigate();
   const handleLogout = () => {
-    logOut();
-    navigate("/super-admin/login");
+    logoutUser();
   };
 
   return (

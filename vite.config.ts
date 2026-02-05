@@ -14,12 +14,13 @@ export default defineConfig(({ mode }) => ({
             "/tlearn": {
               target: "http://localhost:2000",
               changeOrigin: true,
+              secure: false,
             },
           }
         : undefined,
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(
-    Boolean
+    Boolean,
   ),
   resolve: {
     alias: {
