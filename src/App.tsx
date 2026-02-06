@@ -11,6 +11,7 @@ import { SchoolRoutes } from "./routes/SchoolRoutes";
 import SchoolSkeletonLoader from "./components/admin/SchoolSkeletonLoader";
 import SchoolNotFound from "./components/admin/SchoolNotFound";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AdminApp } from "./routes/AdminApp";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +31,7 @@ import { useNetworkListener } from "./hooks/useNetworkListener";
 const App = () => {
   useNetworkListener();
   useInitializeSchool();
-  const { school, isLoading, isMainSite } = useSchoolStore();
+  const { school, isLoading, isMainSite, isAdminSite } = useSchoolStore();
 
   if (isLoading) {
     return <SchoolSkeletonLoader />;
@@ -43,7 +44,9 @@ const App = () => {
           <Sonner position="top-right" expand={true} richColors />
           <BrowserRouter>
             <Routes>
-              {isMainSite ? (
+              {isAdminSite ? (
+                <AdminApp />
+              ) : isMainSite ? (
                 MainSiteRoutes()
               ) : school ? (
                 SchoolRoutes(school)

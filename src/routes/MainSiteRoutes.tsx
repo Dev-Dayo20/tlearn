@@ -13,22 +13,6 @@ export const MainSiteRoutes = () => {
   return (
     <>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/super-admin/login" element={<LoginSuperAdmin />} />
-
-      {/* SUPER ADMIN PROTECTED ROUTES */}
-      <Route
-        path="/super-admin"
-        element={
-          <ProtectedRoute requiredRole="SUPER_ADMIN">
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="school" element={<School />} />
-        <Route path="users" element={<UsersPage />} />
-      </Route>
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="*" element={<NotFound />} />
     </>

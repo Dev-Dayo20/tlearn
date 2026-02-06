@@ -1,57 +1,124 @@
-import axios from "axios";
-import { School, SchoolDomainResponse } from "@/types/types";
 import axiosInstance from "@/lib/axios";
+import { SchoolDomainResponse } from "@/types/types";
 
-export const getTenantFromUrl = () => {
+export const getTenantFromUrl = (): string | null => {
   const hostname = window.location.hostname;
-  const parts = hostname.split(".");
 
-  // Handle localhost development
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return null;
+  // Remove port if present (localhost:3000 → localhost)
+  const cleanHostname = hostname.split(":")[0];
+  const parts = cleanHostname.split(".");
+
+  // ========== 1. LOCALHOST DEVELOPMENT ==========
+  if (cleanHostname === "localhost" || cleanHostname === "127.0.0.1") {
+    return null; // Main site on localhost
   }
 
-  // Handle localhost with subdomain (e.g., school1.localhost)
-  if (hostname.includes("localhost") && parts.length >= 2) {
-    return parts[0];
+  // Handle subdomains on localhost (school1.localhost, admin.localhost)
+  if (cleanHostname.includes("localhost") && parts.length >= 2) {
+    return parts[0]; // Return first part as subdomain
   }
 
-  // Handle Vercel domains
-  if (hostname.includes("vercel.app")) {
-    // tlearn-ten.vercel.app = MAIN SITE (3 parts)
+  // ========== 2. VERCEL PREVIEW DEPLOYMENTS ==========
+  if (cleanHostname.includes("vercel.app")) {
+    // Pattern: project-name.vercel.app (3 parts) = MAIN SITE
     if (parts.length === 3) {
       return null;
     }
-    // school1.tlearn-ten.vercel.app = SCHOOL SUBDOMAIN (4 parts)
+
+    // Pattern: subdomain.project-name.vercel.app (4 parts) = SUBDOMAIN
     if (parts.length === 4) {
-      return parts[0];
+      return parts[0]; // Return subdomain
     }
+
     return null;
   }
 
-  // If it's just domain.com or www.domain.com = main site
+  // ========== 3. PRODUCTION DOMAIN (tlearn.africa) ==========
+  if (cleanHostname.endsWith("tlearn.africa")) {
+    const domainParts = cleanHostname.split(".");
+
+    // tlearn.africa (2 parts) = MAIN SITE
+    if (domainParts.length === 2) {
+      return null;
+    }
+
+    // www.tlearn.africa (3 parts, first is www) = MAIN SITE
+    if (domainParts.length === 3 && domainParts[0] === "www") {
+      return null;
+    }
+
+    // admin.tlearn.africa (3 parts) = ADMIN SITE (SPECIAL)
+    if (domainParts.length === 3 && domainParts[0] === "admin") {
+      return "admin"; // Return 'admin' as special value
+    }
+
+    // school1.tlearn.africa (3 parts) = SCHOOL SUBDOMAIN
+    if (domainParts.length === 3) {
+      return domainParts[0]; // school1, etc.
+    }
+
+    // Catch-all for any other pattern
+    return null;
+  }
+
+  // ========== 4. CUSTOM DOMAINS (Future-proofing) ==========
+  // If you ever have custom school domains like school1.com
+  // This handles generic domain patterns
+
+  // Pattern: domain.com (2 parts) or www.domain.com (3 parts, first is www)
   if (parts.length === 2 || (parts.length === 3 && parts[0] === "www")) {
-    // console.log("Production main site detected");
-    return null;
+    return null; // Main site
   }
 
-  // If it's subdomain.domain.com = school subdomain
-  if (parts.length === 3 && parts[0] !== "www") {
-    return parts[0];
+  // Pattern: subdomain.domain.com (3 parts)
+  if (parts.length === 3) {
+    return parts[0]; // Return subdomain
   }
 
-  // No subdomain
+  // ========== 5. DEFAULT ==========
   return null;
 };
 
-export const isMainSite = () => {
-  return getTenantFromUrl() === null;
+/**
+ * Check if current site is admin subdomain
+ */
+export const isAdminSite = (): boolean => {
+  const tenant = getTenantFromUrl();
+  return tenant === "admin";
 };
 
-export const getSchoolSlug = () => {
-  return getTenantFromUrl();
+/**
+ * Check if current site is main marketing site
+ * (tlearn.africa, www.tlearn.africa, or localhost without subdomain)
+ */
+export const isMainSite = (): boolean => {
+  const tenant = getTenantFromUrl();
+  return tenant === null; // Only null means main site (not admin, not school)
 };
 
+/**
+ * Check if current site is a school subdomain
+ */
+export const isSchoolSite = (): boolean => {
+  const tenant = getTenantFromUrl();
+  return tenant !== null && tenant !== "admin";
+};
+
+/**
+ * Get school slug (returns null for admin/main sites)
+ */
+export const getSchoolSlug = (): string | null => {
+  const tenant = getTenantFromUrl();
+  // Return null for admin and main sites
+  if (tenant === null || tenant === "admin") {
+    return null;
+  }
+  return tenant; // school1, etc.
+};
+
+/**
+ * Fetch school data by subdomain (only for school sites)
+ */
 export const getSchoolBySubdomain = async (
   subdomain: string,
 ): Promise<SchoolDomainResponse> => {
@@ -59,6 +126,31 @@ export const getSchoolBySubdomain = async (
     const response = await axiosInstance.get(`/sch-admin/school/${subdomain}`);
     return response.data;
   } catch (error) {
+    console.error(`Error fetching school data for ${subdomain}:`, error);
     return null;
   }
+};
+
+/**
+ * Get full current URL with protocol
+ */
+export const getCurrentFullUrl = (): string => {
+  return window.location.origin;
+};
+
+/**
+ * Check environment
+ */
+export const getEnvironment = (): "development" | "preview" | "production" => {
+  const hostname = window.location.hostname;
+
+  if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
+    return "development";
+  }
+
+  if (hostname.includes("vercel.app")) {
+    return "preview";
+  }
+
+  return "production";
 };
