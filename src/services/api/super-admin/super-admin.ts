@@ -17,10 +17,7 @@ import { AddSchoolPayload } from "@/utils/validation";
 import { toast } from "sonner";
 import { getTenantFromUrl } from "@/utils/tenantHelpers";
 
-// const API_BASE_URL =
-//   import.meta.env.VITE_API_BASE_URL || "http://localhost:2000/tlearn";
-
-const API_BASE_URL = "/tlearn";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/tlearn";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -111,8 +108,8 @@ api.interceptors.response.use(
         if (subdomain) {
           headers["x-school-subdomain"] = subdomain;
         }
-        const { data } = await axios.post(
-          `${API_BASE_URL}/refresh-token`,
+        const { data } = await api.post(
+          `/refresh-token`,
           {},
           {
             withCredentials: true,
