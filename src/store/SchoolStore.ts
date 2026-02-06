@@ -10,6 +10,7 @@ import {
 interface SchoolContexts {
   school: SchoolDomainResponse | null;
   isLoading: boolean;
+  isInitialized: boolean;
   isMainSite: boolean;
   isAdminSite: boolean;
   initializeSchool: () => Promise<void>;
@@ -18,11 +19,12 @@ interface SchoolContexts {
 export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
   school: null,
   isLoading: false,
+  isInitialized: false,
   isMainSite: false,
   isAdminSite: false,
 
   initializeSchool: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, isInitialized: false });
 
     const adminSite = isAdminSite();
     const mainSite = isMainSite();
@@ -31,6 +33,7 @@ export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
     if (adminSite) {
       set({
         isLoading: false,
+        isInitialized: true,
         isMainSite: false,
         isAdminSite: true,
         school: null,
@@ -41,6 +44,7 @@ export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
     if (mainSite) {
       set({
         isLoading: false,
+        isInitialized: true,
         isMainSite: true,
         isAdminSite: false,
         school: null,
@@ -55,13 +59,14 @@ export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
         set({
           school: schoolData,
           isLoading: false,
+          isInitialized: true,
           isMainSite: false,
           isAdminSite: false,
         });
       } catch (error) {
-        // console.error("Failed to load school data:", error);
         set({
           isLoading: false,
+          isInitialized: true,
           school: null,
           isMainSite: false,
           isAdminSite: false,
@@ -71,6 +76,7 @@ export const useSchoolStore = create<SchoolContexts>()((set, get) => ({
       // Should not happen, but as fallback
       set({
         isLoading: false,
+        isInitialized: true,
         isMainSite: true,
         isAdminSite: false,
         school: null,

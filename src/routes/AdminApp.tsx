@@ -10,7 +10,7 @@ import { ProtectedRoute } from "@/utils/ProtectedRoute";
 
 export const AdminApp = () => {
   return (
-    <Routes>
+    <>
       <Route path="/" element={<Navigate to="/super-admin/login" replace />} />
       <Route path="/super-admin/login" element={<LoginSuperAdmin />} />
 
@@ -29,6 +29,6 @@ export const AdminApp = () => {
       </Route>
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="*" element={<NotFound />} />
-    </Routes>
+    </>
   );
 };

@@ -1,12 +1,11 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Unauthorized from "./pages/Unauthorized";
 import { MainSiteRoutes } from "./routes/MainSiteRoutes";
 import { useSchoolStore } from "./store/SchoolStore";
-import { useInitializeSchool } from "./hooks/useInitializeSchool";
 import { SchoolRoutes } from "./routes/SchoolRoutes";
 import SchoolSkeletonLoader from "./components/admin/SchoolSkeletonLoader";
 import SchoolNotFound from "./components/admin/SchoolNotFound";
@@ -30,12 +29,23 @@ import { useNetworkListener } from "./hooks/useNetworkListener";
 
 const App = () => {
   useNetworkListener();
-  useInitializeSchool();
-  const { school, isLoading, isMainSite, isAdminSite } = useSchoolStore();
+  const {
+    school,
+    isLoading,
+    isMainSite,
+    isAdminSite,
+    initializeSchool,
+    isInitialized,
+  } = useSchoolStore();
 
-  if (isLoading) {
+  useEffect(() => {
+    initializeSchool();
+  }, [initializeSchool]);
+
+  if (isLoading || !isInitialized) {
     return <SchoolSkeletonLoader />;
   }
+
   return (
     <ThemeProvider defaultTheme="system" storageKey="tlearn-ui-theme">
       <QueryClientProvider client={queryClient}>
@@ -45,7 +55,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               {isAdminSite ? (
-                <AdminApp />
+                AdminApp()
               ) : isMainSite ? (
                 MainSiteRoutes()
               ) : school ? (
