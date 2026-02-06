@@ -47,7 +47,7 @@ const roleConfig = {
     title: "Student Login",
     subtitle: "Access your courses, assignments, and learning materials.",
     emailLabel: "Student ID",
-    emailPlaceholder: "MUW/NUR/00009",
+    emailPlaceholder: "MUW/XXXX",
     identifierType: "studentId" as const,
   },
 };
