@@ -17,8 +17,8 @@ export const studentLoginSchema = z.object({
     .string()
     .min(1, "Student ID is required")
     .regex(
-      /^STU-\d{4}-\d{5}$/,
-      "Invalid student ID format (e.g., STU-2024-00001)"
+      /^[A-Z]{3}\/[A-Z]{3}\/\d{5}$/,
+      "Invalid student ID format (e.g., MUW/NUR/00009)",
     ),
   role: z.literal("STUDENT"),
 });

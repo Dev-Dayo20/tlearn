@@ -54,7 +54,10 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  if (config.url?.includes("/sch-admin/")) {
+  if (
+    config.url?.includes("/sch-admin/") ||
+    config.url?.includes("/student/")
+  ) {
     const subdomain = getTenantFromUrl();
     if (subdomain) {
       config.headers["x-school-subdomain"] = subdomain;

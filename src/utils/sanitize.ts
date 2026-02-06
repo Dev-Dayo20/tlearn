@@ -9,7 +9,7 @@ export function sanitizeHtml(dirty: string): string {
 
 export function sanitizeText(input: string): string {
   return DOMPurify.sanitize(input, {
-    ALLOWED_TAGS: [], 
+    ALLOWED_TAGS: [],
     ALLOWED_ATTR: [],
   });
 }
@@ -42,7 +42,8 @@ export function sanitizeUrl(url: string): string {
 /**
  * Validate and sanitize email
  */
-export function sanitizeEmail(email: string): string {
+export function sanitizeEmail(email: string | null | undefined): string {
+  if (!email) return "";
   const cleaned = email.trim().toLowerCase();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

@@ -47,7 +47,7 @@ const roleConfig = {
     title: "Student Login",
     subtitle: "Access your courses, assignments, and learning materials.",
     emailLabel: "Student ID",
-    emailPlaceholder: "STU-2024-XXXXX",
+    emailPlaceholder: "MUW/NUR/00009",
     identifierType: "studentId" as const,
   },
 };
@@ -99,7 +99,7 @@ export default function LoginSchoolAdmin({
     reset(
       role === "STUDENT"
         ? { studentId: "", role: "STUDENT" }
-        : { email: "", password: "", role }
+        : { email: "", password: "", role },
     );
   };
 
@@ -110,41 +110,70 @@ export default function LoginSchoolAdmin({
 
   return (
     <div className="relative flex min-h-screen overflow-hidden">
-      <div className="hidden w-1/2 flex-col justify-between bg-gradient-primary p-8 xl:p-12 lg:flex">
-        <div className="space-y-8">
-          <div className="space-y-4">
-            {/* Display school name dynamically */}
-            <h1 className="font-heading text-3xl xl:text-4xl font-bold leading-tight text-primary-foreground">
-              Welcome to {school.school.name} Admin Portal
-              <br />
-              <span className="text-accent">One Click at a Time</span>
-            </h1>
-            <p className="max-w-md text-base xl:text-lg text-primary-foreground/80">
-              A comprehensive learning management system designed for modern
-              educational institutions.
-            </p>
-          </div>
-          <div className="grid gap-4">
-            {/* <FeatureItem
-              icon={BookOpen}
-              title="Rich Course Content"
-              description="Interactive lessons, quizzes, and assignments"
-            />
-            <FeatureItem
-              icon={Users}
-              title="Collaborative Learning"
-              description="Discussion forums and group projects"
-            />
-            <FeatureItem
-              icon={BarChart3}
-              title="Progress Analytics"
-              description="Track performance with detailed insights"
-            /> */}
+      <div className="hidden w-1/2 flex-col items-center justify-center bg-gradient-primary p-8 xl:p-12 lg:flex relative overflow-hidden">
+        {/* Decorative background shapes */}
+        <div className="absolute top-0 right-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute bottom-0 left-0 h-96 w-96 translate-y-1/2 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+
+        <div className="relative z-10 flex w-full max-w-xl flex-col items-center text-center">
+          {/* Logo on Left Side */}
+          {logoUrl && (
+            <div className="mb-10 p-5 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl animate-fade-in">
+              <img
+                src={logoUrl}
+                alt={school.school.name}
+                className="h-20 w-auto object-contain"
+              />
+            </div>
+          )}
+
+          <div className="space-y-8 animate-fade-in">
+            <div className="space-y-4">
+              <h1 className="font-heading text-4xl xl:text-5xl font-bold leading-tight text-white tracking-tight">
+                Welcome to {school.school.name}
+                <br />
+                <span className="text-accent drop-shadow-sm">
+                  {currentRole === "STUDENT"
+                    ? "Learning Portal"
+                    : "School Management"}
+                </span>
+              </h1>
+              <p className="mx-auto max-w-md text-base xl:text-lg text-white/80 leading-relaxed">
+                Connect with your educational community through our seamless and
+                powerful digital learning ecosystem.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-6 pt-4 text-white/60">
+              <div className="flex flex-col items-center gap-1">
+                <BookOpen className="h-6 w-6" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  Resources
+                </span>
+              </div>
+              <div className="h-4 w-px bg-white/20" />
+              <div className="flex flex-col items-center gap-1">
+                <Users className="h-6 w-6" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  Community
+                </span>
+              </div>
+              <div className="h-4 w-px bg-white/20" />
+              <div className="flex flex-col items-center gap-1">
+                <BarChart3 className="h-6 w-6" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  Analytics
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        <p className="text-sm text-primary-foreground/60">
-          © 2024 TLearn. All rights reserved.
-        </p>
+
+        <div className="absolute bottom-8 left-0 w-full text-center">
+          <p className="text-xs font-medium text-white/40 tracking-widest uppercase">
+            © 2024 TLearn • Powering Education Digitally
+          </p>
+        </div>
       </div>
 
       {/* Right Panel - Login */}
@@ -213,7 +242,14 @@ export default function LoginSchoolAdmin({
                       className="pl-10"
                       disabled={isPending}
                       {...register(
-                        currentRole === "STUDENT" ? "studentId" : "email"
+                        currentRole === "STUDENT" ? "studentId" : "email",
+                        {
+                          onChange: (e) => {
+                            if (currentRole === "STUDENT") {
+                              e.target.value = e.target.value.toUpperCase();
+                            }
+                          },
+                        },
                       )}
                     />
                   </div>

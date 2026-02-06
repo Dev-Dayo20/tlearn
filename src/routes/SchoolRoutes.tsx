@@ -13,6 +13,13 @@ import ClassDetail from "@/pages/admin/ClassDetails";
 import Analytics from "@/pages/admin/Analytics";
 import Settings from "@/pages/admin/Settings";
 
+// Student Pages
+import { StudentLayout } from "@/components/student/StudentLayout";
+import StudentDashboard from "@/pages/student/Dashboard";
+import Lessons from "@/pages/student/Lessons";
+import Exams from "@/pages/student/Exams";
+import StudentSettings from "@/pages/student/Settings";
+
 export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
   if (!school) {
     return <SchoolNotFound />;
@@ -52,6 +59,22 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
           path="teachers"
           element={<div>Teachers Page for {school.school.name}</div>}
         />
+      </Route>
+
+      {/* Student protected routes */}
+      <Route
+        path="/student"
+        element={
+          <ProtectedRoute requiredRole="STUDENT">
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="lessons" element={<Lessons />} />
+        <Route path="exams" element={<Exams />} />
+        <Route path="settings" element={<StudentSettings />} />
       </Route>
     </>
   );

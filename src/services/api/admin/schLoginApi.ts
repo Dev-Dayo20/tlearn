@@ -11,8 +11,10 @@ import { CreateStudentType } from "@/schema/createStudentSchema";
 
 export const loginSchool = async (data: SchoolLoginData, schoolId: number) => {
   const payload = { ...data, schoolId };
+  const endpoint =
+    data.role === "STUDENT" ? "/student/login" : "/sch-admin/login";
 
-  const response = await api.post("/sch-admin/login", payload);
+  const response = await api.post(endpoint, payload);
   return response.data;
 };
 
