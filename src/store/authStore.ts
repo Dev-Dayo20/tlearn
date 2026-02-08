@@ -12,14 +12,11 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
 
-  login: (token: string, user: User) => void;
-  setToken: (token: string) => void;
+  login: (user: User) => void;
   logout: () => void;
   updateUser: (user: Partial<User>) => void;
-  checkTokenExpiry: () => boolean;
 }
 
 // Helper functions for redirect path (outside of Zustand)
@@ -40,55 +37,30 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       // Initial state
       user: null,
-      token: null,
       isAuthenticated: false,
       redirectPath: null,
 
-      // Login action
-      login: (token, user) =>
+      login: (user) =>
         set({
-          token,
           user,
           isAuthenticated: true,
         }),
 
-      // Update token only
-      setToken: (token) => set({ token }),
-
-      // Logout action
       logout: () =>
         set({
-          token: null,
           user: null,
           isAuthenticated: false,
         }),
 
-      // Update user info (for profile updates)
       updateUser: (userData) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...userData } : null,
         })),
-
-      checkTokenExpiry: () => {
-        const { token } = get();
-
-        if (!token) {
-          return false;
-        }
-
-        if (isTokenExpired(token)) {
-          // We don't call logout() here anymore because we want to allow
-          // the refresh token interceptor to handle it when an API call is made.
-          return true;
-        }
-        return false;
-      },
     }),
     {
       name: "auth-storage",
-      storage: createJSONStorage(() => encryptedStorage),
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),

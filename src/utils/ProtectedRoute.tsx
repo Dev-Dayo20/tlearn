@@ -12,10 +12,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, user } = useAuthStore();
 
-  // Note: We don't check token expiry here anymore.
-  // The refresh token interceptor in super-admin.ts handles expired tokens automatically.
-  // The background interval in authStore.ts still logs out idle users every 60s.
-
   if (!isAuthenticated) {
     if (requiredRole === "SUPER_ADMIN") {
       return <Navigate to="/super-admin/login" replace />;

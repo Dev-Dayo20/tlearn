@@ -44,14 +44,13 @@ export const useSuperAdminLogin = () => {
   return useMutation({
     mutationFn: loginSuperAdmin,
     onSuccess: (data) => {
-      if (data.token) {
-        login(data.token, {
-          id: data.admin.id,
-          email: sanitizeEmail(data.admin.email),
-          role: data.admin.role as "SUPER_ADMIN" | "ADMIN" | "STUDENT",
-          name: sanitizeText(data.adminName),
-        });
-      }
+      login({
+        id: data.admin.id,
+        email: sanitizeEmail(data.admin.email),
+        role: data.admin.role as "SUPER_ADMIN" | "ADMIN" | "STUDENT",
+        name: sanitizeText(data.adminName),
+      });
+
       toast.success(`Welcome Back ${data.adminName}`, { duration: 5000 });
 
       const redirectPath = getRedirectPath();
@@ -148,7 +147,7 @@ export const useGetSchools = (
   search: string = "",
   status: string = "all",
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ) => {
   return useQuery({
     queryKey: ["schools", search, status, page, limit],
@@ -211,7 +210,7 @@ export const useGetAllUsers = (
   search: string,
   role: string,
   page: number,
-  pageSize: number
+  pageSize: number,
 ) => {
   return useQuery({
     queryKey: ["users", search, role, page, pageSize],

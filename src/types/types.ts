@@ -16,7 +16,6 @@ export interface SchoolDomainResponse {
 export interface LoginResponseSuperAdmin {
   success: boolean;
   message: string;
-  token?: string;
   admin: {
     id: number;
     email: string;

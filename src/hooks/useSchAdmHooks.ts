@@ -28,14 +28,13 @@ export const useSchUsersAuth = (schoolId: number) => {
   return useMutation({
     mutationFn: (data: SchoolLoginData) => loginSchool(data, schoolId),
     onSuccess: (data) => {
-      if (data.accessToken) {
-        login(data.accessToken, {
-          id: data.user.id,
-          email: sanitizeEmail(data.user.email) || "",
-          role: data.user.role as "ADMIN" | "STUDENT" | "TEACHER",
-          name: data.user.name,
-        });
-      }
+      login({
+        id: data.user.id,
+        email: sanitizeEmail(data.user.email) || "",
+        role: data.user.role as "ADMIN" | "STUDENT" | "TEACHER",
+        name: data.user.name,
+      });
+
       toast.success(`Welcome Back, ${data.user.name}!`, { duration: 5000 });
 
       // Redirect based on role
@@ -53,7 +52,7 @@ export const useSchUsersAuth = (schoolId: number) => {
         error.message ||
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
     },
   });
 };

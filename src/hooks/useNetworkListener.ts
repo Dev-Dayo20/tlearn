@@ -9,6 +9,10 @@ export const useNetworkListener = () => {
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
+      // Dismiss persistent warning/error toasts
+      toast.dismiss("offline-toast");
+      toast.dismiss("unstable-toast");
+
       if (prevStatus.current === false) {
         toast.success("Back Online", {
           description: "Your network connection has been restored.",

@@ -29,31 +29,30 @@ const api = axios.create({
 
 let isRefreshing = false;
 
-type RefreshCallback = (token: string | null, error?: any) => void;
+type RefreshCallback = (error?: any) => void;
 let refreshSubscribers: RefreshCallback[] = [];
 
 const subscribeTokenRefresh = (callback: RefreshCallback) => {
   refreshSubscribers.push(callback);
 };
 
-const onRefreshed = (token: string) => {
-  refreshSubscribers.forEach((callback) => callback(token, null));
+const onRefreshed = () => {
+  refreshSubscribers.forEach((callback) => callback(null));
   refreshSubscribers = [];
 };
 
 const onRefreshFailed = (error: any) => {
-  refreshSubscribers.forEach((callback) => callback(null, error));
+  refreshSubscribers.forEach((callback) => callback(error));
   refreshSubscribers = [];
 };
 
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  config.withCredentials = true;
   if (
     config.url?.includes("/sch-admin/") ||
-    config.url?.includes("/student/")
+    config.url?.includes("/student/") ||
+    config.url?.includes("/teacher/") ||
+    config.url?.includes("/super-admin/")
   ) {
     const subdomain = getTenantFromUrl();
     if (subdomain) {
@@ -84,11 +83,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
-          subscribeTokenRefresh((newToken, error) => {
+          subscribeTokenRefresh((error) => {
             if (error) {
               reject(error);
             } else {
-              originalRequest.headers["Authorization"] = "Bearer " + newToken;
               resolve(api(originalRequest));
             }
           });
@@ -117,14 +115,8 @@ api.interceptors.response.use(
           },
         );
 
-        if (data.success && data.accessToken) {
-          useAuthStore.getState().setToken(data.accessToken);
-          api.defaults.headers.common["Authorization"] =
-            "Bearer " + data.accessToken;
-          originalRequest.headers["Authorization"] =
-            "Bearer " + data.accessToken;
-
-          onRefreshed(data.accessToken);
+        if (data.success) {
+          onRefreshed();
           return api(originalRequest);
         }
       } catch (refreshError: any) {
@@ -192,7 +184,6 @@ export const loginSuperAdmin = async (
     return {
       success: response.data.success,
       message: response.data.message,
-      token: response.data.token,
       admin: {
         id: response.data.admin.id,
         email: response.data.admin.email,

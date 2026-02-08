@@ -1,5 +1,6 @@
 import axiosInstance from "@/lib/axios";
 import { SchoolDomainResponse } from "@/types/types";
+import api from "@/services/api/super-admin/super-admin";
 
 export const getTenantFromUrl = (): string | null => {
   const hostname = window.location.hostname;
@@ -79,34 +80,21 @@ export const getTenantFromUrl = (): string | null => {
   return null;
 };
 
-/**
- * Check if current site is admin subdomain
- */
 export const isAdminSite = (): boolean => {
   const tenant = getTenantFromUrl();
   return tenant === "admin";
 };
 
-/**
- * Check if current site is main marketing site
- * (tlearn.africa, www.tlearn.africa, or localhost without subdomain)
- */
 export const isMainSite = (): boolean => {
   const tenant = getTenantFromUrl();
   return tenant === null; // Only null means main site (not admin, not school)
 };
 
-/**
- * Check if current site is a school subdomain
- */
 export const isSchoolSite = (): boolean => {
   const tenant = getTenantFromUrl();
   return tenant !== null && tenant !== "admin";
 };
 
-/**
- * Get school slug (returns null for admin/main sites)
- */
 export const getSchoolSlug = (): string | null => {
   const tenant = getTenantFromUrl();
   // Return null for admin and main sites
@@ -116,14 +104,11 @@ export const getSchoolSlug = (): string | null => {
   return tenant; // school1, etc.
 };
 
-/**
- * Fetch school data by subdomain (only for school sites)
- */
 export const getSchoolBySubdomain = async (
   subdomain: string,
 ): Promise<SchoolDomainResponse> => {
   try {
-    const response = await axiosInstance.get(`/sch-admin/school/${subdomain}`);
+    const response = await api.get(`/sch-admin/school/${subdomain}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching school data for ${subdomain}:`, error);
@@ -131,16 +116,10 @@ export const getSchoolBySubdomain = async (
   }
 };
 
-/**
- * Get full current URL with protocol
- */
 export const getCurrentFullUrl = (): string => {
   return window.location.origin;
 };
 
-/**
- * Check environment
- */
 export const getEnvironment = (): "development" | "preview" | "production" => {
   const hostname = window.location.hostname;
 
