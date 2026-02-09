@@ -43,7 +43,7 @@ export const useSuperAdminLogin = () => {
 
   return useMutation({
     mutationFn: loginSuperAdmin,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       login({
         id: data.admin.id,
         email: sanitizeEmail(data.admin.email),
@@ -52,6 +52,8 @@ export const useSuperAdminLogin = () => {
       });
 
       toast.success(`Welcome Back ${data.adminName}`, { duration: 5000 });
+      // CRITICAL: Wait for cookies to be set
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const redirectPath = getRedirectPath();
       if (redirectPath && redirectPath !== "/super-admin/login") {
