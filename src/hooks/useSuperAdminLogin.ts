@@ -44,18 +44,6 @@ export const useSuperAdminLogin = () => {
   return useMutation({
     mutationFn: loginSuperAdmin,
     onSuccess: (data) => {
-      console.log("🎯 Login response:", data);
-      console.log("🍪 Cookies after login:", document.cookie);
-
-      // Check if cookies are actually set
-      const hasCookies = document.cookie.includes("accessToken");
-      console.log("✅ Has cookies:", hasCookies);
-
-      if (!hasCookies) {
-        console.error("❌ COOKIES NOT SET! Check CORS and credentials");
-        toast.error("Authentication failed - cookies not set");
-        return;
-      }
       login({
         id: data.admin.id,
         email: sanitizeEmail(data.admin.email),
