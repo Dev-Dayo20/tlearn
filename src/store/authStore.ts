@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { isTokenExpired } from "@/utils/token";
-import { encryptedStorage } from "@/utils/encryptedStorage";
 
 interface User {
   id: number;

@@ -7,10 +7,6 @@
   
   "rewrites": [
     {
-      "source": "/tlearn/:path*",
-      "destination": "https://tlearn-backend.onrender.com/tlearn/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
