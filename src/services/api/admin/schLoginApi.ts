@@ -5,9 +5,14 @@ import {
   ClassesFetchRes,
   DashboardStats,
   StudentAnalyticsResponse,
+  TeachersResponse,
+  TeacherAssignmentData,
 } from "@/types/types";
 import { URLSearchParams } from "url";
-import { CreateStudentType } from "@/schema/createStudentSchema";
+import {
+  CreateStudentType,
+  UpdateStudentInput,
+} from "@/schema/createStudentSchema";
 
 export const loginSchool = async (data: SchoolLoginData, schoolId: number) => {
   const payload = { ...data, schoolId };
@@ -84,5 +89,45 @@ export const fetchStudentAnalytics = async (
   id: string,
 ): Promise<StudentAnalyticsResponse> => {
   const response = await api.get(`/sch-admin/students/${id}/analytics`);
+  return response.data;
+};
+export const fetchTeachers = async (
+  search?: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<TeachersResponse> => {
+  const params: Record<string, string> = {
+    page: page.toString(),
+    limit: limit.toString(),
+  };
+
+  if (search) params.search = search;
+
+  const { data } = await api.get("/sch-admin/teachers", { params });
+  return data;
+};
+
+export const createTeacher = async (data: any) => {
+  const response = await api.post("/sch-admin/teacher", data);
+  return response.data;
+};
+
+export const updateTeacher = async (id: number, data: any) => {
+  const response = await api.patch(`/sch-admin/teachers/${id}`, data);
+  return response.data;
+};
+
+export const assignTeacher = async (data: TeacherAssignmentData) => {
+  const response = await api.post("/sch-admin/teachers/assign", data);
+  return response.data;
+};
+
+export const updateStudent = async (id: number, data: UpdateStudentInput) => {
+  const response = await api.patch(`/sch-admin/students/${id}`, data);
+  return response.data;
+};
+
+export const deleteStudent = async (id: number) => {
+  const response = await api.delete(`/sch-admin/students/${id}`);
   return response.data;
 };

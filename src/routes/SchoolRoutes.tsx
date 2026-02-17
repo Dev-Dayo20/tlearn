@@ -20,6 +20,8 @@ import Lessons from "@/pages/student/Lessons";
 import Exams from "@/pages/student/Exams";
 import StudentSettings from "@/pages/student/Settings";
 
+import Teachers from "@/pages/admin/Teachers";
+
 export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
   if (!school) {
     return <SchoolNotFound />;
@@ -55,10 +57,7 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
         <Route path="analytics" element={<Analytics />} />
         {/* Settings Route */}
         <Route path="settings" element={<Settings />} />
-        <Route
-          path="teachers"
-          element={<div>Teachers Page for {school.school.name}</div>}
-        />
+        <Route path="teachers" element={<Teachers school={school} />} />
       </Route>
 
       {/* Student protected routes */}

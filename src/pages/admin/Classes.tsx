@@ -25,6 +25,7 @@ import { SchoolDomainResponse } from "@/types/types";
 import { CreateClass } from "@/components/admin/modals/CreateClass";
 import { useGetClasses } from "@/hooks/useSchAdmHooks";
 import { useDebounce } from "@/hooks/useDebounce";
+import { ClassEmptyState } from "@/components/admin/class-section/ClassEmptyState";
 
 interface ClassProps {
   school: SchoolDomainResponse;
@@ -41,7 +42,7 @@ const Classes = ({ school }: ClassProps) => {
   const navigate = useNavigate();
 
   // Fetch classes with filters
-  const { data, isLoading, error } = useGetClasses(
+  const { data, isLoading, error, refetch } = useGetClasses(
     debouncedSearchTerm,
     page,
     12, // pageSize
@@ -119,10 +120,12 @@ const Classes = ({ school }: ClassProps) => {
       )}
 
       {/* Error State */}
-      {error && (
-        <div className="flex justify-center py-12">
-          <div className="text-destructive">Failed to load classes</div>
-        </div>
+      {error && !isLoading && (
+        <ClassEmptyState
+          isSearch={!!searchQuery}
+          isError={true}
+          onRetry={() => refetch()}
+        />
       )}
 
       {/* Classes Grid */}
@@ -188,8 +191,12 @@ const Classes = ({ school }: ClassProps) => {
 
           {/* Empty State */}
           {data?.classes?.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground">No classes found</p>
+            <div className="col-span-full">
+              <ClassEmptyState
+                isSearch={!!searchQuery}
+                onClearSearch={() => setSearchQuery("")}
+                onCreateClass={() => setShowCreateModal(true)}
+              />
             </div>
           )}
         </div>

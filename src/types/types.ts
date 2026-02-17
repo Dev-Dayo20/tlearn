@@ -342,3 +342,38 @@ export interface StudentAnalyticsResponse {
     };
   };
 }
+export interface Teacher {
+  id: number;
+  name: string;
+  email: string;
+  role: "TEACHER";
+  schoolId: number;
+  isActive: boolean;
+  profilePicture?: string | null;
+  phoneNumber?: string | null;
+  classes?: { id: number; name: string }[];
+  subjects?: { id: number; name: string }[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TeachersResponse {
+  success: boolean;
+  message?: string;
+  teachers: Teacher[];
+  pagination?: {
+    currentPage: number;
+    pageSize: number;
+    totalTeachers: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export interface TeacherAssignmentData {
+  teacherId: number;
+  classId?: number;
+  armId?: number;
+  subjectId?: number;
+}

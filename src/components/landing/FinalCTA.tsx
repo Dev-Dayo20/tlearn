@@ -4,14 +4,14 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 const FinalCTA = () => {
   return (
-    <section className="py-20 bg-gradient-hero dark:bg-gradient-hero-dark relative overflow-hidden">
+    <section className="py-20 bg-secondary dark:bg-gradient-hero-dark relative overflow-hidden">
       {/* Decorative Blur Shapes */}
       <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-accent/10 blur-[100px] rounded-full -translate-y-1/2 -translate-x-1/2" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-prim/10 blur-[100px] rounded-full translate-y-1/2 translate-x-1/2" />
 
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-bold text-white dark:text-foreground mb-6 tracking-tight leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground dark:text-foreground mb-6 tracking-tight leading-tight">
             Ready to Revolutionize Learning in Your Institution?
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -25,7 +25,7 @@ const FinalCTA = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-white/20 text-white bg-white/5 backdrop-blur-md hover:bg-white/10 rounded-2xl font-bold py-7 px-10 text-lg transition-all dark:border-border dark:text-foreground"
+              className="border-primary/20 text-primary bg-primary/5 backdrop-blur-md hover:bg-primary/10 rounded-2xl font-bold py-7 px-10 text-lg transition-all dark:border-border dark:text-foreground"
             >
               School Partnerships
             </Button>

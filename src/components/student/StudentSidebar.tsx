@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { logoutUser } from "@/services/api/super-admin/super-admin";
 import { LogoutConfirmModal } from "../admin/modals/LogoutConfirmModal";
 import { useAuthStore } from "@/store/authStore";
+import tlearnWhite from "@/assets/tlearnWhite.png";
 
 const navItems = [
   {
@@ -73,14 +74,20 @@ export function StudentSidebar({ onWidthChange }: StudentSidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar-primary shadow-lg shadow-primary/20">
-            <GraduationCap className="h-6 w-6 text-sidebar-primary-foreground" />
+          <div
+            className={cn(
+              "flex items-center transition-all duration-300",
+              collapsed && !mobileOpen ? "w-10 overflow-hidden" : "w-auto",
+            )}
+          >
+            <img
+              src={tlearnWhite}
+              alt="TLearn Logo"
+              className={cn(
+                "h-10 w-auto min-w-[140px] object-contain object-left transition-all duration-300",
+              )}
+            />
           </div>
-          {(!collapsed || mobileOpen) && (
-            <span className="text-xl font-bold tracking-tight text-sidebar-foreground">
-              TLearn
-            </span>
-          )}
         </div>
         <button
           onClick={() => setCollapsed(!collapsed)}

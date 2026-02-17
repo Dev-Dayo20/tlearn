@@ -18,6 +18,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { GraduationCap } from "lucide-react";
+import { cn } from "@/lib/utils";
+import tlearnWhite from "@/assets/tlearnWhite.png";
 
 const menuItems = [
   { title: "Dashboard", url: "/super-admin/dashboard", icon: LayoutDashboard },
@@ -35,13 +37,21 @@ export function DashboardSidebar() {
     <Sidebar className="border-r border-sidebar-border bg-sidebar">
       <SidebarContent>
         {/* Logo */}
-        <div className="flex items-center gap-2 px-6 py-4 border-b border-sidebar-border">
-          <GraduationCap className="w-8 h-8 text-sidebar-primary" />
-          {!isCollapsed && (
-            <span className="text-lg font-bold text-sidebar-foreground">
-              TLearn
-            </span>
-          )}
+        <div className="flex items-center gap-2 px-6 py-4 border-b border-sidebar-border overflow-hidden">
+          <div
+            className={cn(
+              "flex items-center transition-all duration-300",
+              isCollapsed ? "w-10 overflow-hidden" : "w-auto",
+            )}
+          >
+            <img
+              src={tlearnWhite}
+              alt="TLearn Logo"
+              className={cn(
+                "h-10 w-auto min-w-[140px] object-contain object-left transition-all duration-300",
+              )}
+            />
+          </div>
         </div>
 
         {/* Navigation */}

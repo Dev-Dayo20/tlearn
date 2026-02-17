@@ -60,6 +60,10 @@ import { StudentEmptyState } from "./StudentEmptyState";
 import { Download, FileDown, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { fetchDashboardStats } from "@/services/api/admin/schLoginApi";
+import { useDeleteStudent } from "@/hooks/useSchAdmHooks";
+
+import { ConfirmationModal } from "@/components/admin/modals/ConfirmationModal";
+import { UpdateStudentModal } from "@/components/admin/modals/UpdateStudentModal";
 
 // Fetch students with pagination and filters
 const fetchStudents = async (
@@ -85,9 +89,36 @@ const StudentsLists = () => {
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedArm, setSelectedArm] = useState<string>("");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [studentToEdit, setStudentToEdit] = useState<Student | null>(null);
+  const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const pageSize = 10;
+
+  const { mutate: deleteStudent, isPending: isDeleting } = useDeleteStudent();
+
+  const handleEdit = (student: Student) => {
+    setStudentToEdit(student);
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleDelete = (student: Student) => {
+    setStudentToDelete(student);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (studentToDelete) {
+      deleteStudent(studentToDelete.id, {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          setStudentToDelete(null);
+        },
+      });
+    }
+  };
 
   // Reset to page 1 when search or filters change
   useEffect(() => {
@@ -362,6 +393,7 @@ const StudentsLists = () => {
                                   variant="ghost"
                                   size="icon"
                                   className="h-9 w-9 text-amber-500 hover:text-amber-600 hover:bg-amber-50 transition-all active:scale-95"
+                                  onClick={() => handleEdit(student)}
                                 >
                                   <Pencil className="h-4.5 w-4.5" />
                                 </Button>
@@ -379,6 +411,7 @@ const StudentsLists = () => {
                                   variant="ghost"
                                   size="icon"
                                   className="h-9 w-9 text-rose-500 hover:text-rose-600 hover:bg-rose-50 transition-all active:scale-95"
+                                  onClick={() => handleDelete(student)}
                                 >
                                   <Trash2 className="h-4.5 w-4.5" />
                                 </Button>
@@ -473,12 +506,18 @@ const StudentsLists = () => {
                         <Eye className="h-4 w-4 shrink-0" />{" "}
                         <span className="font-semibold">View Profile</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="rounded-lg text-amber-600 focus:text-amber-700 focus:bg-amber-50 gap-3 py-2.5">
+                      <DropdownMenuItem
+                        className="rounded-lg text-amber-600 focus:text-amber-700 focus:bg-amber-50 gap-3 py-2.5"
+                        onClick={() => handleEdit(student)}
+                      >
                         <Pencil className="h-4 w-4 shrink-0" />{" "}
                         <span className="font-semibold">Edit Record</span>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-muted/50" />
-                      <DropdownMenuItem className="rounded-lg text-rose-600 focus:text-rose-700 focus:bg-rose-50 gap-3 py-2.5">
+                      <DropdownMenuItem
+                        className="rounded-lg text-rose-600 focus:text-rose-700 focus:bg-rose-50 gap-3 py-2.5"
+                        onClick={() => handleDelete(student)}
+                      >
                         <Trash2 className="h-4 w-4 shrink-0" />{" "}
                         <span className="font-semibold">Delete Student</span>
                       </DropdownMenuItem>
@@ -633,6 +672,29 @@ const StudentsLists = () => {
       <RegisterStudents
         open={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
+      />
+
+      <UpdateStudentModal
+        open={isUpdateModalOpen}
+        onClose={() => {
+          setIsUpdateModalOpen(false);
+          setStudentToEdit(null);
+        }}
+        student={studentToEdit}
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setStudentToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Student?"
+        description={`Are you sure you want to delete ${studentToDelete?.name}? This action is irreversible and all associated data will be lost.`}
+        confirmText="Yes, Delete Student"
+        isLoading={isDeleting}
+        variant="danger"
       />
     </div>
   );

@@ -1,0 +1,218 @@
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { teacherSchema, TeacherFormValues } from "@/schema/teacherSchema";
+import { useCreateTeacher, useUpdateTeacher } from "@/hooks/useSchAdmHooks";
+import { Teacher } from "@/types/types";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
+interface TeacherModalProps {
+  open: boolean;
+  onClose: () => void;
+  teacher?: Teacher | null;
+}
+
+export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
+  const isEditing = !!teacher;
+  const { mutate: createTeacher, isPending: isCreating } = useCreateTeacher();
+  const { mutate: updateTeacher, isPending: isUpdating } = useUpdateTeacher(
+    teacher?.id || 0,
+  );
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TeacherFormValues>({
+    resolver: zodResolver(teacherSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      profilePicture: "",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    if (teacher) {
+      reset({
+        name: teacher.name,
+        email: teacher.email,
+        phoneNumber: teacher.phoneNumber || "",
+        profilePicture: teacher.profilePicture || "",
+        password: "", // Don't populate password
+      });
+    } else {
+      reset({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        profilePicture: "",
+        password: "",
+      });
+    }
+  }, [teacher, reset, open]);
+
+  const onSubmit = (data: TeacherFormValues) => {
+    if (isEditing) {
+      // For updates, we usually don't send individual fields if they are empty or if we want to be precise.
+      // But for simplicity, we'll send the data.
+      const updateData = { ...data };
+      if (!updateData.password) delete updateData.password;
+
+      updateTeacher(updateData, {
+        onSuccess: () => {
+          onClose();
+          reset();
+        },
+      });
+    } else {
+      createTeacher(data, {
+        onSuccess: (res) => {
+          toast.success(res.message || "Teacher created successfully");
+          onClose();
+          reset();
+        },
+      });
+    }
+  };
+
+  const isPending = isCreating || isUpdating;
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px] rounded-3xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-black">
+            {isEditing ? "Edit Teacher Profile" : "Register New Teacher"}
+          </DialogTitle>
+          <DialogDescription>
+            {isEditing
+              ? "Update the teacher's personal information and login credentials."
+              : "Fill in the details to onboard a new teacher to your school faculty."}
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
+          <div className="space-y-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name" className="font-bold">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                placeholder="e.g. John Doe"
+                className="rounded-xl h-11"
+                {...register("name")}
+                disabled={isPending}
+              />
+              {errors.name && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="email" className="font-bold">
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="teacher@school.com"
+                className="rounded-xl h-11"
+                {...register("email")}
+                disabled={isPending}
+              />
+              {errors.email && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="phoneNumber" className="font-bold">
+                Phone Number (Optional)
+              </Label>
+              <Input
+                id="phoneNumber"
+                placeholder="+234..."
+                className="rounded-xl h-11"
+                {...register("phoneNumber")}
+                disabled={isPending}
+              />
+              {errors.phoneNumber && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="password" className="font-bold">
+                {isEditing
+                  ? "New Password (Leave blank to keep current)"
+                  : "Password"}
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                className="rounded-xl h-11"
+                {...register("password")}
+                disabled={isPending}
+              />
+              {errors.password && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              className="flex-1 rounded-xl h-12 font-bold"
+              onClick={onClose}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="flex-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-12 px-8 font-bold shadow-lg shadow-primary/20"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isEditing ? "Updating..." : "Saving..."}
+                </>
+              ) : isEditing ? (
+                "Update Profile"
+              ) : (
+                "Create Teacher"
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

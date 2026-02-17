@@ -516,26 +516,28 @@ Quick Debugging Checklist
 
 Save this somewhere! You'll thank yourself later. 📝✨
 
-// Login & Refresh Token endpoints
-const cookieOptions = {
-  httpOnly: true,              // Prevents JavaScript access (XSS protection)
-  secure: true,                // Required for SameSite=None
-  sameSite: process.env.NODE_ENV === "production" 
-    ? ("lax" as const)         // Production: lax (more restrictive, works same-site)
-    : ("none" as const),       // Development: none (allows cross-site cookies)
-  domain: process.env.NODE_ENV === "production" 
-    ? ".tlearn.africa"         // Production: works across all subdomains
-    : ".localhost",            // Development: works across localhost subdomains
-  path: "/",                   // Cookie accessible on all paths
-};
+PRODUCTION COOKIE OPTION
+export function getCookieOptions() {
+  const isProduction = process.env.NODE_ENV === "production";
 
-// Set cookies
-res.cookie("accessToken", accessToken, {
-  ...cookieOptions,
-  maxAge: 30 * 60 * 1000,      // 30 minutes
-});
+  return {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax" as const, // Changed from "none"
+    domain: ".tlearn.africa", // Added back
+    path: "/",
+  };
+}
 
-res.cookie("refreshToken", refreshToken, {
-  ...cookieOptions,
-  maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
-});
+DEVELOPMENT COOKIE SETTING
+export function getCookieOptions() {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  return {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none" as const,
+    domain: isProduction ? ".tlearn.africa" : undefined,
+    path: "/",
+  };
+}

@@ -40,6 +40,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import api from "@/services/api/super-admin/super-admin";
+import { RegisterStudents } from "@/components/admin/modals/RegisterStudent";
+import { UpdateStudentModal } from "@/components/admin/modals/UpdateStudentModal";
+import { ConfirmationModal } from "@/components/admin/modals/ConfirmationModal";
+import { useDeleteStudent } from "@/hooks/useSchAdmHooks";
+import { Student } from "@/types/types";
 
 // Fetch single class with all details
 const fetchClassDetail = async (classId: string) => {
@@ -52,6 +57,14 @@ const ClassDetail = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Modal states
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+  const { mutate: deleteStudent, isPending: isDeleting } = useDeleteStudent();
 
   // Fetch class details
   const {
@@ -324,7 +337,7 @@ const ClassDetail = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="success">
+            <Button variant="success" onClick={() => setIsAddModalOpen(true)}>
               <UserPlus className="mr-2 h-4 w-4" />
               Add Student
             </Button>
@@ -390,11 +403,22 @@ const ClassDetail = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedStudent(student);
+                                setIsUpdateModalOpen(true);
+                              }}
+                            >
                               <Edit className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => {
+                                setSelectedStudent(student);
+                                setIsDeleteModalOpen(true);
+                              }}
+                            >
                               <Trash2 className="mr-2 h-4 w-4" />
                               Remove
                             </DropdownMenuItem>
@@ -455,6 +479,45 @@ const ClassDetail = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Modals */}
+      <RegisterStudents
+        open={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        defaultClassId={classData.id}
+      />
+
+      <UpdateStudentModal
+        open={isUpdateModalOpen}
+        onClose={() => {
+          setIsUpdateModalOpen(false);
+          setSelectedStudent(null);
+        }}
+        student={selectedStudent}
+      />
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedStudent(null);
+        }}
+        onConfirm={() => {
+          if (selectedStudent) {
+            deleteStudent(selectedStudent.id, {
+              onSuccess: () => {
+                setIsDeleteModalOpen(false);
+                setSelectedStudent(null);
+              },
+            });
+          }
+        }}
+        title="Delete Student Record"
+        description={`Are you sure you want to delete ${selectedStudent?.name}'s record? This action is permanent and cannot be undone.`}
+        confirmText={isDeleting ? "Deleting..." : "Delete Record"}
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

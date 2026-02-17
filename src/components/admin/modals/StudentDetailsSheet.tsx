@@ -22,8 +22,13 @@ import {
   Fingerprint,
   Phone,
   MapPin,
+  Trash2,
 } from "lucide-react";
 import { Student } from "@/types/types";
+import { UpdateStudentModal } from "./UpdateStudentModal";
+import { useDeleteStudent } from "@/hooks/useSchAdmHooks";
+import { ConfirmationModal } from "./ConfirmationModal";
+import { toast } from "sonner";
 
 interface StudentDetailsSheetProps {
   open: boolean;
@@ -37,6 +42,10 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
   student,
 }) => {
   const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = React.useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
+
+  const { mutate: deleteStudent, isPending: isDeleting } = useDeleteStudent();
 
   if (!student) return null;
 
@@ -202,20 +211,60 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
           <div className="pt-6 grid grid-cols-2 gap-3">
             <Button
               variant="outline"
+              onClick={() => setIsUpdateOpen(true)}
               className="h-12 rounded-xl border-2 font-bold text-prim hover:bg-prim hover:text-white transition-all"
             >
               Edit Profile
             </Button>
             <Button
+              variant="outline"
+              onClick={() => setIsDeleteOpen(true)}
+              className="h-12 rounded-xl border-2 font-bold text-rose-500 border-rose-100 hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all group"
+            >
+              <Trash2 className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+              Delete Student
+            </Button>
+          </div>
+
+          <div className="pt-3">
+            <Button
               variant="secondary"
               onClick={onClose}
-              className="h-12 rounded-xl font-bold transition-all shadow-sm"
+              className="w-full h-12 rounded-xl font-bold transition-all shadow-sm"
             >
               Close
             </Button>
           </div>
         </div>
       </SheetContent>
+
+      {/* Update Modal */}
+      <UpdateStudentModal
+        open={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
+        student={student}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmationModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={() => {
+          if (student) {
+            deleteStudent(student.id, {
+              onSuccess: () => {
+                setIsDeleteOpen(false);
+                onClose();
+              },
+            });
+          }
+        }}
+        title="Delete Student Record"
+        description={`Are you sure you want to delete ${student.name}'s record? This action is permanent and cannot be undone.`}
+        confirmText={isDeleting ? "Deleting..." : "Delete Record"}
+        variant="danger"
+        isLoading={isDeleting}
+      />
 
       {/* Profile Picture Preview Dialog */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>

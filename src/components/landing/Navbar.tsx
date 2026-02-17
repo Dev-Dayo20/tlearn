@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import tlearn from "@/assets/tlearn.png";
+import tlearnWhite from "@/assets/tlearnWhite.png";
 import { useTheme } from "@/contexts/ThemeContext";
 
 const Navbar = () => {
@@ -59,7 +60,7 @@ const Navbar = () => {
           {/* Logo */}
           <a href="#" className="flex items-center space-x-2 group">
             <img
-              src={tlearn}
+              src={theme === "dark" ? tlearnWhite : tlearn}
               alt="TLearn Logo"
               className="h-12 sm:h-14 lg:h-16 max-w-[140px] sm:max-w-[160px] w-auto object-contain transition-transform group-hover:scale-105"
             />

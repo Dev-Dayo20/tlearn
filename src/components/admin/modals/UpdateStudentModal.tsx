@@ -17,14 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Upload,
-  User,
-  Loader2,
-  Camera,
-  Calendar,
-  GraduationCap,
-} from "lucide-react";
+import { User, Loader2, Camera, Calendar, Pencil } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -35,17 +28,17 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import {
-  createStudentSchema,
-  CreateStudentType,
+  updateStudentSchema,
+  UpdateStudentInput,
 } from "@/schema/createStudentSchema";
-import { useCreateStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { useUpdateStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { Student } from "@/types/types";
 import { toast } from "sonner";
 
-interface RegisterStudentModalProps {
+interface UpdateStudentModalProps {
   open: boolean;
   onClose: () => void;
-  defaultClassId?: number;
-  defaultArmId?: number;
+  student: Student | null;
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -53,36 +46,44 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-export function RegisterStudents({
+export function UpdateStudentModal({
   open,
   onClose,
-  defaultClassId,
-  defaultArmId,
-}: RegisterStudentModalProps) {
+  student,
+}: UpdateStudentModalProps) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
-  const { mutate: createStudent, isPending } = useCreateStudent();
+  const { mutate: updateStudent, isPending } = useUpdateStudent(
+    student?.id || 0,
+  );
 
-  const form = useForm<CreateStudentType>({
-    resolver: zodResolver(createStudentSchema),
+  const form = useForm<UpdateStudentInput>({
+    resolver: zodResolver(updateStudentSchema),
     defaultValues: {
       name: "",
-      classId: defaultClassId,
-      armId: defaultArmId,
+      classId: undefined,
+      armId: undefined,
       dateOfBirth: "",
       profilePicture: "",
     },
   });
 
-  // Pre-fill when default values change (e.g. when modal opens with specific class)
   useEffect(() => {
-    if (open) {
-      if (defaultClassId) form.setValue("classId", defaultClassId);
-      if (defaultArmId) form.setValue("armId", defaultArmId);
+    if (student) {
+      form.reset({
+        name: student.name,
+        classId: student.class?.id,
+        armId: student.arm?.id || null,
+        dateOfBirth: student.dateOfBirth
+          ? new Date(student.dateOfBirth).toISOString().split("T")[0]
+          : "",
+        profilePicture: student.profilePicture || "",
+      });
+      setPhotoPreview(student.profilePicture || null);
     }
-  }, [open, defaultClassId, defaultArmId, form]);
+  }, [student, form, open]);
 
   const { data: classesData } = useFetchClassesList();
   const classes = classesData?.classes || [];
@@ -145,24 +146,23 @@ export function RegisterStudents({
     }
   };
 
-  const onSubmit = async (data: CreateStudentType) => {
-    let profilePictureUrl: string | null = null;
+  const onSubmit = async (data: UpdateStudentInput) => {
+    let profilePictureUrl = student?.profilePicture || "";
 
     if (photoFile) {
-      profilePictureUrl = await uploadPhotoToCloudinary();
-      if (!profilePictureUrl) return;
+      const uploadedUrl = await uploadPhotoToCloudinary();
+      if (!uploadedUrl) return;
+      profilePictureUrl = uploadedUrl;
     }
 
     const submitData = {
       ...data,
       profilePicture: profilePictureUrl || null,
+      email: student?.email || null,
     };
 
-    createStudent(submitData, {
-      onSuccess: () => {
-        form.reset();
-        setPhotoPreview(null);
-        setPhotoFile(null);
+    updateStudent(submitData, {
+      onSuccess: (res) => {
         onClose();
       },
     });
@@ -172,18 +172,18 @@ export function RegisterStudents({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl p-0 overflow-y-auto max-h-[95vh] rounded-3xl border-none shadow-2xl">
         {/* Header Section */}
-        <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8 border-b border-muted/50 sticky top-0 z-10 backdrop-blur-md">
+        <div className="bg-gradient-to-br from-amber-500/10 via-background to-background p-6 md:p-8 border-b border-muted/50 sticky top-0 z-10 backdrop-blur-md">
           <DialogHeader className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
-                <GraduationCap className="w-8 h-8" />
+              <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-inner">
+                <Pencil className="w-8 h-8" />
               </div>
               <div>
                 <DialogTitle className="text-3xl font-black tracking-tight text-foreground">
-                  Register Student
+                  Update Student Profile
                 </DialogTitle>
                 <DialogDescription className="text-base font-medium text-muted-foreground mt-1">
-                  Onboard a new student to your academic community.
+                  Modify the student's academic and personal details.
                 </DialogDescription>
               </div>
             </div>
@@ -201,9 +201,9 @@ export function RegisterStudents({
                 <div className="group relative">
                   <div
                     className={cn(
-                      "flex h-40 w-40 items-center justify-center rounded-3xl bg-muted/30 border-2 border-dashed border-muted-foreground/20 overflow-hidden transition-all duration-300 group-hover:border-primary/40",
+                      "flex h-40 w-40 items-center justify-center rounded-3xl bg-muted/30 border-2 border-dashed border-muted-foreground/20 overflow-hidden transition-all duration-300 group-hover:border-amber-500/40",
                       photoPreview &&
-                        "border-solid border-primary/20 bg-background",
+                        "border-solid border-amber-500/20 bg-background",
                     )}
                   >
                     {photoPreview ? (
@@ -226,12 +226,12 @@ export function RegisterStudents({
                     accept="image/*"
                     onChange={handlePhotoChange}
                     className="hidden"
-                    id="photo-input"
+                    id="photo-input-update"
                     disabled={isPending || isUploadingPhoto}
                   />
                   <label
-                    htmlFor="photo-input"
-                    className="absolute -bottom-3 -right-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:scale-110 hover:-rotate-12 cursor-pointer active:scale-95"
+                    htmlFor="photo-input-update"
+                    className="absolute -bottom-3 -right-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-xl shadow-amber-500/20 transition-all hover:scale-110 hover:-rotate-12 cursor-pointer active:scale-95"
                   >
                     <Camera className="h-6 w-6" />
                   </label>
@@ -241,7 +241,7 @@ export function RegisterStudents({
                     Student Photo
                   </h4>
                   <p className="text-[10px] text-muted-foreground/60 font-medium max-w-[120px] mt-1">
-                    Upload a clear passport photograph (JPG, PNG).
+                    Update the student's passport photograph.
                   </p>
                 </div>
               </div>
@@ -260,7 +260,7 @@ export function RegisterStudents({
                       <FormControl>
                         <Input
                           placeholder="e.g. John Doe Adewale"
-                          className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
+                          className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-amber-500/20 transition-all font-semibold"
                           {...field}
                         />
                       </FormControl>
@@ -282,7 +282,7 @@ export function RegisterStudents({
                         <Select
                           onValueChange={(value) => {
                             field.onChange(Number(value));
-                            form.setValue("armId", undefined);
+                            form.setValue("armId", null);
                           }}
                           value={field.value?.toString()}
                         >
@@ -319,9 +319,15 @@ export function RegisterStudents({
                         </FormLabel>
                         <Select
                           onValueChange={(value) =>
-                            field.onChange(value ? Number(value) : undefined)
+                            field.onChange(
+                              value === "null" ? null : Number(value),
+                            )
                           }
-                          value={field.value?.toString() || "0"}
+                          value={
+                            field.value === null
+                              ? "null"
+                              : field.value?.toString() || "null"
+                          }
                           disabled={arms.length === 0}
                         >
                           <FormControl>
@@ -334,6 +340,12 @@ export function RegisterStudents({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="rounded-2xl shadow-xl">
+                            <SelectItem
+                              value="null"
+                              className="rounded-xl font-medium"
+                            >
+                              No Arm
+                            </SelectItem>
                             {arms.map((arm: any) => (
                               <SelectItem
                                 key={arm.id}
@@ -364,8 +376,9 @@ export function RegisterStudents({
                         <div className="relative">
                           <Input
                             type="date"
-                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold pl-12"
+                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-amber-500/20 transition-all font-semibold pl-12"
                             {...field}
+                            value={field.value || ""}
                           />
                           <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
                         </div>
@@ -390,18 +403,18 @@ export function RegisterStudents({
               </Button>
               <Button
                 type="submit"
-                className="flex-[2] h-12 rounded-2xl font-black bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                className="flex-[2] h-12 rounded-2xl font-black bg-amber-500 hover:bg-amber-600 text-white shadow-xl shadow-amber-500/20 transition-all active:scale-[0.98]"
                 disabled={isPending || isUploadingPhoto}
               >
                 {isPending || isUploadingPhoto ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {isPending ? "Registering..." : "Uploading photo..."}
+                    {isPending ? "Updating..." : "Uploading photo..."}
                   </>
                 ) : (
                   <>
-                    <Upload className="mr-2 h-5 w-5" />
-                    Complete Registration
+                    <Pencil className="mr-2 h-5 w-5" />
+                    Update Record
                   </>
                 )}
               </Button>

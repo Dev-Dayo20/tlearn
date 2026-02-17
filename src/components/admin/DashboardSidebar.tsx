@@ -10,6 +10,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   GraduationCap,
   LogOut,
   Menu,
@@ -19,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { logoutUser } from "@/services/api/super-admin/super-admin";
 import { LogoutConfirmModal } from "./modals/LogoutConfirmModal";
+import tlearnWhite from "@/assets/tlearnWhite.png";
 
 const navItems = [
   {
@@ -27,7 +30,18 @@ const navItems = [
     icon: LayoutDashboard,
   },
   { title: "Classes", path: "/school-admin/classes", icon: BookOpen },
-  { title: "Students", path: "/school-admin/students", icon: Users },
+  {
+    title: "Users",
+    icon: Users,
+    subItems: [
+      {
+        title: "Teachers",
+        path: "/school-admin/teachers",
+        icon: GraduationCap,
+      },
+      { title: "Students", path: "/school-admin/students", icon: Users },
+    ],
+  },
   { title: "Materials", path: "/school-admin/materials", icon: Video },
   { title: "Analytics", path: "/school-admin/analytics", icon: BarChart3 },
   { title: "Settings", path: "/school-admin/settings", icon: Settings },
@@ -39,6 +53,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [usersOpen, setUsersOpen] = useState(true); // Default open for better visibility
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -77,14 +92,20 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar-primary">
-            <GraduationCap className="h-6 w-6 text-sidebar-primary-foreground" />
+          <div
+            className={cn(
+              "flex items-center transition-all duration-300",
+              collapsed && !mobileOpen ? "w-10 overflow-hidden" : "w-auto",
+            )}
+          >
+            <img
+              src={tlearnWhite}
+              alt="TLearn Logo"
+              className={cn(
+                "h-20 w-auto min-w-[140px] object-contain object-left transition-all duration-300",
+              )}
+            />
           </div>
-          {(!collapsed || mobileOpen) && (
-            <span className="text-xl font-bold text-sidebar-foreground">
-              TLearn
-            </span>
-          )}
         </div>
         {/* Desktop collapse button */}
         <button
@@ -108,24 +129,86 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.path === "/"}
-            onClick={() => setMobileOpen(false)}
-            className={cn(
-              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent",
-              collapsed && !mobileOpen && "justify-center px-2",
-            )}
-            activeClassName="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary"
-          >
-            <item.icon className="h-5 w-5 shrink-0" />
-            {(!collapsed || mobileOpen) && (
-              <span className="text-sm font-medium">{item.title}</span>
-            )}
-          </NavLink>
-        ))}
+        {navItems.map((item) => {
+          if (item.subItems) {
+            const isUsersItem = item.title === "Users";
+            const isOpen = isUsersItem ? usersOpen : false;
+            const toggleOpen = () => isUsersItem && setUsersOpen(!isOpen);
+
+            return (
+              <div key={item.title} className="space-y-1">
+                <button
+                  onClick={() => {
+                    if (collapsed && !mobileOpen) {
+                      setCollapsed(false);
+                      setUsersOpen(true);
+                    } else {
+                      toggleOpen();
+                    }
+                  }}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent",
+                    collapsed && !mobileOpen && "justify-center px-2",
+                  )}
+                >
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  {(!collapsed || mobileOpen) && (
+                    <>
+                      <span className="flex-1 text-left text-sm font-medium">
+                        {item.title}
+                      </span>
+                      {isOpen ? (
+                        <ChevronUp className="h-4 w-4 text-sidebar-foreground/60" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 text-sidebar-foreground/60" />
+                      )}
+                    </>
+                  )}
+                </button>
+
+                {isOpen && (!collapsed || mobileOpen) && (
+                  <div className="ml-4 flex flex-col gap-1 border-l border-sidebar-border pl-2 animate-in slide-in-from-top-2 duration-200">
+                    {item.subItems.map((subItem) => (
+                      <NavLink
+                        key={subItem.path}
+                        to={subItem.path}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground/70 transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                        )}
+                        activeClassName="bg-sidebar-primary/10 text-sidebar-primary font-semibold hover:bg-sidebar-primary/15"
+                      >
+                        <subItem.icon className="h-4 w-4 shrink-0" />
+                        <span className="text-xs font-medium">
+                          {subItem.title}
+                        </span>
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path!}
+              end={item.path === "/"}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sidebar-foreground transition-all duration-200 hover:bg-sidebar-accent",
+                collapsed && !mobileOpen && "justify-center px-2",
+              )}
+              activeClassName="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary"
+            >
+              <item.icon className="h-5 w-5 shrink-0" />
+              {(!collapsed || mobileOpen) && (
+                <span className="text-sm font-medium">{item.title}</span>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* User Section */}
