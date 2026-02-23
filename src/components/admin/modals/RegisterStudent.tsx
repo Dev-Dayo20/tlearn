@@ -170,7 +170,7 @@ export function RegisterStudents({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl p-0 overflow-y-auto max-h-[95vh] rounded-3xl border-none shadow-2xl">
+      <DialogContent className="w-[95%] sm:max-w-2xl p-0 overflow-y-auto max-h-[90vh] rounded-3xl border-none shadow-2xl">
         {/* Header Section */}
         <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8 border-b border-muted/50 sticky top-0 z-10 backdrop-blur-md">
           <DialogHeader className="space-y-4">

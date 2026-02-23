@@ -95,7 +95,7 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
 
         <div className="p-6 space-y-8">
           {/* Quick Stats/Info */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-muted/30 border border-muted/50 space-y-1">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <Fingerprint className="w-3 h-3" /> Student ID
@@ -208,7 +208,7 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
             </div>
           </div>
 
-          <div className="pt-6 grid grid-cols-2 gap-3">
+          <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button
               variant="outline"
               onClick={() => setIsUpdateOpen(true)}

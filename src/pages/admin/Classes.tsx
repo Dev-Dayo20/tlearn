@@ -59,8 +59,8 @@ const Classes = ({ school }: ClassProps) => {
 
       {/* Filters Bar */}
       <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-card p-4 shadow-soft sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 items-center gap-3">
-          <div className="relative flex-1 sm:max-w-xs">
+        <div className="flex flex-col sm:flex-row flex-1 sm:items-center gap-3">
+          <div className="relative w-full sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search classes..."
@@ -70,7 +70,7 @@ const Classes = ({ school }: ClassProps) => {
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-full sm:w-[140px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>

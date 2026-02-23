@@ -19,8 +19,10 @@ export function Topbar({ title, subtitle }: TopbarProps) {
 
   return (
     <header className="flex h-16 items-center justify-between rounded-2xl bg-card px-6 shadow-soft">
-      <div>
-        <h1 className="text-xl font-semibold text-foreground">{title}</h1>
+      <div className="flex flex-col">
+        <h1 className="text-xl font-semibold text-foreground ml-12 lg:ml-0">
+          {title}
+        </h1>
         {subtitle && (
           <p className="text-sm text-muted-foreground">{subtitle}</p>
         )}

@@ -251,7 +251,7 @@ export function Sidebar({ onWidthChange }: SidebarProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar text-sidebar-foreground shadow-lg lg:hidden"
+        className="fixed left-6 top-6 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar text-sidebar-foreground shadow-lg lg:hidden"
         aria-label="Open menu"
       >
         <Menu className="h-5 w-5" />

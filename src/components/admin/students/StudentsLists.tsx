@@ -125,6 +125,11 @@ const StudentsLists = () => {
     setCurrentPage(1);
   }, [debouncedSearch, selectedClass, selectedArm]);
 
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
+
   const { data, isLoading, isError } = useQuery<StudentsResponse>({
     queryKey: [
       "students",
@@ -235,7 +240,7 @@ const StudentsLists = () => {
           <Button
             onClick={handleExportCSV}
             variant="outline"
-            className="h-11 rounded-xl px-4 border-blue-200 bg-blue-50/50 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300 font-bold text-xs group"
+            className="h-11 rounded-xl px-4 border-blue-200 bg-blue-50/50 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300 font-bold text-xs group w-full md:w-auto"
           >
             <Download className="h-4 w-4 mr-2 text-blue-600 group-hover:text-white transition-colors" />
             Export CSV
