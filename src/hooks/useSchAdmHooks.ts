@@ -29,7 +29,13 @@ import {
   assignTeacher,
   updateStudent,
   deleteStudent,
+  fetchSubjects,
+  fetchAllSubjects,
+  createSubject,
+  updateSubject,
+  deleteSubject,
 } from "@/services/api/admin/schLoginApi";
+import { SubjectType } from "@/schema/SubjectSchema";
 
 export const useSchUsersAuth = (schoolId: number) => {
   const navigate = useNavigate();
@@ -62,7 +68,6 @@ export const useSchUsersAuth = (schoolId: number) => {
         error.message ||
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
-      // console.error("Login error:", error);
     },
   });
 };
@@ -205,6 +210,67 @@ export const useDeleteStudent = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || "Failed to delete student");
+    },
+  });
+};
+
+export const useGetSubjects = (
+  search?: string,
+  page: number = 1,
+  limit: number = 10,
+  classId?: number,
+) => {
+  return useQuery({
+    queryKey: ["subjects", search, page, limit, classId],
+    queryFn: () => fetchSubjects(search, page, limit, classId),
+  });
+};
+
+export const useGetAllSubjects = () => {
+  return useQuery({
+    queryKey: ["subjects", "all"],
+    queryFn: () => fetchAllSubjects(),
+  });
+};
+
+export const useCreateSubject = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createSubject,
+    onSuccess: () => {
+      toast.success("Subject created successfully");
+      queryClient.invalidateQueries({ queryKey: ["subjects"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Failed to create subject");
+    },
+  });
+};
+
+export const useUpdateSubject = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Partial<SubjectType>) => updateSubject(id, data),
+    onSuccess: () => {
+      toast.success("Subject updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["subjects"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Failed to update subject");
+    },
+  });
+};
+
+export const useDeleteSubject = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteSubject(id),
+    onSuccess: () => {
+      toast.success("Subject deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["subjects"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Failed to delete subject");
     },
   });
 };

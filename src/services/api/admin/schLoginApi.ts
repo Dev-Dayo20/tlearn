@@ -8,11 +8,12 @@ import {
   TeachersResponse,
   TeacherAssignmentData,
 } from "@/types/types";
-import { URLSearchParams } from "url";
 import {
   CreateStudentType,
   UpdateStudentInput,
 } from "@/schema/createStudentSchema";
+import { SubjectType } from "@/schema/SubjectSchema";
+import { SubjectsFetchRes, SubjectsAllRes } from "@/types/types";
 
 export const loginSchool = async (data: SchoolLoginData, schoolId: number) => {
   const payload = { ...data, schoolId };
@@ -129,5 +130,45 @@ export const updateStudent = async (id: number, data: UpdateStudentInput) => {
 
 export const deleteStudent = async (id: number) => {
   const response = await api.delete(`/sch-admin/students/${id}`);
+  return response.data;
+};
+
+// Subjects API
+export const fetchSubjects = async (
+  search?: string,
+  page: number = 1,
+  limit: number = 10,
+  classId?: number,
+): Promise<SubjectsFetchRes> => {
+  const params: Record<string, string> = {
+    page: page.toString(),
+    limit: limit.toString(),
+  };
+
+  if (search) params.search = search;
+  if (classId) params.classId = classId.toString();
+
+  const { data } = await api.get("/sch-admin/subjects", { params });
+  return data;
+};
+
+export const fetchAllSubjects = async (): Promise<SubjectsAllRes> => {
+  const { data } = await api.get("/sch-admin/subjects/all");
+  return data;
+};
+
+export const createSubject = async (data: SubjectType) => {
+  const { description, code, ...payload } = data;
+  const response = await api.post("/sch-admin/subject", payload);
+  return response.data;
+};
+
+export const updateSubject = async (id: number, data: Partial<SubjectType>) => {
+  const response = await api.patch(`/sch-admin/subject/${id}`, data);
+  return response.data;
+};
+
+export const deleteSubject = async (id: number) => {
+  const response = await api.delete(`/sch-admin/subjects/${id}`);
   return response.data;
 };

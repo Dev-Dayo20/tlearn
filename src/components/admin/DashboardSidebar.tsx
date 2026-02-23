@@ -30,6 +30,7 @@ const navItems = [
     icon: LayoutDashboard,
   },
   { title: "Classes", path: "/school-admin/classes", icon: BookOpen },
+  { title: "Subjects", path: "/school-admin/subjects", icon: BookOpen },
   {
     title: "Users",
     icon: Users,

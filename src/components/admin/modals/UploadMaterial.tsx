@@ -30,10 +30,11 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { useFetchClassesList, useGetAllSubjects } from "@/hooks/useSchAdmHooks";
 import { uploadMaterial } from "@/services/api/admin/schLoginApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Subject } from "@/types/types";
 
 interface UploadMaterialModalProps {
   open: boolean;
@@ -58,6 +59,10 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
 
   const { data: classesData } = useFetchClassesList();
   const classes = classesData?.classes || [];
+
+  const { data: subjectsData, isLoading: loadingSubjects } =
+    useGetAllSubjects();
+  const subjects = subjectsData?.data || [];
 
   const {
     register,
@@ -231,7 +236,7 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
                       Click or drag & drop to upload
                     </p>
                     <p className="text-xs text-muted-foreground font-medium">
-                      MP4, PDF, DOCX, PPTX up to 100MB
+                      MP4 100MB
                     </p>
                   </div>
                 )}
@@ -352,16 +357,25 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
                   <SelectItem value="all" className="rounded-xl font-medium">
                     All Subjects
                   </SelectItem>
-                  {/* Subjects should ideally come from an API */}
-                  <SelectItem value="1" className="rounded-xl font-medium">
-                    Mathematics
-                  </SelectItem>
-                  <SelectItem value="2" className="rounded-xl font-medium">
-                    English Language
-                  </SelectItem>
-                  <SelectItem value="3" className="rounded-xl font-medium">
-                    Basic Science
-                  </SelectItem>
+                  {loadingSubjects ? (
+                    <SelectItem
+                      value="loading"
+                      disabled
+                      className="rounded-xl font-medium italic text-muted-foreground/50"
+                    >
+                      Loading subjects...
+                    </SelectItem>
+                  ) : (
+                    subjects.map((subject: Subject) => (
+                      <SelectItem
+                        key={subject.id}
+                        value={subject.id.toString()}
+                        className="rounded-xl font-medium"
+                      >
+                        {subject.name.toUpperCase()}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>

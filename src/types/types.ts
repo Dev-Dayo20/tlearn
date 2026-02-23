@@ -377,3 +377,42 @@ export interface TeacherAssignmentData {
   armId?: number;
   subjectId?: number;
 }
+
+export interface Subject {
+  id: number;
+  name: string;
+  classId: number;
+  teacherId?: number | null;
+  description?: string | null;
+  code?: string | null;
+  schoolId?: number;
+  isActive?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  class?: { id?: number; name: string };
+  teacher?: { id?: number; name: string } | null;
+  _count?: {
+    teachers: number;
+    classes: number;
+    videos: number;
+  };
+}
+
+export interface SubjectsFetchRes {
+  success: boolean;
+  message: string;
+  data: Subject[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalSubjects: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export interface SubjectsAllRes {
+  status: string;
+  data: Subject[];
+}
