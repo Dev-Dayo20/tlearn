@@ -323,6 +323,7 @@ export default function LoginSchoolAdmin({
                 </div>
                 {/* Add submit button */}
                 <Button
+                  variant="prim"
                   type="submit"
                   className="w-full mt-4"
                   disabled={isPending}
