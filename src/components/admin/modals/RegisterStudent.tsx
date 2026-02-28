@@ -40,6 +40,7 @@ import {
 } from "@/schema/createStudentSchema";
 import { useCreateStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
 import { toast } from "sonner";
+import { ImageCropperModal } from "./ImageCropperModal";
 
 interface RegisterStudentModalProps {
   open: boolean;
@@ -62,6 +63,8 @@ export function RegisterStudents({
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
 
   const { mutate: createStudent, isPending } = useCreateStudent();
 
@@ -105,11 +108,20 @@ export function RegisterStudents({
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-        setPhotoFile(file);
+        setSelectedImageUrl(reader.result as string);
+        setCropperOpen(true);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCropConfirm = async (croppedBlob: Blob) => {
+    const croppedFile = new File([croppedBlob], "profile-picture.jpg", {
+      type: "image/jpeg",
+    });
+    setPhotoFile(croppedFile);
+    setPhotoPreview(URL.createObjectURL(croppedBlob));
+    setCropperOpen(false);
   };
 
   const uploadPhotoToCloudinary = async (): Promise<string | null> => {
@@ -231,7 +243,7 @@ export function RegisterStudents({
                   />
                   <label
                     htmlFor="photo-input"
-                    className="absolute -bottom-3 -right-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:scale-110 hover:-rotate-12 cursor-pointer active:scale-95"
+                    className="absolute -bottom-3 -right-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-prim text-prim-foreground shadow-xl shadow-prim/20 transition-all hover:scale-110 hover:-rotate-12 cursor-pointer active:scale-95"
                   >
                     <Camera className="h-6 w-6" />
                   </label>
@@ -259,7 +271,7 @@ export function RegisterStudents({
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g. John Doe Adewale"
+                          placeholder="e.g. Usman Adewale"
                           className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
                           {...field}
                         />
@@ -291,7 +303,7 @@ export function RegisterStudents({
                               <SelectValue placeholder="Select Class" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="rounded-2xl shadow-xl">
+                          <SelectContent className="rounded-2xl shadow-xl max-h-[280px] overflow-y-auto">
                             {classes?.map((cls: any) => (
                               <SelectItem
                                 key={cls.id}
@@ -333,7 +345,7 @@ export function RegisterStudents({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="rounded-2xl shadow-xl">
+                          <SelectContent className="rounded-2xl shadow-xl max-h-[280px] overflow-y-auto">
                             {arms.map((arm: any) => (
                               <SelectItem
                                 key={arm.id}
@@ -390,7 +402,7 @@ export function RegisterStudents({
               </Button>
               <Button
                 type="submit"
-                className="flex-[2] h-12 rounded-2xl font-black bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                className="flex-[2] h-12 rounded-2xl font-black bg-prim hover:bg-prim/70 text-white shadow-xl shadow-prim/20 transition-all active:scale-[0.98]"
                 disabled={isPending || isUploadingPhoto}
               >
                 {isPending || isUploadingPhoto ? (
@@ -409,6 +421,15 @@ export function RegisterStudents({
           </form>
         </Form>
       </DialogContent>
+
+      {selectedImageUrl && (
+        <ImageCropperModal
+          image={selectedImageUrl}
+          open={cropperOpen}
+          onClose={() => setCropperOpen(false)}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </Dialog>
   );
 }

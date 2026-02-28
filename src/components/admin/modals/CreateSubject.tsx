@@ -169,48 +169,6 @@ export function CreateSubject({ open, onClose }: CreateSubjectModalProps) {
               )}
             </div>
 
-            {/* <div className="space-y-2">
-              <Label
-                htmlFor="code"
-                className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1"
-              >
-                Subject Code (Optional)
-              </Label>
-              <Input
-                id="code"
-                placeholder="e.g., MATH101, ENG202..."
-                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
-                {...register("code")}
-                disabled={isPending}
-              />
-              {errors.code && (
-                <p className="text-xs font-bold text-rose-500 ml-1">
-                  {errors.code.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="description"
-                className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1"
-              >
-                Description (Optional)
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Brief description of the subject..."
-                className="min-h-[100px] rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all resize-none font-medium"
-                {...register("description")}
-                disabled={isPending}
-              />
-              {errors.description && (
-                <p className="text-xs font-bold text-rose-500 ml-1">
-                  {errors.description.message}
-                </p>
-              )}
-            </div> */}
-
             <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-muted/50">
               <Button
                 type="button"
@@ -223,7 +181,7 @@ export function CreateSubject({ open, onClose }: CreateSubjectModalProps) {
               </Button>
               <Button
                 type="submit"
-                className="flex-[2] h-12 rounded-2xl font-black bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                className="flex-[2] h-12 rounded-2xl font-black bg-prim hover:bg-prim/70 text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
                 disabled={isPending}
               >
                 {isPending ? "Creating..." : "Create Subject"}

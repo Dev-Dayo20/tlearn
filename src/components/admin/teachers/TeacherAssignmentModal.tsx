@@ -32,53 +32,35 @@ export function TeacherAssignmentModal({
   onClose,
   teacher,
 }: TeacherAssignmentModalProps) {
-  const [selectedClassId, setSelectedClassId] = useState<string>("");
-  const [selectedArmId, setSelectedArmId] = useState<string>("");
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
 
   const { mutate: assignTeacher, isPending } = useAssignTeacher();
 
-  // Fetch classes for dropdown
-  const { data: classData, isLoading: loadingClasses } = useQuery({
-    queryKey: ["classes-list"],
+  // Fetch all subjects for dropdown
+  const { data: subjectData, isLoading: loadingSubjects } = useQuery({
+    queryKey: ["subjects", "all"],
     queryFn: async () => {
-      const res = await api.get("/sch-admin/classes/list");
+      const res = await api.get("/sch-admin/subjects/all");
       return res.data;
     },
     enabled: open,
   });
 
-  // Fetch subjects for dropdown
-  // Note: Usually subjects are tied to classes, but here we'll list all for now or filter by class
-  const { data: subjectData, isLoading: loadingSubjects } = useQuery({
-    queryKey: ["subjects-list", selectedClassId],
-    queryFn: async () => {
-      // If we have a classId, we might want to fetch subjects for that class
-      // For now, let's fetch all subjects
-      const endpoint = selectedClassId
-        ? `/sch-admin/subjects?classId=${selectedClassId}`
-        : "/sch-admin/subjects";
-      const res = await api.get(endpoint);
-      return res.data;
-    },
-    enabled: open,
-  });
+  const selectedSubject = subjectData?.data?.find(
+    (sub: any) => String(sub.id) === selectedSubjectId,
+  );
 
   const handleAssign = () => {
-    if (!teacher) return;
+    if (!teacher || !selectedSubjectId) return;
 
     assignTeacher(
       {
         teacherId: teacher.id,
-        classId: selectedClassId ? Number(selectedClassId) : undefined,
-        armId: selectedArmId ? Number(selectedArmId) : undefined,
-        subjectId: selectedSubjectId ? Number(selectedSubjectId) : undefined,
+        subjectId: Number(selectedSubjectId),
       },
       {
         onSuccess: () => {
           onClose();
-          setSelectedClassId("");
-          setSelectedArmId("");
           setSelectedSubjectId("");
         },
       },
@@ -95,39 +77,12 @@ export function TeacherAssignmentModal({
           <DialogDescription>
             Assign{" "}
             <span className="text-primary font-bold">{teacher?.name}</span> to a
-            class and subject.
+            subject and its associated class.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
           <div className="space-y-4">
-            <div className="grid gap-2">
-              <Label className="font-bold flex items-center gap-2">
-                <GraduationCap className="h-4 w-4" /> Select Class
-              </Label>
-              <Select
-                value={selectedClassId}
-                onValueChange={setSelectedClassId}
-              >
-                <SelectTrigger className="rounded-xl h-12">
-                  <SelectValue placeholder="Choose a class" />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  {loadingClasses ? (
-                    <div className="p-2 flex items-center justify-center">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </div>
-                  ) : (
-                    classData?.classes?.map((cls: any) => (
-                      <SelectItem key={cls.id} value={String(cls.id)}>
-                        {cls.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-
             <div className="grid gap-2">
               <Label className="font-bold flex items-center gap-2">
                 <BookOpen className="h-4 w-4" /> Select Subject
@@ -139,20 +94,48 @@ export function TeacherAssignmentModal({
                 <SelectTrigger className="rounded-xl h-12">
                   <SelectValue placeholder="Choose a subject" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl">
+                <SelectContent className="rounded-xl max-h-[280px] overflow-y-auto">
                   {loadingSubjects ? (
                     <div className="p-2 flex items-center justify-center">
                       <Loader2 className="h-4 w-4 animate-spin" />
                     </div>
                   ) : (
-                    subjectData?.subjects?.map((sub: any) => (
+                    subjectData?.data?.map((sub: any) => (
                       <SelectItem key={sub.id} value={String(sub.id)}>
-                        {sub.name}
+                        <div className="flex flex-col">
+                          <span className="font-medium">{sub.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {sub.class?.name || "No Class Assigned"}
+                          </span>
+                        </div>
                       </SelectItem>
                     ))
                   )}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Display associated class smoothly */}
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                selectedSubject
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-2 pointer-events-none h-0"
+              }`}
+            >
+              <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Assigned Class
+                  </p>
+                  <p className="text-lg font-bold text-primary">
+                    {selectedSubject?.class?.name || "N/A"}
+                  </p>
+                </div>
+                <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <GraduationCap className="h-6 w-6 text-primary" />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -166,9 +149,9 @@ export function TeacherAssignmentModal({
               Cancel
             </Button>
             <Button
-              className="flex-2 bg-primary hover:bg-primary/90 rounded-xl h-12 px-8 font-bold shadow-lg shadow-primary/20"
+              className="flex-2 bg-prim hover:bg-prim/90 rounded-xl h-12 px-8 font-bold shadow-lg shadow-prim/20"
               onClick={handleAssign}
-              disabled={isPending || (!selectedClassId && !selectedSubjectId)}
+              disabled={isPending || !selectedSubjectId}
             >
               {isPending ? (
                 <>

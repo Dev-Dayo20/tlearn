@@ -34,6 +34,7 @@ import {
 import { useUpdateStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
 import { Student } from "@/types/types";
 import { toast } from "sonner";
+import { ImageCropperModal } from "./ImageCropperModal";
 
 interface UpdateStudentModalProps {
   open: boolean;
@@ -54,6 +55,8 @@ export function UpdateStudentModal({
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
 
   const { mutate: updateStudent, isPending } = useUpdateStudent(
     student?.id || 0,
@@ -106,11 +109,20 @@ export function UpdateStudentModal({
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-        setPhotoFile(file);
+        setSelectedImageUrl(reader.result as string);
+        setCropperOpen(true);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCropConfirm = async (croppedBlob: Blob) => {
+    const croppedFile = new File([croppedBlob], "profile-picture.jpg", {
+      type: "image/jpeg",
+    });
+    setPhotoFile(croppedFile);
+    setPhotoPreview(URL.createObjectURL(croppedBlob));
+    setCropperOpen(false);
   };
 
   const uploadPhotoToCloudinary = async (): Promise<string | null> => {
@@ -291,7 +303,7 @@ export function UpdateStudentModal({
                               <SelectValue placeholder="Select Class" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="rounded-2xl shadow-xl">
+                          <SelectContent className="rounded-2xl shadow-xl max-h-[280px] overflow-y-auto">
                             {classes?.map((cls: any) => (
                               <SelectItem
                                 key={cls.id}
@@ -339,7 +351,7 @@ export function UpdateStudentModal({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="rounded-2xl shadow-xl">
+                          <SelectContent className="rounded-2xl shadow-xl max-h-[280px] overflow-y-auto">
                             <SelectItem
                               value="null"
                               className="rounded-xl font-medium"
@@ -422,6 +434,15 @@ export function UpdateStudentModal({
           </form>
         </Form>
       </DialogContent>
+
+      {selectedImageUrl && (
+        <ImageCropperModal
+          image={selectedImageUrl}
+          open={cropperOpen}
+          onClose={() => setCropperOpen(false)}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </Dialog>
   );
 }

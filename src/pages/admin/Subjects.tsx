@@ -181,7 +181,7 @@ const Subjects = ({ school }: SubjectsProps) => {
               className="group relative flex flex-col overflow-hidden rounded-3xl border bg-card p-6 shadow-soft transition-all duration-300 hover:shadow-xl hover:border-primary/20 hover:-translate-y-1 cursor-pointer"
             >
               <div className="mb-5 flex items-start justify-between">
-                <div className="rounded-2xl bg-primary/10 p-3 text-primary transition-transform duration-300 group-hover:scale-110">
+                <div className="rounded-2xl bg-prim/10 p-3 text-prim transition-transform duration-300 group-hover:scale-110">
                   <BookOpen className="h-6 w-6" />
                 </div>
                 <DropdownMenu>

@@ -196,7 +196,7 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
             </Button>
             <Button
               type="submit"
-              className="flex-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-12 px-8 font-bold shadow-lg shadow-primary/20"
+              className="flex-2 bg-prim hover:bg-prim/90 text-white rounded-xl h-12 px-8 font-bold shadow-lg shadow-prim/20"
               disabled={isPending}
             >
               {isPending ? (

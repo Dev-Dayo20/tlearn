@@ -210,7 +210,7 @@ export const StudentDetailsSheet: React.FC<StudentDetailsSheetProps> = ({
 
           <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={() => setIsUpdateOpen(true)}
               className="h-12 rounded-xl border-2 font-bold text-prim hover:bg-prim hover:text-white transition-all"
             >

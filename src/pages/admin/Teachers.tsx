@@ -10,6 +10,7 @@ import {
   UserCheck,
   BookOpen as BookIcon,
   GraduationCap as TeacherIcon,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { TeacherModal } from "@/components/admin/teachers/TeacherModal";
 import { TeacherAssignmentModal } from "@/components/admin/teachers/TeacherAssignmentModal";
+import { TeacherDetailsSheet } from "@/components/admin/modals/TeacherDetailsSheet";
 
 interface TeachersProps {
   school: SchoolDomainResponse;
@@ -38,6 +40,7 @@ const Teachers = ({ school }: TeachersProps) => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showDetailsSheet, setShowDetailsSheet] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [page, setPage] = useState(1);
 
@@ -56,6 +59,11 @@ const Teachers = ({ school }: TeachersProps) => {
   const handleAssign = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
     setShowAssignModal(true);
+  };
+
+  const handleViewDetails = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+    setShowDetailsSheet(true);
   };
 
   const handleCreate = () => {
@@ -128,7 +136,7 @@ const Teachers = ({ school }: TeachersProps) => {
       {isLoading ? (
         <div className="flex h-[400px] items-center justify-center">
           <div className="flex flex-col items-center gap-2">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-prim"></div>
             <p className="text-sm text-muted-foreground font-medium">
               Loading faculty...
             </p>
@@ -162,6 +170,7 @@ const Teachers = ({ school }: TeachersProps) => {
               viewMode={viewMode}
               onEdit={() => handleEdit(teacher)}
               onAssign={() => handleAssign(teacher)}
+              onViewDetails={() => handleViewDetails(teacher)}
             />
           ))}
         </div>
@@ -210,6 +219,17 @@ const Teachers = ({ school }: TeachersProps) => {
         }}
         teacher={selectedTeacher}
       />
+
+      <TeacherDetailsSheet
+        open={showDetailsSheet}
+        onClose={() => {
+          setShowDetailsSheet(false);
+          setSelectedTeacher(null);
+        }}
+        teacher={selectedTeacher}
+        onEdit={handleEdit}
+        onAssign={handleAssign}
+      />
     </div>
   );
 };
@@ -219,11 +239,13 @@ const TeacherCard = ({
   viewMode,
   onEdit,
   onAssign,
+  onViewDetails,
 }: {
   teacher: Teacher;
   viewMode: "grid" | "list";
   onEdit: () => void;
   onAssign: () => void;
+  onViewDetails: () => void;
 }) => {
   const isGrid = viewMode === "grid";
 
@@ -248,6 +270,12 @@ const TeacherCard = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40 rounded-xl">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={onViewDetails}
+              >
+                <Eye className="mr-2 h-4 w-4" /> View Details
+              </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer" onClick={onEdit}>
                 <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
               </DropdownMenuItem>
@@ -273,13 +301,13 @@ const TeacherCard = ({
           )}
         >
           <AvatarImage src={teacher.profilePicture || ""} />
-          <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
+          <AvatarFallback className="bg-prim/5 text-prim text-xl font-bold">
             {teacher.name.charAt(0)}
           </AvatarFallback>
         </Avatar>
 
         <div className={isGrid ? "" : "flex-1"}>
-          <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+          <h3 className="font-bold text-lg leading-tight group-hover:text-prim transition-colors">
             {teacher.name.toLocaleUpperCase()}
           </h3>
           <div
@@ -322,7 +350,7 @@ const TeacherCard = ({
               <Badge
                 key={sub.id}
                 variant="secondary"
-                className="text-[10px] font-medium bg-primary/5 text-primary border-none"
+                className="text-[10px] font-medium bg-prim/5 text-prim border-none"
               >
                 {sub.name}
               </Badge>
@@ -338,6 +366,14 @@ const TeacherCard = ({
 
       {!isGrid && (
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded-lg h-8"
+            onClick={onViewDetails}
+          >
+            View
+          </Button>
           <Button
             variant="outline"
             size="sm"

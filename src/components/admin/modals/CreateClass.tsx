@@ -187,7 +187,7 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
                       {arms.length > 1 && (
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="secondary"
                           size="icon"
                           className="h-12 w-12 rounded-2xl text-rose-500 hover:bg-rose-50"
                           onClick={() =>
@@ -202,8 +202,8 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
                   ))}
                   <Button
                     type="button"
-                    variant="outline"
-                    className="w-full h-11 rounded-2xl border-dashed border-2 hover:border-primary/50 hover:bg-primary/5 font-bold transition-all"
+                    variant="ghost"
+                    className="w-full h-11 rounded-2xl  hover:border-accent/50 hover:bg-accent/20 text-prim hover:text-prim font-bold transition-all"
                     onClick={() => setArms([...arms, ""])}
                     disabled={isPending}
                   >
@@ -226,7 +226,7 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
               </Button>
               <Button
                 type="submit"
-                className="flex-[2] h-12 rounded-2xl font-black bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                className="flex-[2] h-12 rounded-2xl font-black bg-prim hover:bg-prim/70 text-white shadow-xl shadow-prim/20 transition-all active:scale-[0.98]"
                 disabled={isPending}
               >
                 {isPending ? "Creating..." : "Create Class"}

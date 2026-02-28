@@ -371,6 +371,21 @@ export interface TeachersResponse {
   };
 }
 
+export interface TeacherDetailResponse {
+  success: boolean;
+  data: Teacher & {
+    teachingSubjects: Array<{
+      id: number;
+      name: string;
+      classId: number;
+      class: {
+        id: number;
+        name: string;
+      };
+    }>;
+  };
+}
+
 export interface TeacherAssignmentData {
   teacherId: number;
   classId?: number;

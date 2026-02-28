@@ -13,7 +13,11 @@ import {
   UpdateStudentInput,
 } from "@/schema/createStudentSchema";
 import { SubjectType } from "@/schema/SubjectSchema";
-import { SubjectsFetchRes, SubjectsAllRes } from "@/types/types";
+import {
+  SubjectsFetchRes,
+  SubjectsAllRes,
+  TeacherDetailResponse,
+} from "@/types/types";
 
 export const loginSchool = async (data: SchoolLoginData, schoolId: number) => {
   const payload = { ...data, schoolId };
@@ -118,8 +122,19 @@ export const updateTeacher = async (id: number, data: any) => {
   return response.data;
 };
 
+export const fetchTeacherById = async (
+  id: number,
+): Promise<TeacherDetailResponse> => {
+  const { data } = await api.get(`/sch-admin/teacher/${id}`);
+  return data;
+};
+
 export const assignTeacher = async (data: TeacherAssignmentData) => {
-  const response = await api.post("/sch-admin/teachers/assign", data);
+  const { teacherId, ...payload } = data;
+  const response = await api.patch(
+    `/sch-admin/teacher/${teacherId}/assign`,
+    payload,
+  );
   return response.data;
 };
 

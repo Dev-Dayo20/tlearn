@@ -125,14 +125,14 @@ export const SubjectDetailsSheet: React.FC<SubjectDetailsSheetProps> = ({
       <SheetContent className="sm:max-w-[500px] p-0 flex flex-col h-full bg-background">
         <SheetHeader className="p-6 bg-primary/5 border-b space-y-4">
           <div className="flex items-center justify-between">
-            <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="h-12 w-12 rounded-2xl bg-prim/10 text-prim flex items-center justify-center">
               <BookOpen className="h-6 w-6" />
             </div>
             <div className="flex items-center gap-2">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
-                className="h-9 w-9 rounded-xl border-2 hover:bg-primary hover:text-white"
+                className="h-9 w-9 rounded-xl border-2 hover:bg-prim hover:text-white"
                 onClick={() => onEdit?.(subject)}
               >
                 <Pencil className="h-4 w-4" />

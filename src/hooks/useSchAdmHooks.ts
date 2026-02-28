@@ -34,6 +34,7 @@ import {
   createSubject,
   updateSubject,
   deleteSubject,
+  fetchTeacherById,
 } from "@/services/api/admin/schLoginApi";
 import { SubjectType } from "@/schema/SubjectSchema";
 
@@ -64,7 +65,7 @@ export const useSchUsersAuth = (schoolId: number) => {
     },
     onError: (error: any) => {
       const errorMessage =
-        error.response?.data?.error ||
+        error.response?.data?.message ||
         error.message ||
         "Login failed. Please try again.";
       toast.error(errorMessage, { duration: 5000 });
@@ -81,7 +82,7 @@ export const useCreateClass = () => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to create class");
+      toast.error(error.response?.data?.message || "Failed to create class");
     },
   });
 };
@@ -144,6 +145,14 @@ export const useGetTeachers = (
   });
 };
 
+export const useGetTeacherById = (id: number | undefined) => {
+  return useQuery({
+    queryKey: ["teacher", id],
+    queryFn: () => fetchTeacherById(id!),
+    enabled: !!id,
+  });
+};
+
 export const useCreateTeacher = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -153,7 +162,7 @@ export const useCreateTeacher = () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to create teacher");
+      toast.error(error.response?.data?.message || "Failed to create teacher");
     },
   });
 };
@@ -167,7 +176,7 @@ export const useUpdateTeacher = (id: number) => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to update teacher");
+      toast.error(error.response?.data?.message || "Failed to update teacher");
     },
   });
 };
@@ -181,7 +190,7 @@ export const useAssignTeacher = () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Assignment failed");
+      toast.error(error.response?.data?.message || "Assignment failed");
     },
   });
 };
@@ -195,7 +204,7 @@ export const useUpdateStudent = (id: number) => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to update student");
+      toast.error(error.response?.data?.message || "Failed to update student");
     },
   });
 };
@@ -209,7 +218,7 @@ export const useDeleteStudent = () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to delete student");
+      toast.error(error.response?.data?.message || "Failed to delete student");
     },
   });
 };
@@ -242,7 +251,7 @@ export const useCreateSubject = () => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to create subject");
+      toast.error(error.response?.data?.message || "Failed to create subject");
     },
   });
 };
@@ -256,7 +265,7 @@ export const useUpdateSubject = (id: number) => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to update subject");
+      toast.error(error.response?.data?.message || "Failed to update subject");
     },
   });
 };
@@ -270,7 +279,7 @@ export const useDeleteSubject = () => {
       queryClient.invalidateQueries({ queryKey: ["subjects"] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to delete subject");
+      toast.error(error.response?.data?.message || "Failed to delete subject");
     },
   });
 };

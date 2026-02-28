@@ -26,7 +26,7 @@ export const ClassEmptyState = ({
 }: ClassEmptyStateProps) => {
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-destructive/5 rounded-3xl border border-dashed border-destructive/20 animate-in fade-in zoom-in duration-500 max-w-4xl mx-auto w-full">
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center  rounded-3xl border border-dashed border-destructive/20 animate-in fade-in zoom-in duration-500 max-w-4xl mx-auto w-full">
         <div className="relative mb-6">
           <div className="absolute -inset-4 bg-destructive/10 rounded-full blur-2xl animate-pulse" />
           <AlertCircle className="h-16 w-16 text-destructive relative" />

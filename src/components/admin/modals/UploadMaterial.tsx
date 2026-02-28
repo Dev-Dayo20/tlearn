@@ -394,7 +394,7 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
             <Button
               type="submit"
               disabled={isUploading || !file}
-              className="flex-[2] h-12 rounded-2xl font-black bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
+              className="flex-[2] h-12 rounded-2xl font-black bg-prim hover:bg-prim/70 text-white shadow-xl shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
             >
               {isUploading ? (
                 <>

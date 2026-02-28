@@ -67,8 +67,8 @@ export const TeacherEmptyState = ({
 
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-card/30 rounded-3xl border border-dashed border-muted-foreground/20 animate-in fade-in zoom-in duration-500">
-      <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 ring-8 ring-primary/5">
-        <UsersRound className="h-12 w-12 text-primary" />
+      <div className="w-24 h-24 bg-prim/10 rounded-full flex items-center justify-center mb-6 ring-8 ring-prim/5">
+        <UsersRound className="h-12 w-12 text-prim" />
       </div>
       <h3 className="text-3xl font-black text-foreground mb-3">
         Onboard Your Teaching Staff
