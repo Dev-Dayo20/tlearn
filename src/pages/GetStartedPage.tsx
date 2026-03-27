@@ -98,7 +98,7 @@ const GetStartedPage = () => {
                           <Input
                             id="schoolName"
                             required
-                            placeholder="e.g. Oxford Academy"
+                            placeholder="e.g. Global Academy"
                             className="bg-secondary/30"
                           />
                         </div>
@@ -298,8 +298,7 @@ const GetStartedPage = () => {
                       </h3>
                       <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                         Skip the form and chat directly with our onboarding team
-                        on WhatsApp. We typically set up student accounts in
-                        under 10 minutes.
+                        on WhatsApp.
                       </p>
 
                       <a
