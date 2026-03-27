@@ -18,6 +18,7 @@ import { StudentLayout } from "@/components/student/StudentLayout";
 import StudentDashboard from "@/pages/student/Dashboard";
 import Lessons from "@/pages/student/Lessons";
 import Exams from "@/pages/student/Exams";
+import TakeExam from "@/pages/student/TakeExam";
 import StudentSettings from "@/pages/student/Settings";
 
 import Teachers from "@/pages/admin/Teachers";
@@ -75,6 +76,7 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
         <Route path="dashboard" element={<StudentDashboard />} />
         <Route path="lessons" element={<Lessons />} />
         <Route path="exams" element={<Exams />} />
+        <Route path="exams/:id" element={<TakeExam />} />
         <Route path="settings" element={<StudentSettings />} />
       </Route>
     </>

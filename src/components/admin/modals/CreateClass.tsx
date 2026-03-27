@@ -25,6 +25,7 @@ import { X } from "lucide-react";
 import { createClassSchema, ClassType } from "@/schema/ClassSchema";
 import { useCreateClass } from "@/hooks/useSchAdmHooks";
 import api from "@/services/api/super-admin/super-admin";
+import { formatTitleCase } from "@/lib/utils";
 
 import { TeacherForDropdownRes } from "@/types/types";
 
@@ -142,7 +143,7 @@ export function CreateClass({ open, onClose }: CreateClassModalProps) {
                     {!loadingTeachers &&
                       teacherData?.teachers?.map((teacher) => (
                         <SelectItem key={teacher.id} value={String(teacher.id)}>
-                          {teacher.name}
+                          {formatTitleCase(teacher.name)}
                         </SelectItem>
                       ))}
                   </SelectContent>

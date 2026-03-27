@@ -16,9 +16,9 @@ import {
   BarChart3,
 } from "lucide-react";
 import loginHero from "@/assets/loginHero.webp";
-import { UserRoles } from "@/types/types";
 import RoleSwitcher from "@/components/RoleSwitcher";
-import { School, SchoolDomainResponse } from "@/types/types";
+import { School, SchoolDomainResponse, UserRoles } from "@/types/types";
+import { toast } from "sonner";
 
 import { useSchUsersAuth } from "@/hooks/useSchAdmHooks";
 import {
@@ -284,6 +284,17 @@ export default function LoginSchoolAdmin({
                         </Label>
                         <button
                           type="button"
+                          onClick={() => {
+                            if (currentRole === "ADMIN") {
+                              toast.info(
+                                "Please contact TLearn Support to reset your password.",
+                              );
+                            } else if (currentRole === "TEACHER") {
+                              toast.info(
+                                "Please contact your School Administrator to reset your password.",
+                              );
+                            }
+                          }}
                           className="text-xs font-medium text-primary hover:text-primary/80 transition-colors"
                         >
                           Forgot password?
@@ -349,17 +360,6 @@ export default function LoginSchoolAdmin({
               </p>
             </div>
           </div>
-        </div>
-        {/* Role hints */}
-        <div className="mt-4 sm:mt-6 text-center">
-          <p className="text-xs text-muted-foreground">
-            {/* {currentRole === "admin" &&
-              "Use admin.tlearn.com for direct admin access"}
-            {currentRole === "teacher" &&
-              "Teachers can also access via teacher.tlearn.com"}
-            {currentRole === "student" &&
-              "Students can also access via student.tlearn.com"} */}
-          </p>
         </div>
         {/* Decorative elements */}
         <div className="pointer-events-none absolute right-0 top-0 h-96 w-96 -translate-y-1/2 translate-x-1/2 rounded-full bg-accent/5 blur-3xl" />

@@ -1,11 +1,22 @@
 import { z } from "zod";
 
 export const createStudentSchema = z.object({
-  name: z.string().min(2).max(100),
-  classId: z.number().int().positive(),
-  armId: z.number().int().positive().optional(),
+  name: z
+    .string()
+    .min(2, "Student name is required")
+    .max(100, "Student name is too long"),
+  classId: z
+    .number({ required_error: "Please select a class" })
+    .int()
+    .positive("Please select a valid class"),
+  armId: z.number().int().positive("Please select a valid arm").optional(),
   dateOfBirth: z.string().optional().or(z.literal("")),
-  profilePicture: z.string().url().nullable().optional().or(z.literal("")),
+  profilePicture: z
+    .string()
+    .url("Invalid image URL")
+    .nullable()
+    .optional()
+    .or(z.literal("")),
 });
 
 export const updateStudentSchema = z.object({

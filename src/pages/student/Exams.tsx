@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -17,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const Exams = () => {
+  const navigate = useNavigate();
   const availableExams = [
     {
       id: 1,
@@ -104,7 +106,10 @@ const Exams = () => {
                     </div>
                   </div>
                   <div className="flex items-center shrink-0">
-                    <Button className="w-full sm:w-auto rounded-xl px-8 py-6 group">
+                    <Button
+                      onClick={() => navigate(`/student/exams/${exam.id}`)}
+                      className="w-full sm:w-auto rounded-xl px-8 py-6 group"
+                    >
                       Proceed to Exam
                       <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>

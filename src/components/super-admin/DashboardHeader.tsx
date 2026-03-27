@@ -1,4 +1,4 @@
-import { Bell, User } from "lucide-react";
+import { Bell, User, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,11 +13,17 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { logoutUser } from "@/services/api/super-admin/super-admin";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export function DashboardHeader() {
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const handleLogout = () => {
     logoutUser();
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -28,9 +34,23 @@ export function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Theme Toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          className="rounded-xl"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5 text-muted-foreground" />
+          ) : (
+            <Moon className="h-5 w-5 text-muted-foreground" />
+          )}
+        </Button>
+
         {/* Notifications */}
         <Button variant="ghost" size="icon" className="relative">
-          <Bell className="w-5 h-5" />
+          <Bell className="w-5 h-5 text-muted-foreground" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
         </Button>
 

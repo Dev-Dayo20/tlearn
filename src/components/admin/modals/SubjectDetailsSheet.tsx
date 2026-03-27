@@ -27,6 +27,8 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api/super-admin/super-admin";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatusBadge } from "@/utils/statusbadge";
+import { formatTitleCase } from "@/lib/utils";
+import { sub } from "date-fns";
 
 interface SubjectDetailsSheetProps {
   open: boolean;
@@ -148,8 +150,8 @@ export const SubjectDetailsSheet: React.FC<SubjectDetailsSheetProps> = ({
             </div>
           </div>
           <div className="space-y-1">
-            <SheetTitle className="text-2xl font-bold uppercase tracking-tight">
-              {subject.name}
+            <SheetTitle className="text-2xl font-bold tracking-tight">
+              {formatTitleCase(subject.name)}
             </SheetTitle>
             <div className="flex flex-wrap gap-2">
               {subject.code && (
@@ -216,7 +218,7 @@ export const SubjectDetailsSheet: React.FC<SubjectDetailsSheetProps> = ({
                     </Avatar>
                     <div className="flex flex-col">
                       <span className="font-bold text-sm tracking-tight">
-                        {subject.teacher.name}
+                        {formatTitleCase(subject.teacher.name)}
                       </span>
                       <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
                         Primary Instructor

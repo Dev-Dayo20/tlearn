@@ -33,6 +33,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatTitleCase } from "@/lib/utils";
 
 interface SubjectsProps {
   school: SchoolDomainResponse;
@@ -227,7 +228,7 @@ const Subjects = ({ school }: SubjectsProps) => {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors">
-                    {subject.name.toUpperCase()}
+                    {formatTitleCase(subject.name)}
                   </h3>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {subject.code && (

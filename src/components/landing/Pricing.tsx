@@ -3,25 +3,25 @@ import { Check, Star, School } from "lucide-react";
 
 const Pricing = () => {
   const plans = [
+    // {
+    //   name: "Monthly Plan",
+    //   price: "₦1,000",
+    //   period: "per student/month",
+    //   description: "Perfect for trying out TLearn",
+    //   features: [
+    //     "Full curriculum access",
+    //     "Video lessons on demand",
+    //     "Progress tracking",
+    //     "Mobile & desktop access",
+    //     "Parent/School dashboard",
+    //   ],
+    //   popular: false,
+    // },
     {
       name: "Monthly Plan",
-      price: "₦1,000",
+      price: "₦3, 000",
       period: "per student/month",
-      description: "Perfect for trying out TLearn",
-      features: [
-        "Full curriculum access",
-        "Video lessons on demand",
-        "Progress tracking",
-        "Mobile & desktop access",
-        "Parent/School dashboard",
-      ],
-      popular: false,
-    },
-    {
-      name: "Termly Plan",
-      price: "₦1,500",
-      period: "per student/term",
-      description: "Most popular - Save 25%",
+      description: "Most popular",
       features: [
         "Everything in Monthly",
         "3 months full access",
@@ -50,7 +50,7 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+        <div className="max-w-lg mx-auto mb-16">
           {plans.map((plan, index) => (
             <div
               key={index}
@@ -76,9 +76,9 @@ const Pricing = () => {
                 <h3 className="text-2xl font-bold text-foreground mb-3">
                   {plan.name}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                {/* <p className="text-muted-foreground text-sm leading-relaxed mb-6">
                   {plan.description}
-                </p>
+                </p> */}
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-5xl font-black text-prim tracking-tight">
                     {plan.price}
@@ -107,6 +107,7 @@ const Pricing = () => {
               <Button
                 variant={plan.popular ? "default" : "outline"}
                 size="lg"
+                onClick={() => (window.location.href = "/get-started")}
                 className={`w-full h-14 rounded-2xl font-bold text-base transition-all ${
                   plan.popular
                     ? "bg-success hover:bg-success/90 text-success-foreground shadow-lg shadow-success/20"

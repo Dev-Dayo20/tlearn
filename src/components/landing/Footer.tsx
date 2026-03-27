@@ -77,17 +77,17 @@ const Footer = () => {
                   <Phone className="w-4 h-4 text-accent" />
                 </div>
                 <a
-                  href="tel:+2341234567890"
+                  href="tel:+2347086928592"
                   className="hover:text-accent transition-colors"
                 >
-                  +234 123 456 7890
+                  +234 708 692 8592
                 </a>
               </div>
               <div className="flex items-center gap-3 text-sm text-white/80 dark:text-muted-foreground group">
                 <div className="p-2 bg-white/10 dark:bg-card/40 rounded-lg group-hover:bg-accent/20 transition-colors">
                   <MapPin className="w-4 h-4 text-accent" />
                 </div>
-                <span>Lagos, Nigeria</span>
+                <span>Katsina, Nigeria</span>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ const Footer = () => {
           </div>
 
           {/* Resources */}
-          <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          {/* <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <h3 className="font-bold text-lg mb-6 text-white dark:text-foreground tracking-tight underline decoration-accent/30 decoration-2 underline-offset-8">
               Resources
             </h3>
@@ -128,10 +128,10 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* For Schools */}
-          <div className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          {/* <div className="animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <h3 className="font-bold text-lg mb-6 text-white dark:text-foreground tracking-tight underline decoration-accent/30 decoration-2 underline-offset-8">
               For Schools
             </h3>
@@ -147,7 +147,7 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </div>
 
         {/* Social Links & Copyright */}

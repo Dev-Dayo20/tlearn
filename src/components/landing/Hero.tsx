@@ -63,7 +63,7 @@ const Hero = () => {
                 variant="default"
                 size="lg"
                 className="bg-accent text-accent-foreground hover:bg-accent/90 px-8 rounded-full font-bold shadow-lg shadow-accent/20"
-                // onClick={() => navigate("/school-admin/login")}
+                onClick={() => navigate("/get-started")}
               >
                 Get Started Now
                 <ArrowRight className="ml-2 h-5 w-5" />

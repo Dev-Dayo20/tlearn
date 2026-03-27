@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -24,22 +25,37 @@ import {
   useFetchClassesList,
   useGetTeachers,
 } from "@/hooks/useSchAdmHooks";
+import { formatTitleCase } from "@/lib/utils";
 
 interface CreateSubjectModalProps {
   open: boolean;
   onClose: () => void;
+  defaultClassId?: number;
 }
 
-export function CreateSubject({ open, onClose }: CreateSubjectModalProps) {
+export function CreateSubject({
+  open,
+  onClose,
+  defaultClassId,
+}: CreateSubjectModalProps) {
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm<SubjectType>({
     resolver: zodResolver(subjectSchema),
   });
+
+  const classId = watch("classId");
+
+  useEffect(() => {
+    if (open && defaultClassId) {
+      setValue("classId", defaultClassId);
+    }
+  }, [open, defaultClassId, setValue]);
 
   const { data: classData, isLoading: loadingClasses } = useFetchClassesList();
   const { data: teacherData, isLoading: loadingTeachers } = useGetTeachers(
@@ -113,6 +129,7 @@ export function CreateSubject({ open, onClose }: CreateSubjectModalProps) {
               </Label>
               <Select
                 onValueChange={(value) => setValue("classId", Number(value))}
+                value={classId ? String(classId) : undefined}
               >
                 <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold">
                   <SelectValue placeholder="Select a class" />
@@ -123,7 +140,7 @@ export function CreateSubject({ open, onClose }: CreateSubjectModalProps) {
                   ) : (
                     classData?.classes?.map((cls: any) => (
                       <SelectItem key={cls.id} value={String(cls.id)}>
-                        {cls.name}
+                        {formatTitleCase(cls.name)}
                       </SelectItem>
                     ))
                   )}
@@ -156,7 +173,7 @@ export function CreateSubject({ open, onClose }: CreateSubjectModalProps) {
                   ) : (
                     teacherData?.teachers?.map((teacher) => (
                       <SelectItem key={teacher.id} value={String(teacher.id)}>
-                        {teacher.name.toUpperCase()}
+                        {formatTitleCase(teacher.name)}
                       </SelectItem>
                     ))
                   )}

@@ -41,6 +41,7 @@ import {
 import { useCreateStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
 import { toast } from "sonner";
 import { ImageCropperModal } from "./ImageCropperModal";
+import { formatTitleCase } from "@/lib/utils";
 
 interface RegisterStudentModalProps {
   open: boolean;
@@ -310,7 +311,7 @@ export function RegisterStudents({
                                 value={cls.id.toString()}
                                 className="rounded-xl font-medium"
                               >
-                                {cls.name}
+                                {formatTitleCase(cls.name)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -352,7 +353,7 @@ export function RegisterStudents({
                                 value={arm.id.toString()}
                                 className="rounded-xl font-medium"
                               >
-                                {arm.name}
+                                {formatTitleCase(arm.name)}
                               </SelectItem>
                             ))}
                           </SelectContent>

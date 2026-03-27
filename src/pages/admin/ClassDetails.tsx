@@ -38,11 +38,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { cn, formatTitleCase } from "@/lib/utils";
 import api from "@/services/api/super-admin/super-admin";
 import { RegisterStudents } from "@/components/admin/modals/RegisterStudent";
 import { UpdateStudentModal } from "@/components/admin/modals/UpdateStudentModal";
 import { ConfirmationModal } from "@/components/admin/modals/ConfirmationModal";
+import { CreateSubject } from "@/components/admin/modals/CreateSubject";
 import { useDeleteStudent } from "@/hooks/useSchAdmHooks";
 import { Student } from "@/types/types";
 
@@ -60,6 +61,7 @@ const ClassDetail = () => {
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddSubjectModalOpen, setIsAddSubjectModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -160,7 +162,7 @@ const ClassDetail = () => {
                     key={subject.id}
                     className="rounded-lg bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground"
                   >
-                    {subject.name}
+                    {formatTitleCase(subject.name)}
                   </span>
                 ))}
               </div>
@@ -258,7 +260,7 @@ const ClassDetail = () => {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {student.name}
+                          {formatTitleCase(student.name)}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {student.email}
@@ -267,7 +269,7 @@ const ClassDetail = () => {
                     </div>
                     {student.arm && (
                       <Badge variant="outline" className="bg-secondary/50">
-                        {student.arm.name}
+                        {formatTitleCase(student.arm.name)}
                       </Badge>
                     )}
                   </div>
@@ -304,11 +306,11 @@ const ClassDetail = () => {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">
-                          {subject.name}
+                          {formatTitleCase(subject.name)}
                         </p>
                         {subject.teacher && (
                           <p className="text-xs text-muted-foreground">
-                            Teacher: {subject.teacher.name}
+                            Teacher: {formatTitleCase(subject.teacher.name)}
                           </p>
                         )}
                       </div>
@@ -441,7 +443,10 @@ const ClassDetail = () => {
         {/* Subjects Tab */}
         <TabsContent value="subjects" className="space-y-4">
           <div className="flex justify-end">
-            <Button variant="success">
+            <Button
+              variant="success"
+              onClick={() => setIsAddSubjectModalOpen(true)}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Add Subject
             </Button>
@@ -459,11 +464,11 @@ const ClassDetail = () => {
                   </div>
                 </div>
                 <h4 className="mb-1 font-semibold text-foreground">
-                  {subject.name}
+                  {formatTitleCase(subject.name)}
                 </h4>
                 {subject.teacher && (
                   <p className="text-sm text-muted-foreground">
-                    Teacher: {subject.teacher.name}
+                    Teacher: {formatTitleCase(subject.teacher.name)}
                   </p>
                 )}
               </div>
@@ -484,6 +489,12 @@ const ClassDetail = () => {
       <RegisterStudents
         open={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        defaultClassId={classData.id}
+      />
+
+      <CreateSubject
+        open={isAddSubjectModalOpen}
+        onClose={() => setIsAddSubjectModalOpen(false)}
         defaultClassId={classData.id}
       />
 

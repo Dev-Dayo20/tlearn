@@ -156,7 +156,7 @@ export const TeacherDetailsSheet: React.FC<TeacherDetailsSheetProps> = ({
                 teachingSubjects.map((sub: any) => (
                   <div
                     key={sub.id}
-                    className="flex flex-col gap-2 p-4 rounded-2xl bg-accent/50 border border-accent/20"
+                    className="flex flex-col gap-2 p-4 rounded-2xl bg-accent/10 border border-accent/20"
                   >
                     <div className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-lg bg-prim/10 flex items-center justify-center">

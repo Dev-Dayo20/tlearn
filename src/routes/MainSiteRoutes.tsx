@@ -1,5 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "@/pages/LandingPage";
+import FeaturesPage from "@/pages/FeaturesPage";
+import PricingPage from "@/pages/PricingPage";
+import WhyTLearnPage from "@/pages/WhyTLearnPage";
+import GetStartedPage from "@/pages/GetStartedPage";
 import LoginSuperAdmin from "@/pages/super-admin/LoginSuperAdmin";
 import DashboardLayout from "@/pages/super-admin/DashboardLayout";
 import Dashboard from "@/pages/super-admin/Dashboard";
@@ -13,6 +17,10 @@ export const MainSiteRoutes = () => {
   return (
     <>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/features" element={<FeaturesPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/why-tlearn" element={<WhyTLearnPage />} />
+      <Route path="/get-started" element={<GetStartedPage />} />
       <Route path="/super-admin/login" element={<LoginSuperAdmin />} />
 
       <Route

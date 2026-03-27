@@ -9,6 +9,7 @@ import { useSuperAdminLogin } from "@/hooks/useSuperAdminLogin";
 import { LoginSuperAdminData } from "@/utils/validation";
 import { loginSuperAdminSchema } from "@/utils/validation";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const LoginSuperAdmin = () => {
   const { mutate: login, isPending } = useSuperAdminLogin();
@@ -131,6 +132,11 @@ const LoginSuperAdmin = () => {
                 <div className="text-center">
                   <button
                     type="button"
+                    onClick={() =>
+                      toast.info(
+                        "Please contact TLearn Support to reset your password.",
+                      )
+                    }
                     className="text-sm text-primary hover:underline disabled:opacity-50"
                     disabled={isPending}
                   >
