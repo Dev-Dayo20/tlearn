@@ -60,7 +60,7 @@ import { StudentEmptyState } from "./StudentEmptyState";
 import { Download, FileDown, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { fetchDashboardStats } from "@/services/api/admin/schLoginApi";
-import { useDeleteStudent } from "@/hooks/useSchAdmHooks";
+import { useDeleteStudent, useFetchClassesList } from "@/hooks/useSchAdmHooks";
 
 import { ConfirmationModal } from "@/components/admin/modals/ConfirmationModal";
 import { UpdateStudentModal } from "@/components/admin/modals/UpdateStudentModal";
@@ -75,8 +75,9 @@ const fetchStudents = async (
 ) => {
   const params: any = { page, limit };
   if (search) params.search = search;
-  if (classId && classId.trim() !== "") params.classId = classId;
-  if (armId && armId.trim() !== "") params.armId = armId;
+  if (classId && classId.trim() !== "" && classId !== "all")
+    params.classId = classId;
+  if (armId && armId.trim() !== "" && armId !== "all") params.armId = armId;
 
   const response = await api.get(`/sch-admin/students`, { params });
   return response.data;
@@ -88,6 +89,14 @@ const StudentsLists = () => {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedArm, setSelectedArm] = useState<string>("");
+
+  const { data: classesData } = useFetchClassesList();
+  const classes = classesData?.classes || [];
+  const selectedClassObj = classes.find(
+    (cls: any) => cls.id?.toString() === selectedClass,
+  );
+  const arms = selectedClassObj?.arms || [];
+
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [studentToEdit, setStudentToEdit] = useState<Student | null>(null);
   const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
@@ -239,40 +248,53 @@ const StudentsLists = () => {
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           <Button
             onClick={handleExportCSV}
-            variant="outline"
-            className="h-11 rounded-xl px-4 border-blue-200 bg-blue-50/50 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300 font-bold text-xs group w-full md:w-auto"
+            className="h-11 rounded-xl px-4 hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] w-full md:w-auto"
           >
-            <Download className="h-4 w-4 mr-2 text-blue-600 group-hover:text-white transition-colors" />
+            <Download className="h-4 w-4 mr-2 group-hover:text-white transition-colors" />
             Export CSV
           </Button>
           <div className="h-8 w-px bg-muted mx-1 hidden md:block" />
-          <Select value={selectedClass} onValueChange={setSelectedClass}>
+          <Select
+            value={selectedClass || "all"}
+            onValueChange={(val) => {
+              setSelectedClass(val === "all" ? "" : val);
+              setSelectedArm("");
+            }}
+          >
             <SelectTrigger className="w-full md:w-[160px] h-11 rounded-xl bg-background border-muted-foreground/20">
               <SelectValue placeholder="All Classes" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value=" ">All Classes</SelectItem>
-              <SelectItem value="1">Primary One</SelectItem>
-              <SelectItem value="4">JSS ONE</SelectItem>
+              <SelectItem value="all">All Classes</SelectItem>
+              {classes.map((cls: any) => (
+                <SelectItem key={cls.id} value={cls.id.toString()}>
+                  {cls.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <Select value={selectedArm} onValueChange={setSelectedArm}>
+          <Select
+            value={selectedArm || "all"}
+            onValueChange={(val) => setSelectedArm(val === "all" ? "" : val)}
+          >
             <SelectTrigger className="w-full md:w-[140px] h-11 rounded-xl bg-background border-muted-foreground/20">
               <SelectValue placeholder="All Arms" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value=" ">All Arms</SelectItem>
-              <SelectItem value="1">Butterfly</SelectItem>
-              <SelectItem value="13">Tiger</SelectItem>
+              <SelectItem value="all">All Arms</SelectItem>
+              {arms.map((arm: any) => (
+                <SelectItem key={arm.id} value={arm.id.toString()}>
+                  {arm.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <div className="h-8 w-px bg-muted mx-1 hidden md:block" />
           <Button
-            variant="prim"
             onClick={() => setIsRegisterModalOpen(true)}
-            className="h-11 rounded-xl px-6 hover:bg-sky-500/90 text-white font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] w-full md:w-auto"
+            className="h-11 rounded-xl px-4 hover:bg-green-500/90 text-white font-bold shadow-lg shadow-green-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] w-full md:w-auto"
           >
-            <Plus className="h-4.5 w-4.5 mr-2" />
+            <Plus className="h-4 w-4 mr-2 group-hover:text-white transition-colors" />
             Add Student
           </Button>
         </div>

@@ -388,11 +388,11 @@ export function UpdateStudentModal({
                         <div className="relative">
                           <Input
                             type="date"
-                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-amber-500/20 transition-all font-semibold pl-12"
+                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-amber-500/20 transition-all font-semibold pl-12 dark:[color-scheme:dark]"
                             {...field}
                             value={field.value || ""}
                           />
-                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-amber-500 dark:text-amber-400 pointer-events-none" />
                         </div>
                       </FormControl>
                       <FormMessage className="font-bold text-rose-500" />

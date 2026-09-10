@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { RegisterStudents } from "@/components/admin/modals/RegisterStudent";
 import { SchoolDomainResponse } from "@/types/types";
 import StudentsLists from "@/components/admin/students/StudentsLists";
-import { Button } from "@/components/ui/button";
-import { UserPlus } from "lucide-react";
 
 interface StudentsProps {
   school: SchoolDomainResponse;
@@ -21,14 +19,6 @@ const Students = ({ school }: StudentsProps) => {
             View and manage all students in {school.school?.name}
           </p>
         </div>
-        {/* <Button
-          onClick={() => setShowRegisterModal(true)}
-          variant="prim"
-          className="w-full sm:w-auto"
-        >
-          <UserPlus className="w-4 h-4 mr-2" />
-          Add Student
-        </Button> */}
       </div>
 
       <StudentsLists />

@@ -35,7 +35,7 @@ const GetStartedPage = () => {
   };
 
   const contactPhone = "+234 708 692 8592";
-  const contactEmail = "hello@tlearn.ng"; // Placeholder email as discussed
+  const contactEmail = "[EMAIL_ADDRESS]"; // Placeholder email as discussed
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

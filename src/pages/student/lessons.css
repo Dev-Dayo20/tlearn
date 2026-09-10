@@ -1,0 +1,256 @@
+/* ---------------------------------------------------------------------
+   TLearn design tokens — Lessons page (Light & Dark Mode Support)
+   Derived from the brand's HSL variables. Matches the global tokens 1:1
+   and seamlessly toggles when dark mode is enabled on html/body.
+   --------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- LIGHT MODE TOKENS --- */
+.tl-scope {
+  --background: 0 0% 100%;
+  --foreground: 232 59% 15%;
+  --card-bg: 0 0% 100%;
+  --primary: 232 59% 30%;
+  --primary-foreground: 0 0% 100%;
+  --prim: 196 99% 37%;
+  --prim-foreground: 0 0% 100%;
+  --success: 141 70% 39%;
+  --success-foreground: 0 0% 100%;
+  --accent: 47 100% 51%;
+  --accent-foreground: 232 59% 30%;
+  --secondary: 232 50% 96%;
+  --secondary-foreground: 232 59% 30%;
+  --muted: 232 30% 95%;
+  --muted-foreground: 232 20% 50%;
+  --border: 232 30% 90%;
+  --radius: 0.75rem;
+
+  --gradient-primary: linear-gradient(135deg, hsl(196 99% 37%) 0%, hsl(232 59% 40%) 100%);
+  --gradient-success: linear-gradient(135deg, hsl(141 70% 39%) 0%, hsl(141 70% 49%) 100%);
+  --gradient-hero: linear-gradient(135deg, hsl(196 99% 37%) 0%, hsl(232 59% 30%) 100%);
+  --gradient-accent: linear-gradient(135deg, hsl(47 100% 51%) 0%, hsl(47 100% 61%) 100%);
+
+  --shadow-sm: 0 2px 8px hsl(232 59% 30% / 0.08);
+  --shadow-md: 0 4px 16px hsl(232 59% 30% / 0.12);
+  --shadow-lg: 0 8px 32px hsl(232 59% 30% / 0.16);
+
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background: hsl(var(--secondary) / 0.55);
+  color: hsl(var(--foreground));
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.tl-display { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
+
+.tl-page-bg {
+  background:
+    radial-gradient(1100px 420px at 100% -10%, hsl(196 99% 37% / 0.08), transparent 60%),
+    radial-gradient(900px 380px at -10% 0%, hsl(47 100% 51% / 0.10), transparent 55%),
+    hsl(var(--secondary) / 0.45);
+}
+
+.tl-card {
+  background: hsl(var(--card-bg));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, background-color .25s ease;
+}
+.tl-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+  border-color: hsl(196 99% 37% / 0.35);
+}
+
+.tl-search:focus-within {
+  border-color: hsl(var(--prim));
+  box-shadow: 0 0 0 4px hsl(196 99% 37% / 0.15);
+}
+
+.tl-chip {
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--card-bg));
+  transition: all .18s ease;
+}
+.tl-chip[data-active="true"] {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.tl-chip:not([data-active="true"]):hover {
+  border-color: hsl(196 99% 37% / 0.4);
+  color: hsl(var(--primary));
+}
+
+/* Faded simple fill banner styling */
+.tl-banner-faded {
+  position: relative;
+  height: 5.5rem;
+  overflow: hidden;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tl-video-container {
+  position: relative;
+  height: 11.5rem;
+  width: 100%;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+/* Sort dropdown button hover styling - Ensures light hover bg with crystal clear text */
+.tl-sort-btn {
+  border-color: hsl(var(--border));
+  color: hsl(var(--primary));
+  background-color: hsl(var(--card-bg));
+  transition: all 0.2s ease;
+}
+.tl-sort-btn:hover {
+  background-color: hsl(var(--muted)) !important;
+  color: hsl(var(--primary)) !important;
+  border-color: hsl(196 99% 37% / 0.4) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Glassmorphism translucent badge */
+.tl-icon-badge {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+.tl-icon-badge:hover {
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+.tl-new-badge {
+  background: hsl(var(--accent) / 0.18);
+  color: hsl(232 59% 30%);
+  border: 1px solid hsl(var(--accent) / 0.3);
+}
+
+.tl-progress-track { background: hsl(var(--muted)); border-radius: 999px; overflow: hidden; }
+.tl-progress-fill { background: var(--gradient-primary); border-radius: 999px; }
+
+.tl-btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  transition: filter .2s ease, transform .2s ease;
+}
+.tl-btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+.tl-ring-track { stroke: hsl(var(--muted)); }
+.tl-stat-icon { box-shadow: var(--shadow-sm); }
+
+
+/* --- DARK MODE OVERRIDES --- */
+.dark .tl-scope,
+.dark.tl-scope,
+:root.dark .tl-scope {
+  --background: 232 50% 9%;
+  --foreground: 210 40% 98%;
+  --card-bg: 232 42% 14%;
+  --primary: 196 95% 65%;
+  --primary-foreground: 232 59% 10%;
+  --prim: 196 95% 55%;
+  --prim-foreground: 0 0% 100%;
+  --success: 141 70% 48%;
+  --success-foreground: 0 0% 100%;
+  --accent: 47 100% 55%;
+  --accent-foreground: 232 59% 10%;
+  --secondary: 232 40% 16%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 232 30% 22%;
+  --muted-foreground: 232 20% 75%;
+  --border: 232 28% 24%;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.dark .tl-page-bg,
+.dark.tl-page-bg,
+:root.dark .tl-page-bg {
+  background:
+    radial-gradient(1100px 420px at 100% -10%, hsl(196 99% 37% / 0.15), transparent 60%),
+    radial-gradient(900px 380px at -10% 0%, hsl(47 100% 51% / 0.08), transparent 55%),
+    hsl(var(--background));
+}
+
+.dark .tl-card,
+.dark.tl-card,
+:root.dark .tl-card {
+  background: hsl(var(--card-bg));
+  border-color: hsl(var(--border));
+}
+
+.dark .tl-card:hover,
+.dark.tl-card:hover,
+:root.dark .tl-card:hover {
+  border-color: hsl(196 95% 55% / 0.45);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+}
+
+.dark .tl-chip,
+.dark.tl-chip,
+:root.dark .tl-chip {
+  background: hsl(var(--secondary));
+  border-color: hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .tl-chip[data-active="true"],
+:root.dark .tl-chip[data-active="true"] {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.dark .tl-chip:not([data-active="true"]):hover,
+:root.dark .tl-chip:not([data-active="true"]):hover {
+  border-color: hsl(196 95% 55% / 0.5);
+  color: hsl(var(--primary));
+}
+
+.dark .tl-search:focus-within,
+:root.dark .tl-search:focus-within {
+  border-color: hsl(var(--prim));
+  box-shadow: 0 0 0 4px hsl(196 99% 45% / 0.25);
+}
+
+.dark .tl-sort-btn,
+:root.dark .tl-sort-btn {
+  background-color: hsl(var(--card-bg));
+  border-color: hsl(var(--border));
+  color: hsl(var(--primary));
+}
+
+.dark .tl-sort-btn:hover,
+:root.dark .tl-sort-btn:hover {
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--primary)) !important;
+  border-color: hsl(196 95% 55% / 0.5) !important;
+}
+
+.dark .tl-new-badge,
+:root.dark .tl-new-badge {
+  background: hsl(var(--accent) / 0.2);
+  color: hsl(47 100% 70%);
+  border-color: hsl(var(--accent) / 0.35);
+}
+
+.dark .tl-banner-faded,
+:root.dark .tl-banner-faded {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}

@@ -135,7 +135,7 @@ const ClassDetail = () => {
           <div className="flex-1">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <h2 className="text-2xl font-bold text-foreground">
-                {classData.name}
+                {formatTitleCase(classData.name)}
               </h2>
               <Badge
                 variant="outline"

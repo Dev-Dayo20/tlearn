@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { teacherSchema, TeacherFormValues } from "@/schema/teacherSchema";
 import { useCreateTeacher, useUpdateTeacher } from "@/hooks/useSchAdmHooks";
 import { Teacher } from "@/types/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 interface TeacherModalProps {
@@ -45,6 +45,16 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
       password: "",
     },
   });
+
+  const handleResetForm = () => {
+    reset({
+      name: "",
+      email: "",
+      phoneNumber: "",
+      profilePicture: "",
+      password: "",
+    });
+  };
 
   useEffect(() => {
     if (teacher) {
@@ -96,25 +106,40 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] rounded-3xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black">
-            {isEditing ? "Edit Teacher Profile" : "Register New Teacher"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the teacher's personal information and login credentials."
-              : "Fill in the details to onboard a new teacher to your school faculty."}
-          </DialogDescription>
+          <div className="flex items-start justify-between gap-3 pr-6">
+            <div>
+              <DialogTitle className="text-2xl font-black text-foreground">
+                {isEditing ? "Edit Teacher Profile" : "Register New Teacher"}
+              </DialogTitle>
+              <DialogDescription className="text-sm font-medium text-muted-foreground mt-1">
+                {isEditing
+                  ? "Update the teacher's personal information and login credentials."
+                  : "Fill in the details to onboard a new teacher to your school faculty."}
+              </DialogDescription>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleResetForm}
+              title="Reset all fields"
+              className="rounded-xl h-8 px-2.5 text-xs font-bold border-muted-foreground/20 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-sm shrink-0 gap-1.5"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Reset
+            </Button>
+          </div>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pt-4">
           <div className="space-y-4">
             <div className="grid gap-2">
-              <Label htmlFor="name" className="font-bold">
+              <Label htmlFor="name" className="font-bold text-foreground">
                 Full Name
               </Label>
               <Input
                 id="name"
                 placeholder="e.g. John Doe"
-                className="rounded-xl h-11"
+                className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold"
                 {...register("name")}
                 disabled={isPending}
               />
@@ -126,14 +151,14 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="email" className="font-bold">
+              <Label htmlFor="email" className="font-bold text-foreground">
                 Email Address
               </Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="teacher@school.com"
-                className="rounded-xl h-11"
+                className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold"
                 {...register("email")}
                 disabled={isPending}
               />
@@ -145,13 +170,16 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="phoneNumber" className="font-bold">
+              <Label
+                htmlFor="phoneNumber"
+                className="font-bold text-foreground"
+              >
                 Phone Number (Optional)
               </Label>
               <Input
                 id="phoneNumber"
                 placeholder="+234..."
-                className="rounded-xl h-11"
+                className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold"
                 {...register("phoneNumber")}
                 disabled={isPending}
               />
@@ -163,7 +191,7 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="password" className="font-bold">
+              <Label htmlFor="password" className="font-bold text-foreground">
                 {isEditing
                   ? "New Password (Leave blank to keep current)"
                   : "Password"}
@@ -172,7 +200,7 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="rounded-xl h-11"
+                className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold"
                 {...register("password")}
                 disabled={isPending}
               />
@@ -184,11 +212,21 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="rounded-xl h-12 font-bold gap-1.5 px-4 border-muted-foreground/20 hover:bg-muted text-foreground transition-all"
+              onClick={handleResetForm}
+              disabled={isPending}
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset
+            </Button>
             <Button
               type="button"
               variant="ghost"
-              className="flex-1 rounded-xl h-12 font-bold"
+              className="flex-1 rounded-xl h-12 font-bold hover:bg-muted transition-all"
               onClick={onClose}
               disabled={isPending}
             >
@@ -196,7 +234,7 @@ export function TeacherModal({ open, onClose, teacher }: TeacherModalProps) {
             </Button>
             <Button
               type="submit"
-              className="flex-2 bg-prim hover:bg-prim/90 text-white rounded-xl h-12 px-8 font-bold shadow-lg shadow-prim/20"
+              className="flex-2 bg-prim hover:bg-prim/90 text-white rounded-xl h-12 px-6 font-bold shadow-lg shadow-prim/20 transition-all active:scale-[0.98]"
               disabled={isPending}
             >
               {isPending ? (

@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   FileText,
+  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutUser } from "@/services/api/super-admin/super-admin";
@@ -26,6 +27,7 @@ const navItems = [
   },
   { title: "My Lessons", path: "/student/lessons", icon: BookOpen },
   { title: "Exams", path: "/student/exams", icon: FileText },
+  { title: "Leaderboard", path: "/student/leaderboard", icon: Trophy },
   { title: "Settings", path: "/student/settings", icon: Settings },
 ];
 

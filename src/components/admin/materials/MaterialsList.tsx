@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Search,
@@ -24,9 +24,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useDebounce } from "@/hooks/useDebounce";
 import { fetchMaterials } from "@/services/api/admin/schLoginApi";
-import { useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { useFetchClassesList, useGetAllSubjects } from "@/hooks/useSchAdmHooks";
 import { MaterialCard } from "./MaterialCards";
-import { MaterialsResponse, Material } from "@/types/types";
+import { MaterialsResponse, Material, Subject } from "@/types/types";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -48,27 +48,18 @@ import { Trash2, AlertTriangle, Loader2 } from "lucide-react";
 
 // Material Skeleton Component
 const MaterialSkeletonGrid = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    {[...Array(8)].map((_, i) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[...Array(6)].map((_, i) => (
       <div
         key={i}
-        className="rounded-2xl border bg-card p-4 space-y-4 shadow-sm"
+        className="p-6 rounded-3xl bg-card border border-muted/50 space-y-4"
       >
-        <Skeleton className="h-40 w-full rounded-xl" />
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <Skeleton className="h-8 w-full rounded-lg" />
-          <Skeleton className="h-8 w-full rounded-lg" />
-        </div>
-        <div className="pt-4 border-t flex justify-between">
-          <Skeleton className="h-4 w-20" />
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-8 rounded-lg" />
-            <Skeleton className="h-8 w-16 rounded-lg" />
-          </div>
+        <Skeleton className="h-6 w-3/4 rounded-lg" />
+        <Skeleton className="h-4 w-full rounded-lg" />
+        <Skeleton className="h-4 w-1/2 rounded-lg" />
+        <div className="flex gap-2 pt-2">
+          <Skeleton className="h-8 w-20 rounded-full" />
+          <Skeleton className="h-8 w-20 rounded-full" />
         </div>
       </div>
     ))}
@@ -101,9 +92,27 @@ const MaterialsList = () => {
   const { data: classesData } = useFetchClassesList();
   const classes = classesData?.classes || [];
 
+  const { data: subjectsData } = useGetAllSubjects();
+  const subjects = subjectsData?.data || [];
+
   // Find selected class to get its arms
   const arms =
     classes.find((c: any) => c.id.toString() === selectedClass)?.arms || [];
+
+  // Filter subjects belonging to selected class
+  const classSubjects = useMemo(() => {
+    if (selectedClass === "all") return subjects;
+    return subjects.filter((subject: Subject) => {
+      if (!subject.classId) return true;
+      return subject.classId.toString() === selectedClass;
+    });
+  }, [subjects, selectedClass]);
+
+  // Reset arm and subject when class changes
+  useEffect(() => {
+    setSelectedArm("all");
+    setSelectedSubject("all");
+  }, [selectedClass]);
 
   const { data, isLoading, isError } = useQuery<MaterialsResponse>({
     queryKey: [
@@ -300,13 +309,30 @@ const MaterialsList = () => {
               <Select
                 value={selectedSubject}
                 onValueChange={setSelectedSubject}
+                disabled={selectedClass === "all"}
               >
-                <SelectTrigger className="h-11 rounded-xl bg-background border-muted-foreground/20 transition-all hover:border-primary/50">
-                  <SelectValue placeholder="All Subjects" />
+                <SelectTrigger
+                  className={cn(
+                    "h-11 rounded-xl bg-background border-muted-foreground/20 transition-all hover:border-primary/50",
+                    selectedClass === "all" &&
+                      "opacity-60 cursor-not-allowed bg-muted/20",
+                  )}
+                >
+                  <SelectValue
+                    placeholder={
+                      selectedClass === "all"
+                        ? "Select Class Level First"
+                        : "All Subjects"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl shadow-xl border-muted/50">
                   <SelectItem value="all">All Subjects</SelectItem>
-                  {/* Subject list would go here */}
+                  {classSubjects.map((subject: Subject) => (
+                    <SelectItem key={subject.id} value={subject.id.toString()}>
+                      {subject.name.toUpperCase()}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

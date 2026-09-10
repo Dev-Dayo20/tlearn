@@ -117,7 +117,7 @@ export function MaterialCard({
             <Button
               variant="secondary"
               size="icon"
-              className="h-8 w-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm border border-muted/50"
+              className="h-8 w-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 hover:bg-white dark:hover:bg-slate-800 backdrop-blur-sm shadow-sm border border-muted/50 dark:border-slate-700/60 transition-colors"
             >
               <MoreVertical className="h-4 w-4" />
             </Button>

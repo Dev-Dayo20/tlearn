@@ -24,6 +24,7 @@ import {
   Camera,
   Calendar,
   GraduationCap,
+  RotateCcw,
 } from "lucide-react";
 import {
   Form,
@@ -80,6 +81,18 @@ export function RegisterStudents({
     },
   });
 
+  const handleResetForm = () => {
+    form.reset({
+      name: "",
+      classId: defaultClassId,
+      armId: defaultArmId,
+      dateOfBirth: "",
+      profilePicture: "",
+    });
+    setPhotoPreview(null);
+    setPhotoFile(null);
+  };
+
   // Pre-fill when default values change (e.g. when modal opens with specific class)
   useEffect(() => {
     if (open) {
@@ -98,17 +111,17 @@ export function RegisterStudents({
     const file = e.target.files?.[0];
     if (file) {
       if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-        toast.error("Please upload a valid image file (JPEG, PNG, or WebP)");
+        toast.error("Invalid file type. Please upload a JPG, PNG, or WebP.");
         return;
       }
-
       if (file.size > MAX_FILE_SIZE) {
-        toast.error("Image size must be less than 5MB");
+        toast.error("File is too large. Maximum size is 5MB.");
         return;
       }
 
+      setPhotoFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onload = () => {
         setSelectedImageUrl(reader.result as string);
         setCropperOpen(true);
       };
@@ -116,54 +129,54 @@ export function RegisterStudents({
     }
   };
 
-  const handleCropConfirm = async (croppedBlob: Blob) => {
-    const croppedFile = new File([croppedBlob], "profile-picture.jpg", {
+  const handleCropConfirm = (croppedBlob: Blob) => {
+    const file = new File([croppedBlob], "student-avatar.jpg", {
       type: "image/jpeg",
     });
-    setPhotoFile(croppedFile);
+    setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(croppedBlob));
     setCropperOpen(false);
   };
 
-  const uploadPhotoToCloudinary = async (): Promise<string | null> => {
-    if (!photoFile) return null;
-
-    setIsUploadingPhoto(true);
-    const formData = new FormData();
-    formData.append("file", photoFile);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    formData.append("folder", "tlearn/schools");
-
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to upload image");
-      }
-
-      const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      console.error("Cloudinary upload error:", error);
-      toast.error("Failed to upload profile picture");
-      return null;
-    } finally {
-      setIsUploadingPhoto(false);
+  const uploadPhotoToCloudinary = async (file: File): Promise<string> => {
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+      throw new Error("Cloudinary configuration missing");
     }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "school_system/students");
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to upload image to Cloudinary");
+    }
+
+    const data = await response.json();
+    return data.secure_url;
   };
 
   const onSubmit = async (data: CreateStudentType) => {
-    let profilePictureUrl: string | null = null;
+    let profilePictureUrl = "";
 
     if (photoFile) {
-      profilePictureUrl = await uploadPhotoToCloudinary();
-      if (!profilePictureUrl) return;
+      setIsUploadingPhoto(true);
+      try {
+        profilePictureUrl = await uploadPhotoToCloudinary(photoFile);
+      } catch (error) {
+        toast.error("Photo upload failed. Please try again.");
+        setIsUploadingPhoto(false);
+        return;
+      }
+      setIsUploadingPhoto(false);
     }
 
     const submitData = {
@@ -187,18 +200,31 @@ export function RegisterStudents({
         {/* Header Section */}
         <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8 border-b border-muted/50 sticky top-0 z-10 backdrop-blur-md">
           <DialogHeader className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
-                <GraduationCap className="w-8 h-8" />
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                  <GraduationCap className="w-8 h-8" />
+                </div>
+                <div>
+                  <DialogTitle className="text-3xl font-black tracking-tight text-foreground">
+                    Register Student
+                  </DialogTitle>
+                  <DialogDescription className="text-base font-medium text-muted-foreground mt-1">
+                    Onboard a new student to your academic community.
+                  </DialogDescription>
+                </div>
               </div>
-              <div>
-                <DialogTitle className="text-3xl font-black tracking-tight text-foreground">
-                  Register Student
-                </DialogTitle>
-                <DialogDescription className="text-base font-medium text-muted-foreground mt-1">
-                  Onboard a new student to your academic community.
-                </DialogDescription>
-              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleResetForm}
+                title="Reset all form fields"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl h-9 px-3 text-xs font-bold border-muted-foreground/20 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-sm shrink-0"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset
+              </Button>
             </div>
           </DialogHeader>
         </div>
@@ -377,10 +403,10 @@ export function RegisterStudents({
                         <div className="relative">
                           <Input
                             type="date"
-                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold pl-12"
+                            className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold pl-12 dark:[color-scheme:dark]"
                             {...field}
                           />
-                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
+                          <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary dark:text-primary-foreground/90 pointer-events-none" />
                         </div>
                       </FormControl>
                       <FormMessage className="font-bold text-rose-500" />
@@ -391,7 +417,17 @@ export function RegisterStudents({
             </div>
 
             {/* Submit Buttons */}
-            <div className="pt-8 border-t border-muted/50 flex flex-col sm:flex-row gap-4">
+            <div className="pt-8 border-t border-muted/50 flex flex-col sm:flex-row gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleResetForm}
+                className="h-12 rounded-2xl font-bold border-muted-foreground/20 hover:bg-muted text-foreground transition-all gap-2 px-5"
+                disabled={isPending || isUploadingPhoto}
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </Button>
               <Button
                 type="button"
                 variant="ghost"

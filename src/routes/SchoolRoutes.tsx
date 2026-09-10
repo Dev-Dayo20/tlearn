@@ -20,6 +20,7 @@ import Lessons from "@/pages/student/Lessons";
 import Exams from "@/pages/student/Exams";
 import TakeExam from "@/pages/student/TakeExam";
 import StudentSettings from "@/pages/student/Settings";
+import Leaderboard from "@/pages/student/Leaderboard";
 
 import Teachers from "@/pages/admin/Teachers";
 import Subjects from "@/pages/admin/Subjects";
@@ -78,6 +79,7 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
         <Route path="exams" element={<Exams />} />
         <Route path="exams/:id" element={<TakeExam />} />
         <Route path="settings" element={<StudentSettings />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
       </Route>
     </>
   );

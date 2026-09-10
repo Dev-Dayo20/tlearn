@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -87,6 +87,15 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
     (c: any) => c.id.toString() === selectedClassId,
   );
   const arms = selectedClass?.arms || [];
+
+  // Filter subjects belonging to the selected Class Level
+  const classSubjects = useMemo(() => {
+    if (!selectedClassId) return [];
+    return subjects.filter((subject: Subject) => {
+      if (!subject.classId) return true;
+      return subject.classId.toString() === selectedClassId;
+    });
+  }, [subjects, selectedClassId]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -236,7 +245,7 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
                       Click or drag & drop to upload
                     </p>
                     <p className="text-xs text-muted-foreground font-medium">
-                      MP4 100MB
+                      MP4, PDF up to 100MB
                     </p>
                   </div>
                 )}
@@ -283,13 +292,18 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
               />
             </div>
 
+            {/* Class Level Select */}
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
                 Class Level
               </Label>
               <Select
-                onValueChange={(v) => setValue("classId", v)}
-                defaultValue={watch("classId")}
+                onValueChange={(v) => {
+                  setValue("classId", v);
+                  setValue("armId", "all");
+                  setValue("subjectId", "all");
+                }}
+                value={watch("classId")}
               >
                 <SelectTrigger
                   className={cn(
@@ -297,7 +311,7 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
                     errors.classId && "border-rose-500",
                   )}
                 >
-                  <SelectValue placeholder="Select Class" />
+                  <SelectValue placeholder="Select Class Level" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl shadow-xl">
                   {classes.map((c: any) => (
@@ -313,17 +327,28 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
               </Select>
             </div>
 
+            {/* Class Arm Select */}
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
                 Class Arm (Optional)
               </Label>
               <Select
                 onValueChange={(v) => setValue("armId", v)}
-                defaultValue={watch("armId")}
+                value={watch("armId")}
                 disabled={!selectedClassId}
               >
-                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 transition-all font-semibold">
-                  <SelectValue placeholder="All Arms" />
+                <SelectTrigger
+                  className={cn(
+                    "h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 transition-all font-semibold",
+                    !selectedClassId &&
+                      "opacity-60 cursor-not-allowed bg-muted/20",
+                  )}
+                >
+                  <SelectValue
+                    placeholder={
+                      !selectedClassId ? "Select Class Level First" : "All Arms"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl shadow-xl">
                   <SelectItem value="all" className="rounded-xl font-medium">
@@ -342,20 +367,34 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
               </Select>
             </div>
 
-            <div className="space-y-2">
+            {/* Subject Select - Disabled until Class Level is selected */}
+            <div className="space-y-2 md:col-span-2 sm:col-span-1">
               <Label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
                 Subject
               </Label>
               <Select
                 onValueChange={(v) => setValue("subjectId", v)}
-                defaultValue={watch("subjectId")}
+                value={watch("subjectId")}
+                disabled={!selectedClassId}
               >
-                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 transition-all font-semibold">
-                  <SelectValue placeholder="Select Subject" />
+                <SelectTrigger
+                  className={cn(
+                    "h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 transition-all font-semibold",
+                    !selectedClassId &&
+                      "opacity-60 cursor-not-allowed bg-muted/20",
+                  )}
+                >
+                  <SelectValue
+                    placeholder={
+                      !selectedClassId
+                        ? "Select Class Level First"
+                        : "Select Subject"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl shadow-xl">
                   <SelectItem value="all" className="rounded-xl font-medium">
-                    All Subjects
+                    All Subjects for {selectedClass?.name || "Class"}
                   </SelectItem>
                   {loadingSubjects ? (
                     <SelectItem
@@ -365,8 +404,16 @@ export function UploadMaterial({ open, onClose }: UploadMaterialModalProps) {
                     >
                       Loading subjects...
                     </SelectItem>
+                  ) : classSubjects.length === 0 ? (
+                    <SelectItem
+                      value="none"
+                      disabled
+                      className="rounded-xl font-medium italic text-muted-foreground/50"
+                    >
+                      No subjects available for this class level
+                    </SelectItem>
                   ) : (
-                    subjects.map((subject: Subject) => (
+                    classSubjects.map((subject: Subject) => (
                       <SelectItem
                         key={subject.id}
                         value={subject.id.toString()}

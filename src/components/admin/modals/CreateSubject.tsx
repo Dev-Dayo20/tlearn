@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RotateCcw } from "lucide-react";
 import { subjectSchema, SubjectType } from "@/schema/SubjectSchema";
 import {
   useCreateSubject,
@@ -51,6 +52,16 @@ export function CreateSubject({
 
   const classId = watch("classId");
 
+  const handleReset = () => {
+    reset({
+      name: "",
+      code: "",
+      description: "",
+      classId: defaultClassId,
+      teacherId: undefined,
+    });
+  };
+
   useEffect(() => {
     if (open && defaultClassId) {
       setValue("classId", defaultClassId);
@@ -64,51 +75,74 @@ export function CreateSubject({
     100,
   );
 
-  const { mutate: addSubject, isPending } = useCreateSubject();
+  const { mutate: createSubject, isPending } = useCreateSubject();
 
   const handleClose = () => {
-    reset();
+    handleReset();
     onClose();
   };
 
   const onSubmit = (data: SubjectType) => {
-    addSubject(data, {
+    const formattedData = {
+      ...data,
+      name: data.name.trim(),
+      code: data.code.trim().toUpperCase(),
+      description: data.description?.trim() || undefined,
+      teacherId: data.teacherId ? Number(data.teacherId) : undefined,
+    };
+
+    createSubject(formattedData, {
       onSuccess: () => {
-        handleClose();
+        handleReset();
+        onClose();
       },
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[95vw] sm:max-w-[425px] p-0 overflow-hidden rounded-3xl border-none shadow-2xl">
-        {/* Premium Header */}
-        <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6 border-b border-muted/50">
+      <DialogContent className="w-[95%] sm:max-w-xl p-0 overflow-y-auto max-h-[90vh] rounded-3xl border-none shadow-2xl">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-primary/10 via-background to-background p-6 md:p-8 border-b border-muted/50 sticky top-0 z-10 backdrop-blur-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold tracking-tight">
-              Create New Subject
-            </DialogTitle>
-            <DialogDescription className="font-medium text-muted-foreground mt-1">
-              Add a new subject and assign it to a class and teacher.
-            </DialogDescription>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <DialogTitle className="text-2xl font-black text-foreground">
+                  Create New Subject
+                </DialogTitle>
+                <DialogDescription className="text-sm font-medium text-muted-foreground mt-1">
+                  Add a new subject to the curriculum and assign a teacher.
+                </DialogDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReset}
+                title="Reset form"
+                className="rounded-xl h-8 px-2.5 text-xs font-bold border-muted-foreground/20 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-sm shrink-0 gap-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Reset
+              </Button>
+            </div>
           </DialogHeader>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="max-h-[70vh] overflow-y-auto p-6 scrollbar-hide">
+        <div className="p-6 md:p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* SUBJECT NAME */}
+            {/* Subject Name */}
             <div className="space-y-2">
               <Label
                 htmlFor="name"
                 className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1"
               >
-                Subject Name
+                Subject Name <span className="text-rose-500">*</span>
               </Label>
               <Input
                 id="name"
-                placeholder="e.g., Mathematics, English Language..."
-                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 transition-all font-semibold"
+                placeholder="e.g. Mathematics, English Language, Physics"
+                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold"
                 {...register("name")}
                 disabled={isPending}
               />
@@ -119,17 +153,62 @@ export function CreateSubject({
               )}
             </div>
 
-            {/* CLASS SELECT */}
+            {/* Subject Code */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="code"
+                className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1"
+              >
+                Subject Code <span className="text-rose-500">*</span>
+              </Label>
+              <Input
+                id="code"
+                placeholder="e.g. MTH101, ENG, PHY"
+                className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold uppercase"
+                {...register("code")}
+                disabled={isPending}
+              />
+              {errors.code && (
+                <p className="text-xs font-bold text-rose-500 ml-1">
+                  {errors.code.message}
+                </p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="description"
+                className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1"
+              >
+                Description (Optional)
+              </Label>
+              <Textarea
+                id="description"
+                placeholder="Brief description of the subject..."
+                className="min-h-[100px] rounded-2xl bg-muted/30 border-muted-foreground/20 focus:ring-2 focus:ring-primary/20 font-semibold resize-none"
+                {...register("description")}
+                disabled={isPending}
+              />
+              {errors.description && (
+                <p className="text-xs font-bold text-rose-500 ml-1">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+
+            {/* Class Selection */}
             <div className="space-y-2">
               <Label
                 htmlFor="classId"
                 className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1"
               >
-                Assign to Class
+                Class <span className="text-rose-500">*</span>
               </Label>
               <Select
-                onValueChange={(value) => setValue("classId", Number(value))}
                 value={classId ? String(classId) : undefined}
+                onValueChange={(value) => setValue("classId", Number(value))}
+                disabled={!!defaultClassId}
               >
                 <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold">
                   <SelectValue placeholder="Select a class" />
@@ -153,7 +232,7 @@ export function CreateSubject({
               )}
             </div>
 
-            {/* TEACHER SELECT */}
+            {/* Assign Teacher */}
             <div className="space-y-2">
               <Label
                 htmlFor="teacherId"
@@ -171,7 +250,7 @@ export function CreateSubject({
                   {loadingTeachers ? (
                     <SelectItem value="loading">Loading teachers...</SelectItem>
                   ) : (
-                    teacherData?.teachers?.map((teacher) => (
+                    teacherData?.teachers?.map((teacher: any) => (
                       <SelectItem key={teacher.id} value={String(teacher.id)}>
                         {formatTitleCase(teacher.name)}
                       </SelectItem>
@@ -179,14 +258,19 @@ export function CreateSubject({
                   )}
                 </SelectContent>
               </Select>
-              {errors.teacherId && (
-                <p className="text-xs font-bold text-rose-500 ml-1">
-                  {errors.teacherId.message}
-                </p>
-              )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-muted/50">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 rounded-2xl font-bold border-muted-foreground/20 hover:bg-muted text-foreground gap-2 px-5"
+                onClick={handleReset}
+                disabled={isPending}
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </Button>
               <Button
                 type="button"
                 variant="ghost"

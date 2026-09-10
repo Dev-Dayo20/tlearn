@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Plus, Grid, List } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatTitleCase } from "@/lib/utils";
 import {
   Users,
   Clock,
@@ -145,7 +145,7 @@ const Classes = ({ school }: ClassProps) => {
             >
               <div className="mb-4 flex items-start justify-between">
                 <div>
-                  <h3 className="font-semibold">{cls.name}</h3>
+                  <h3 className="font-semibold">{formatTitleCase(cls.name)}</h3>
                   <p className="text-sm text-muted-foreground mt-1">
                     {cls.school.name}
                   </p>

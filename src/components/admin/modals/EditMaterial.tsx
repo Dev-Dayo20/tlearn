@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -20,13 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Pencil, Loader2, Save, AlertCircle } from "lucide-react";
+import { Pencil, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useFetchClassesList } from "@/hooks/useSchAdmHooks";
+import { useFetchClassesList, useGetAllSubjects } from "@/hooks/useSchAdmHooks";
 import { updateMaterial } from "@/services/api/admin/schLoginApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Material } from "@/types/types";
+import { Material, Subject } from "@/types/types";
 
 interface EditMaterialModalProps {
   open: boolean;
@@ -54,6 +54,10 @@ export function EditMaterial({
 
   const { data: classesData } = useFetchClassesList();
   const classes = classesData?.classes || [];
+
+  const { data: subjectsData, isLoading: loadingSubjects } =
+    useGetAllSubjects();
+  const subjects = subjectsData?.data || [];
 
   const {
     register,
@@ -90,6 +94,15 @@ export function EditMaterial({
     (c: any) => c.id.toString() === selectedClassId,
   );
   const arms = selectedClass?.arms || [];
+
+  // Filter subjects belonging to the selected Class Level
+  const classSubjects = useMemo(() => {
+    if (!selectedClassId) return [];
+    return subjects.filter((subject: Subject) => {
+      if (!subject.classId) return true;
+      return subject.classId.toString() === selectedClassId;
+    });
+  }, [subjects, selectedClassId]);
 
   const onSubmit = async (data: FormValues) => {
     if (!material) return;
@@ -184,16 +197,21 @@ export function EditMaterial({
               />
             </div>
 
+            {/* Class Level Select */}
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
                 Class Level
               </Label>
               <Select
-                onValueChange={(v) => setValue("classId", v)}
+                onValueChange={(v) => {
+                  setValue("classId", v);
+                  setValue("armId", "all");
+                  setValue("subjectId", "all");
+                }}
                 value={watch("classId")}
               >
                 <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold">
-                  <SelectValue placeholder="Select Class" />
+                  <SelectValue placeholder="Select Class Level" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl shadow-xl">
                   {classes.map((c: any) => (
@@ -209,6 +227,7 @@ export function EditMaterial({
               </Select>
             </div>
 
+            {/* Class Arm Select */}
             <div className="space-y-2">
               <Label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
                 Class Arm
@@ -216,9 +235,20 @@ export function EditMaterial({
               <Select
                 onValueChange={(v) => setValue("armId", v)}
                 value={watch("armId")}
+                disabled={!selectedClassId}
               >
-                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold">
-                  <SelectValue placeholder="All Arms" />
+                <SelectTrigger
+                  className={cn(
+                    "h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold",
+                    !selectedClassId &&
+                      "opacity-60 cursor-not-allowed bg-muted/20",
+                  )}
+                >
+                  <SelectValue
+                    placeholder={
+                      !selectedClassId ? "Select Class Level First" : "All Arms"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl shadow-xl">
                   <SelectItem value="all" className="rounded-xl font-medium">
@@ -237,30 +267,62 @@ export function EditMaterial({
               </Select>
             </div>
 
-            <div className="space-y-2">
+            {/* Subject Select - Disabled until Class Level is selected */}
+            <div className="space-y-2 md:col-span-2 sm:col-span-1">
               <Label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">
                 Subject
               </Label>
               <Select
                 onValueChange={(v) => setValue("subjectId", v)}
                 value={watch("subjectId")}
+                disabled={!selectedClassId}
               >
-                <SelectTrigger className="h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold">
-                  <SelectValue placeholder="Select Subject" />
+                <SelectTrigger
+                  className={cn(
+                    "h-12 rounded-2xl bg-muted/30 border-muted-foreground/20 font-semibold",
+                    !selectedClassId &&
+                      "opacity-60 cursor-not-allowed bg-muted/20",
+                  )}
+                >
+                  <SelectValue
+                    placeholder={
+                      !selectedClassId
+                        ? "Select Class Level First"
+                        : "Select Subject"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl shadow-xl">
                   <SelectItem value="all" className="rounded-xl font-medium">
-                    All Subjects
+                    All Subjects for {selectedClass?.name || "Class"}
                   </SelectItem>
-                  <SelectItem value="1" className="rounded-xl font-medium">
-                    Mathematics
-                  </SelectItem>
-                  <SelectItem value="2" className="rounded-xl font-medium">
-                    English Language
-                  </SelectItem>
-                  <SelectItem value="3" className="rounded-xl font-medium">
-                    Basic Science
-                  </SelectItem>
+                  {loadingSubjects ? (
+                    <SelectItem
+                      value="loading"
+                      disabled
+                      className="rounded-xl font-medium italic text-muted-foreground/50"
+                    >
+                      Loading subjects...
+                    </SelectItem>
+                  ) : classSubjects.length === 0 ? (
+                    <SelectItem
+                      value="none"
+                      disabled
+                      className="rounded-xl font-medium italic text-muted-foreground/50"
+                    >
+                      No subjects available for this class level
+                    </SelectItem>
+                  ) : (
+                    classSubjects.map((subject: Subject) => (
+                      <SelectItem
+                        key={subject.id}
+                        value={subject.id.toString()}
+                        className="rounded-xl font-medium"
+                      >
+                        {subject.name.toUpperCase()}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -279,7 +341,7 @@ export function EditMaterial({
             <Button
               type="submit"
               disabled={isUpdating}
-              className="flex-[2] h-12 rounded-2xl font-black bg-amber-500 hover:bg-amber-600 text-white shadow-xl shadow-amber-200 transition-all active:scale-95"
+              className="flex-[2] h-12 rounded-2xl font-black bg-amber-500 hover:bg-amber-600 text-white shadow-xl shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50"
             >
               {isUpdating ? (
                 <>
@@ -287,10 +349,7 @@ export function EditMaterial({
                   Updating...
                 </>
               ) : (
-                <>
-                  <Save className="mr-2 h-5 w-5" />
-                  Save Changes
-                </>
+                "Save Changes"
               )}
             </Button>
           </div>

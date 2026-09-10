@@ -7,6 +7,14 @@ interface User {
   email: string;
   role: "SUPER_ADMIN" | "ADMIN" | "STUDENT" | "TEACHER";
   name?: string;
+  profilePicture?: string | null;
+  registrationNumber?: string;
+  regNumber?: string;
+  studentId?: string | number;
+  class?: string | number | { id: number; name: string } | null;
+  className?: string;
+  arm?: string | { id: number; name: string } | null;
+  armName?: string;
 }
 
 interface AuthState {

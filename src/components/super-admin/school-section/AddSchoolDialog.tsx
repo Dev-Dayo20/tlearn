@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Eye, EyeOff, RotateCcw } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -40,9 +40,12 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
   const { mutate: addSchool, isPending } = useAddSchool();
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
+  const [showConfirmAdminPassword, setShowConfirmAdminPassword] =
+    useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [schoolToDelete, setSchoolToDelete] = useState<SchoolArray | null>(
-    null
+    null,
   );
 
   const { mutate: toggleStatus, isPending: isToggling } =
@@ -115,6 +118,22 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
     setLogoPreview(null);
   };
 
+  // Reset form fields and logo
+  const handleReset = () => {
+    reset({
+      schoolName: "",
+      subdomain: "",
+      schoolEmail: "",
+      address: "",
+      adminName: "",
+      adminEmail: "",
+      adminPassword: "",
+      confirmAdminPassword: "",
+    });
+    setLogoFile(null);
+    setLogoPreview(null);
+  };
+
   const onSubmit = (data: SchoolData) => {
     const { confirmAdminPassword, logo, ...submitData } = data;
 
@@ -136,7 +155,7 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
         setLogoFile(null);
         setLogoPreview(null);
         onOpenChange(false);
-        toast.success("School registered successfully!", );
+        toast.success("School registered successfully!");
       },
       onError: (error: any) => {
         if (
@@ -173,11 +192,28 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Add New School</DialogTitle>
-          <DialogDescription>
-            Register a new school on the platform. Fill in all required
-            information.
-          </DialogDescription>
+          <div className="flex items-start justify-between gap-4 pr-6">
+            <div>
+              <DialogTitle className="text-2xl font-black text-foreground">
+                Add New School
+              </DialogTitle>
+              <DialogDescription className="text-sm font-medium text-muted-foreground mt-1">
+                Register a new school on the platform. Fill in all required
+                information.
+              </DialogDescription>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              title="Reset all form fields"
+              className="rounded-xl h-8 px-2.5 text-xs font-bold border-muted-foreground/20 hover:bg-muted text-muted-foreground hover:text-foreground transition-all shadow-sm shrink-0 gap-1.5"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Reset
+            </Button>
+          </div>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -326,13 +362,27 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
 
             <div className="space-y-2">
               <Label htmlFor="adminPassword">Create Password *</Label>
-              <Input
-                id="adminPassword"
-                type="password"
-                placeholder="Min 8 chars, uppercase, lowercase, number"
-                disabled={isPending}
-                {...register("adminPassword")}
-              />
+              <div className="relative">
+                <Input
+                  id="adminPassword"
+                  type={showAdminPassword ? "text" : "password"}
+                  placeholder="Min 8 chars, uppercase, lowercase, number"
+                  disabled={isPending}
+                  className="pr-10"
+                  {...register("adminPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowAdminPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showAdminPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
               {errors.adminPassword && (
                 <p className="text-sm text-red-600">
                   {errors.adminPassword.message}
@@ -342,13 +392,27 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
 
             <div className="space-y-2">
               <Label htmlFor="confirmAdminPassword">Confirm Password *</Label>
-              <Input
-                id="confirmAdminPassword"
-                type="password"
-                placeholder="Re-enter password"
-                disabled={isPending}
-                {...register("confirmAdminPassword")}
-              />
+              <div className="relative">
+                <Input
+                  id="confirmAdminPassword"
+                  type={showConfirmAdminPassword ? "text" : "password"}
+                  placeholder="Re-enter password"
+                  disabled={isPending}
+                  className="pr-10"
+                  {...register("confirmAdminPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmAdminPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showConfirmAdminPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
               {errors.confirmAdminPassword && (
                 <p className="text-sm text-red-600">
                   {errors.confirmAdminPassword.message}
@@ -362,16 +426,30 @@ export function AddSchoolDialog({ open, onOpenChange }: AddSchoolDialogProps) {
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-2">
             <Button
               type="button"
               variant="outline"
+              onClick={handleReset}
+              disabled={isPending}
+              className="gap-1.5 rounded-xl border-muted-foreground/20 hover:bg-muted font-bold text-foreground"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Reset
+            </Button>
+            <Button
+              type="button"
+              className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground"
+              disabled={isPending}
+            >
               {isPending ? "Adding..." : "Add School"}
             </Button>
           </DialogFooter>

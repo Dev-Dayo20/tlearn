@@ -50,6 +50,14 @@ export const useSchUsersAuth = (schoolId: number) => {
         email: sanitizeEmail(data.user.email) || "",
         role: data.user.role as "ADMIN" | "STUDENT" | "TEACHER",
         name: data.user.name,
+        profilePicture: data.user.profilePicture || null,
+        registrationNumber: data.user.registrationNumber || data.user.regNumber,
+        regNumber: data.user.regNumber || data.user.registrationNumber,
+        studentId: data.user.studentId || data.user.registrationNumber || data.user.regNumber || data.user.id,
+        class: data.user.class || data.user.className,
+        className: data.user.className || (typeof data.user.class === "object" ? data.user.class?.name : data.user.class),
+        arm: data.user.arm || data.user.armName,
+        armName: data.user.armName || (typeof data.user.arm === "object" ? data.user.arm?.name : data.user.arm),
       });
 
       toast.success(`Welcome Back, ${data.user.name}!`, { duration: 5000 });

@@ -72,7 +72,10 @@ const Dashboard = () => {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <ProgressCharts />
+          <ProgressCharts
+            data={statsData?.distributions?.classDistribution}
+            title="Class Distribution"
+          />
         </div>
         <div>
           <QuickActions
