@@ -21,6 +21,7 @@ import Exams from "@/pages/student/Exams";
 import TakeExam from "@/pages/student/TakeExam";
 import StudentSettings from "@/pages/student/Settings";
 import Leaderboard from "@/pages/student/Leaderboard";
+import DigitalCourses from "@/pages/student/DigitalCourses";
 
 import Teachers from "@/pages/admin/Teachers";
 import Subjects from "@/pages/admin/Subjects";
@@ -75,6 +76,7 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="digital-courses" element={<DigitalCourses />} />
         <Route path="lessons" element={<Lessons />} />
         <Route path="exams" element={<Exams />} />
         <Route path="exams/:id" element={<TakeExam />} />

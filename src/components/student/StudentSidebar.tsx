@@ -12,6 +12,7 @@ import {
   X,
   FileText,
   Trophy,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutUser } from "@/services/api/super-admin/super-admin";
@@ -24,6 +25,12 @@ const navItems = [
     title: "Dashboard",
     path: "/student/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Digital Courses",
+    path: "/student/digital-courses",
+    icon: Sparkles,
+    badge: "New",
   },
   { title: "My Lessons", path: "/student/lessons", icon: BookOpen },
   { title: "Exams", path: "/student/exams", icon: FileText },
@@ -124,9 +131,16 @@ export function StudentSidebar({ onWidthChange }: StudentSidebarProps) {
           >
             <item.icon className={cn("h-5 w-5 shrink-0 transition-colors")} />
             {(!collapsed || mobileOpen) && (
-              <span className="text-sm font-bold tracking-tight">
-                {item.title}
-              </span>
+              <div className="flex items-center justify-between flex-1">
+                <span className="text-sm font-bold tracking-tight">
+                  {item.title}
+                </span>
+                {item.badge && (
+                  <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-amber-400 text-slate-950 shadow-sm">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
             )}
           </NavLink>
         ))}
