@@ -49,12 +49,12 @@ const Hero = () => {
                   Curriculum-Aligned
                 </span>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 dark:bg-card/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 dark:border-border">
+              {/* <div className="flex items-center gap-2 bg-white/5 dark:bg-card/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 dark:border-border">
                 <CheckCircle2 className="w-5 h-5 text-success" />
                 <span className="font-semibold text-white dark:text-foreground text-sm">
                   1000+ Students
                 </span>
-              </div>
+              </div> */}
             </div>
 
             {/* CTAs */}
