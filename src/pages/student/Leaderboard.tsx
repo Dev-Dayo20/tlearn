@@ -29,16 +29,114 @@ interface LeaderboardEntry {
 // Set profilePicture to a URL string to test the image path, or null/undefined for initials fallback.
 
 const MOCK_CLASS_DATA: LeaderboardEntry[] = [
-  { id: 1, name: "Amara Okonkwo", avgScore: 96, completedLessons: 30, totalLessons: 32, combinedScore: 95, profilePicture: null },
-  { id: 2, name: "Tobenna Eze", avgScore: 91, completedLessons: 28, totalLessons: 32, combinedScore: 90, profilePicture: null },
-  { id: 3, name: "Chisom Adeyemi", avgScore: 88, completedLessons: 27, totalLessons: 32, combinedScore: 86, profilePicture: null },
-  { id: 4, name: "Funmilayo Bello", avgScore: 85, completedLessons: 26, totalLessons: 32, combinedScore: 83, profilePicture: null },
-  { id: 5, name: "You", avgScore: 82, completedLessons: 24, totalLessons: 32, combinedScore: 79, profilePicture: null },
-  { id: 6, name: "Emeka Nwachukwu", avgScore: 79, completedLessons: 22, totalLessons: 32, combinedScore: 75, profilePicture: null },
-  { id: 7, name: "Sade Lawal", avgScore: 76, completedLessons: 20, totalLessons: 32, combinedScore: 71, profilePicture: null },
-  { id: 8, name: "Yusuf Musa", avgScore: 72, completedLessons: 19, totalLessons: 32, combinedScore: 67, profilePicture: null },
-  { id: 9, name: "Ngozi Obi", avgScore: 68, completedLessons: 18, totalLessons: 32, combinedScore: 63, profilePicture: null },
-  { id: 10, name: "Adaeze Nwosu", avgScore: 65, completedLessons: 16, totalLessons: 32, combinedScore: 59, profilePicture: null },
+  {
+    id: 1,
+    name: "Ibrahim Musa",
+    avgScore: 96,
+    completedLessons: 30,
+    totalLessons: 32,
+    combinedScore: 95,
+    profilePicture: null,
+  },
+  {
+    id: 2,
+    name: "Aisha Bashir",
+    avgScore: 91,
+    completedLessons: 28,
+    totalLessons: 32,
+    combinedScore: 90,
+    profilePicture: null,
+  },
+  {
+    id: 3,
+    name: "Sadiq Ibrahim",
+    avgScore: 88,
+    completedLessons: 27,
+    totalLessons: 32,
+    combinedScore: 86,
+    profilePicture: null,
+  },
+  {
+    id: 4,
+    name: "Fatima Aliyu",
+    avgScore: 85,
+    completedLessons: 26,
+    totalLessons: 32,
+    combinedScore: 83,
+    profilePicture: null,
+  },
+  {
+    id: 5,
+    name: "You",
+    avgScore: 82,
+    completedLessons: 24,
+    totalLessons: 32,
+    combinedScore: 79,
+    profilePicture: null,
+  },
+  {
+    id: 6,
+    name: "Mubarak Yusuf",
+    avgScore: 79,
+    completedLessons: 22,
+    totalLessons: 32,
+    combinedScore: 75,
+    profilePicture: null,
+  },
+  {
+    id: 7,
+    name: "Zainab Usman",
+    avgScore: 76,
+    completedLessons: 20,
+    totalLessons: 32,
+    combinedScore: 71,
+    profilePicture: null,
+  },
+  {
+    id: 8,
+    name: "Abubakar Shehu",
+    avgScore: 73,
+    completedLessons: 19,
+    totalLessons: 32,
+    combinedScore: 68,
+    profilePicture: null,
+  },
+  {
+    id: 9,
+    name: "Maryam Bello",
+    avgScore: 69,
+    completedLessons: 18,
+    totalLessons: 32,
+    combinedScore: 64,
+    profilePicture: null,
+  },
+  {
+    id: 10,
+    name: "Umar Faruk Sanusi",
+    avgScore: 65,
+    completedLessons: 16,
+    totalLessons: 32,
+    combinedScore: 60,
+    profilePicture: null,
+  },
+  {
+    id: 11,
+    name: "Bilkisu Mohammed",
+    avgScore: 62,
+    completedLessons: 15,
+    totalLessons: 32,
+    combinedScore: 57,
+    profilePicture: null,
+  },
+  {
+    id: 12,
+    name: "Mustapha Danjuma",
+    avgScore: 58,
+    completedLessons: 14,
+    totalLessons: 32,
+    combinedScore: 54,
+    profilePicture: null,
+  },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -52,20 +150,25 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-function getSortedData(data: LeaderboardEntry[], tab: FilterTab): LeaderboardEntry[] {
+function getSortedData(
+  data: LeaderboardEntry[],
+  tab: FilterTab,
+): LeaderboardEntry[] {
   const sorted = [...data];
   if (tab === "score") return sorted.sort((a, b) => b.avgScore - a.avgScore);
   if (tab === "completion")
     return sorted.sort(
       (a, b) =>
-        b.completedLessons / b.totalLessons - a.completedLessons / a.totalLessons
+        b.completedLessons / b.totalLessons -
+        a.completedLessons / a.totalLessons,
     );
   return sorted.sort((a, b) => b.combinedScore - a.combinedScore);
 }
 
 function getScoreLabel(entry: LeaderboardEntry, tab: FilterTab): string {
   if (tab === "score") return `${entry.avgScore}% avg`;
-  if (tab === "completion") return `${entry.completedLessons}/${entry.totalLessons}`;
+  if (tab === "completion")
+    return `${entry.completedLessons}/${entry.totalLessons}`;
   return `${entry.combinedScore} pts`;
 }
 
@@ -107,8 +210,9 @@ const StudentAvatar = ({
 
   return (
     <div
-      className={`${size} ${rounded} ${ring} ${showImage ? "" : bgColor
-        } flex items-center justify-center text-white font-bold shrink-0 overflow-hidden shadow-md`}
+      className={`${size} ${rounded} ${ring} ${
+        showImage ? "" : bgColor
+      } flex items-center justify-center text-white font-bold shrink-0 overflow-hidden shadow-md`}
     >
       {showImage ? (
         <img
@@ -118,7 +222,9 @@ const StudentAvatar = ({
           onError={() => setImgError(true)}
         />
       ) : (
-        <span className={`${isCurrentUser ? "text-primary-foreground" : "text-white"} select-none font-bold`}>
+        <span
+          className={`${isCurrentUser ? "text-primary-foreground" : "text-white"} select-none font-bold`}
+        >
           {getInitials(name)}
         </span>
       )}
@@ -175,7 +281,13 @@ const PodiumCard = ({ entry, rank, isCurrentUser, tab }: PodiumCardProps) => {
       {/* Avatar with badge icon */}
       <div className="relative">
         <StudentAvatar
-          name={isCurrentUser ? (entry.name === "You" ? "You" : entry.name) : entry.name}
+          name={
+            isCurrentUser
+              ? entry.name === "You"
+                ? "You"
+                : entry.name
+              : entry.name
+          }
           profilePicture={entry.profilePicture}
           size={cfg.avatarSize}
           bgColor={cfg.avatarBg}
@@ -191,8 +303,9 @@ const PodiumCard = ({ entry, rank, isCurrentUser, tab }: PodiumCardProps) => {
       {/* Name + score */}
       <div className="text-center w-full px-1">
         <p
-          className={`text-xs sm:text-sm font-bold truncate ${isCurrentUser ? "text-primary" : ""
-            }`}
+          className={`text-xs sm:text-sm font-bold truncate ${
+            isCurrentUser ? "text-primary" : ""
+          }`}
         >
           {isCurrentUser ? "You" : entry.name.split(" ")[0]}
         </p>
@@ -205,7 +318,9 @@ const PodiumCard = ({ entry, rank, isCurrentUser, tab }: PodiumCardProps) => {
       <div
         className={`w-full ${cfg.platformH} rounded-t-xl sm:rounded-t-2xl ${cfg.platformBg} flex items-center justify-center shadow-lg ${cfg.shadow}`}
       >
-        <span className="text-white font-black text-base sm:text-xl">{cfg.label}</span>
+        <span className="text-white font-black text-base sm:text-xl">
+          {cfg.label}
+        </span>
       </div>
     </div>
   );
@@ -235,24 +350,26 @@ const RankRow = ({
 
   return (
     <div
-      className={`flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:shadow-md group ${isCurrentUser
-        ? "border-primary/40 bg-primary/5 shadow-sm"
-        : "border-border bg-card hover:border-primary/20"
-        }`}
+      className={`flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 hover:shadow-md group ${
+        isCurrentUser
+          ? "border-primary/40 bg-primary/5 shadow-sm"
+          : "border-border bg-card hover:border-primary/20"
+      }`}
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       {/* Rank badge */}
       <div
-        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 ${rank === 1
-          ? "bg-amber-100 text-amber-700"
-          : rank === 2
-            ? "bg-slate-100 text-slate-600"
-            : rank === 3
-              ? "bg-orange-100 text-orange-700"
-              : isCurrentUser
-                ? "bg-primary/10 text-primary"
-                : "bg-muted text-muted-foreground"
-          }`}
+        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 ${
+          rank === 1
+            ? "bg-amber-100 text-amber-700"
+            : rank === 2
+              ? "bg-slate-100 text-slate-600"
+              : rank === 3
+                ? "bg-orange-100 text-orange-700"
+                : isCurrentUser
+                  ? "bg-primary/10 text-primary"
+                  : "bg-muted text-muted-foreground"
+        }`}
       >
         {rank}
       </div>
@@ -271,8 +388,9 @@ const RankRow = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
           <p
-            className={`text-xs sm:text-sm font-semibold truncate ${isCurrentUser ? "text-primary" : ""
-              }`}
+            className={`text-xs sm:text-sm font-semibold truncate ${
+              isCurrentUser ? "text-primary" : ""
+            }`}
           >
             {isCurrentUser ? `${entry.name} (You)` : entry.name}
           </p>
@@ -287,10 +405,11 @@ const RankRow = ({
         </div>
         <div className="h-1 sm:h-1.5 bg-muted rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-700 ${isCurrentUser
-              ? "bg-primary"
-              : "bg-muted-foreground/40 group-hover:bg-primary/50"
-              }`}
+            className={`h-full rounded-full transition-all duration-700 ${
+              isCurrentUser
+                ? "bg-primary"
+                : "bg-muted-foreground/40 group-hover:bg-primary/50"
+            }`}
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -299,8 +418,9 @@ const RankRow = ({
       {/* Score column */}
       <div className="text-right shrink-0">
         <p
-          className={`text-xs sm:text-sm font-bold ${isCurrentUser ? "text-primary" : ""
-            }`}
+          className={`text-xs sm:text-sm font-bold ${
+            isCurrentUser ? "text-primary" : ""
+          }`}
         >
           {getScoreLabel(entry, tab)}
         </p>
@@ -334,9 +454,17 @@ const Leaderboard = () => {
   ];
 
   const tabs: { key: FilterTab; label: string; icon: React.ReactNode }[] = [
-    { key: "overall", label: "Overall", icon: <TrendingUp className="h-3.5 w-3.5" /> },
+    {
+      key: "overall",
+      label: "Overall",
+      icon: <TrendingUp className="h-3.5 w-3.5" />,
+    },
     { key: "score", label: "By Score", icon: <Star className="h-3.5 w-3.5" /> },
-    { key: "completion", label: "By Completion", icon: <BookOpen className="h-3.5 w-3.5" /> },
+    {
+      key: "completion",
+      label: "By Completion",
+      icon: <BookOpen className="h-3.5 w-3.5" />,
+    },
   ];
 
   return (
@@ -367,14 +495,18 @@ const Leaderboard = () => {
                 isCurrentUser
               />
               <div className="min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground">Your current rank</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Your current rank
+                </p>
                 <p className="text-lg sm:text-xl font-black text-primary leading-tight">
                   #{currentUserRank} in your class
                 </p>
               </div>
             </div>
             <div className="text-right shrink-0">
-              <p className="text-[10px] sm:text-sm text-muted-foreground">Combined Score</p>
+              <p className="text-[10px] sm:text-sm text-muted-foreground">
+                Combined Score
+              </p>
               <p className="text-xl sm:text-2xl font-black">
                 {currentUserEntry?.combinedScore ?? "—"} pts
               </p>
@@ -389,10 +521,11 @@ const Leaderboard = () => {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border whitespace-nowrap shrink-0 ${activeTab === tab.key
-              ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
-              : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
-              }`}
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 border whitespace-nowrap shrink-0 ${
+              activeTab === tab.key
+                ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20"
+                : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:text-foreground"
+            }`}
           >
             {tab.icon}
             {tab.label}
