@@ -37,12 +37,12 @@ const Hero = () => {
 
             {/* Trust Indicators */}
             <div className="flex flex-wrap gap-4 sm:gap-6 mb-10 justify-center lg:justify-start">
-              <div className="flex items-center gap-2 bg-white/5 dark:bg-card/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 dark:border-border">
+              {/* <div className="flex items-center gap-2 bg-white/5 dark:bg-card/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 dark:border-border">
                 <CheckCircle2 className="w-5 h-5 text-success" />
                 <span className="font-semibold text-white dark:text-foreground text-sm">
                   ₦1000/month
                 </span>
-              </div>
+              </div> */}
               <div className="flex items-center gap-2 bg-white/5 dark:bg-card/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 dark:border-border">
                 <CheckCircle2 className="w-5 h-5 text-success" />
                 <span className="font-semibold text-white dark:text-foreground text-sm">
