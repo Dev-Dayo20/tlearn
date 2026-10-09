@@ -149,24 +149,10 @@ const ClassDetail = () => {
               </Badge>
             </div>
 
-            <p className="mb-4 text-muted-foreground">
+            <p className="text-muted-foreground">
               This class has {classData._count?.subjects || 0} subjects and{" "}
               {classData._count?.students || 0} students enrolled.
             </p>
-
-            {/* Subjects */}
-            {classData.subjects?.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {classData.subjects.map((subject: any) => (
-                  <span
-                    key={subject.id}
-                    className="rounded-lg bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground"
-                  >
-                    {formatTitleCase(subject.name)}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Right Section - Stats */}
@@ -456,14 +442,14 @@ const ClassDetail = () => {
             {classData.subjects?.map((subject: any) => (
               <div
                 key={subject.id}
-                className="rounded-2xl bg-card p-5 shadow-soft"
+                className="group rounded-2xl bg-card p-5 border border-border/80 shadow-soft transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
               >
                 <div className="mb-4 flex items-start justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
                     <BookOpen className="h-6 w-6" />
                   </div>
                 </div>
-                <h4 className="mb-1 font-semibold text-foreground">
+                <h4 className="mb-1 font-semibold text-foreground transition-colors group-hover:text-primary">
                   {formatTitleCase(subject.name)}
                 </h4>
                 {subject.teacher && (

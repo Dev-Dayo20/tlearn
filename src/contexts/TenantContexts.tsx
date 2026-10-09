@@ -26,7 +26,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const schoolData = await getSchoolBySubdomain(subdomain);
-        setSchool(schoolData);
+        setSchool(schoolData.school);
       } catch (error) {
         console.error("Failed to load school data:", error);
       } finally {

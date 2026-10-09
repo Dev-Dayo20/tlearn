@@ -9,24 +9,25 @@ import {
   DigitalCourseEnrollModal,
   DigitalCoursesEmptyState,
 } from "@/components/student/digital-courses";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import "@/pages/student/lessons.css";
 
 const DigitalCourses: React.FC = () => {
   const {
     studentClassLevel,
-    searchQuery,
-    setSearchQuery,
-    activeCategory,
-    setActiveCategory,
-    onlyMyLevel,
-    setOnlyMyLevel,
-    sortBy,
-    setSortBy,
-    currentSortOption,
     courses,
+    pagination,
     stats,
     isLoading,
+    searchQuery,
+    setSearchQuery,
+    termFilter,
+    setTermFilter,
+    pathwayFilter,
+    setPathwayFilter,
+    page,
+    setPage,
     selectedCourse,
     isDetailModalOpen,
     courseToEnroll,
@@ -37,14 +38,8 @@ const DigitalCourses: React.FC = () => {
     handleOpenEnrollModal,
     handleCloseEnrollModal,
     handleConfirmEnroll,
+    handleResetFilters,
   } = useDigitalCourses();
-
-  const handleResetFilters = () => {
-    setSearchQuery("");
-    setActiveCategory("All");
-    setOnlyMyLevel(false);
-    setSortBy("recommended");
-  };
 
   return (
     <div className="tl-scope tl-page-bg min-h-full w-full">
@@ -52,9 +47,8 @@ const DigitalCourses: React.FC = () => {
         {/* Hero Section */}
         <DigitalCoursesHero
           studentClassLevel={studentClassLevel}
-          tailoredCount={stats?.tailoredForLevel ?? 3}
-          onlyMyLevel={onlyMyLevel}
-          onToggleMyLevel={setOnlyMyLevel}
+          tailoredCount={stats?.totalCourses ?? courses.length}
+          enrolledCount={stats?.enrolledCount ?? 0}
         />
 
         {/* Quick Stats Strip */}
@@ -67,11 +61,11 @@ const DigitalCourses: React.FC = () => {
         <DigitalCoursesFilterBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-          sortBy={sortBy}
-          currentSortOption={currentSortOption}
-          onSortChange={setSortBy}
+          termFilter={termFilter}
+          onTermChange={setTermFilter}
+          pathwayFilter={pathwayFilter}
+          onPathwayChange={setPathwayFilter}
+          onResetFilters={handleResetFilters}
         />
 
         {/* Course Grid & State Handlers */}
@@ -91,39 +85,68 @@ const DigitalCourses: React.FC = () => {
               <p className="text-xs sm:text-sm font-bold text-muted-foreground">
                 Showing{" "}
                 <strong className="text-foreground">{courses.length}</strong>{" "}
+                {pagination ? `of ${pagination.total}` : ""}{" "}
                 digital {courses.length === 1 ? "course" : "courses"}{" "}
-                {onlyMyLevel && (
-                  <span className="text-primary font-black">
-                    tailored for {studentClassLevel}
-                  </span>
-                )}
+                <span className="text-primary font-black">
+                  tailored for {studentClassLevel}
+                </span>
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course) => (
+              {courses.map((item) => (
                 <DigitalCourseCard
-                  key={course.id}
-                  course={course}
+                  key={item.schoolDigitalCourseId}
+                  item={item}
                   onOpenDetail={handleOpenDetail}
                   onEnroll={handleOpenEnrollModal}
-                  studentClassLevel={studentClassLevel}
                 />
               ))}
             </div>
+
+            {/* Pagination Controls */}
+            {pagination && pagination.totalPages > 1 && (
+              <div className="flex items-center justify-between pt-6 border-t border-border">
+                <p className="text-xs text-muted-foreground font-semibold">
+                  Page {pagination.currentPage} of {pagination.totalPages} ({pagination.total} courses)
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 rounded-xl text-xs font-bold gap-1"
+                    disabled={!pagination.hasPreviousPage}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 rounded-xl text-xs font-bold gap-1"
+                    disabled={!pagination.hasNextPage}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <DigitalCoursesEmptyState
             onResetFilters={handleResetFilters}
             searchQuery={searchQuery}
-            activeCategory={activeCategory}
+            activeCategory={termFilter || pathwayFilter}
           />
         )}
       </div>
 
       {/* Course Detail Modal */}
       <DigitalCourseDetailModal
-        course={selectedCourse}
+        item={selectedCourse}
         isOpen={isDetailModalOpen}
         onClose={handleCloseDetail}
         onEnroll={handleOpenEnrollModal}
@@ -132,7 +155,7 @@ const DigitalCourses: React.FC = () => {
 
       {/* Course Enrollment Modal */}
       <DigitalCourseEnrollModal
-        course={courseToEnroll}
+        item={courseToEnroll}
         isOpen={isEnrollModalOpen}
         onClose={handleCloseEnrollModal}
         onConfirmEnroll={handleConfirmEnroll}

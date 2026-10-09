@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   School,
   Users,
+  Laptop,
   FileText,
   Settings,
 } from "lucide-react";
@@ -25,6 +26,11 @@ const menuItems = [
   { title: "Dashboard", url: "/super-admin/dashboard", icon: LayoutDashboard },
   { title: "Schools", url: "/super-admin/school", icon: School },
   { title: "Users", url: "/super-admin/users", icon: Users },
+  {
+    title: "Digital Courses",
+    url: "/super-admin/digital-courses",
+    icon: Laptop,
+  },
   { title: "Reports", url: "/dashboard/reports", icon: FileText },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];

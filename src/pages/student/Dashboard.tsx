@@ -32,6 +32,7 @@ import type { Lesson, LessonsStats } from "@/types/lessons.types";
 import { MOCK_LESSONS } from "@/data/lessons.data";
 import { formatTitleCase } from "@/lib/utils";
 import { DigitalCoursesDashboardSection } from "@/components/student/dashboard/DigitalCoursesDashboardSection";
+import { ColabDashboardSection } from "@/components/student/dashboard/ColabDashboardSection";
 
 // ─── Leaderboard Preview Row (extracted to honour Rules of Hooks) ─────────────
 interface PreviewEntry {
@@ -352,6 +353,9 @@ const StudentDashboard = () => {
 
       {/* Digital Courses Tailored for Class Level */}
       <DigitalCoursesDashboardSection />
+
+      {/* tlearn coLab Collaboration Section */}
+      <ColabDashboardSection />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Lessons */}

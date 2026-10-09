@@ -22,8 +22,10 @@ import TakeExam from "@/pages/student/TakeExam";
 import StudentSettings from "@/pages/student/Settings";
 import Leaderboard from "@/pages/student/Leaderboard";
 import DigitalCourses from "@/pages/student/DigitalCourses";
+import TLearnCoLab from "@/pages/student/TLearnCoLab";
 
 import Teachers from "@/pages/admin/Teachers";
+import SchoolDigitalCoursesPage from "@/pages/admin/DigitalCoursesPage";
 import Subjects from "@/pages/admin/Subjects";
 
 export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
@@ -58,6 +60,7 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
         <Route path="classes/:id" element={<ClassDetail />} />
         <Route path="subjects" element={<Subjects school={school} />} />
         <Route path="materials" element={<Materials school={school} />} />
+        <Route path="digital-courses" element={<SchoolDigitalCoursesPage />} />
         {/* Analytics Route */}
         <Route path="analytics" element={<Analytics />} />
         {/* Settings Route */}
@@ -76,6 +79,8 @@ export const SchoolRoutes = (school: SchoolDomainResponse | null) => {
       >
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="colab" element={<TLearnCoLab />} />
+        <Route path="collaborate" element={<Navigate to="/student/colab" replace />} />
         <Route path="digital-courses" element={<DigitalCourses />} />
         <Route path="lessons" element={<Lessons />} />
         <Route path="exams" element={<Exams />} />

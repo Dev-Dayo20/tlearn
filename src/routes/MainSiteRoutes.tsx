@@ -9,6 +9,7 @@ import DashboardLayout from "@/pages/super-admin/DashboardLayout";
 import Dashboard from "@/pages/super-admin/Dashboard";
 import School from "@/pages/super-admin/SchoolPage";
 import UsersPage from "@/pages/super-admin/UsersPage";
+import DigitalCoursesPage from "@/pages/super-admin/DigitalCoursesPage";
 import Unauthorized from "@/pages/Unauthorized";
 import NotFound from "@/pages/NotFound";
 import { ProtectedRoute } from "@/utils/ProtectedRoute";
@@ -35,6 +36,7 @@ export const MainSiteRoutes = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="school" element={<School />} />
         <Route path="users" element={<UsersPage />} />
+        <Route path="digital-courses" element={<DigitalCoursesPage />} />
       </Route>
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="*" element={<NotFound />} />

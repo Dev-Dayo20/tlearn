@@ -13,6 +13,7 @@ import {
   FileText,
   Trophy,
   Sparkles,
+  Users2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logoutUser } from "@/services/api/super-admin/super-admin";
@@ -25,6 +26,12 @@ const navItems = [
     title: "Dashboard",
     path: "/student/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "tlearn coLab",
+    path: "/student/colab",
+    icon: Users2,
+    badge: "Live",
   },
   {
     title: "Digital Courses",
@@ -136,7 +143,17 @@ export function StudentSidebar({ onWidthChange }: StudentSidebarProps) {
                   {item.title}
                 </span>
                 {item.badge && (
-                  <span className="text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-amber-400 text-slate-950 shadow-sm">
+                  <span
+                    className={cn(
+                      "text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1",
+                      item.badge === "Live"
+                        ? "bg-rose-500 text-white animate-pulse"
+                        : "bg-amber-400 text-slate-950",
+                    )}
+                  >
+                    {item.badge === "Live" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping shrink-0" />
+                    )}
                     {item.badge}
                   </span>
                 )}

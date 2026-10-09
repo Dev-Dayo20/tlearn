@@ -1,9 +1,13 @@
 import React from "react";
-import { BookOpen, Award, CheckCircle, Clock } from "lucide-react";
-import type { DigitalCoursesStats } from "@/types/digitalCourse.types";
+import { BookOpen, CheckCircle, Clock, Award } from "lucide-react";
 
 interface DigitalCoursesStatsStripProps {
-  stats: DigitalCoursesStats | null;
+  stats: {
+    totalCourses: number;
+    enrolledCount: number;
+    completedCount: number;
+    inProgressCount: number;
+  } | null;
   studentClassLevel: string;
 }
 
@@ -13,14 +17,14 @@ export const DigitalCoursesStatsStrip: React.FC<
   const statItems = [
     {
       label: `Tailored for ${studentClassLevel}`,
-      value: stats?.tailoredForLevel ?? 3,
+      value: stats?.totalCourses ?? 0,
       icon: BookOpen,
       color: "text-blue-500",
       bg: "bg-blue-500/10",
       border: "border-blue-500/20",
     },
     {
-      label: "My Enrolled Courses",
+      label: "Enrolled Courses",
       value: stats?.enrolledCount ?? 0,
       icon: CheckCircle,
       color: "text-emerald-500",
@@ -28,16 +32,16 @@ export const DigitalCoursesStatsStrip: React.FC<
       border: "border-emerald-500/20",
     },
     {
-      label: "Available Hours of Content",
-      value: `${stats?.totalLearningHours ?? 48}+ hrs`,
+      label: "In Progress",
+      value: stats?.inProgressCount ?? 0,
       icon: Clock,
       color: "text-amber-500",
       bg: "bg-amber-500/10",
       border: "border-amber-500/20",
     },
     {
-      label: "Accredited Certifications",
-      value: "Verified",
+      label: "Completed",
+      value: stats?.completedCount ?? 0,
       icon: Award,
       color: "text-purple-500",
       bg: "bg-purple-500/10",

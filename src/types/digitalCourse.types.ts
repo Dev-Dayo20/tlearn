@@ -1,93 +1,225 @@
 /* ---------------------------------------------------------------------
-   Digital Course domain types & backend API contracts
+   Digital Course domain types — aligned with backend API contracts
    --------------------------------------------------------------------- */
 
-export type CourseCategory =
-  | "All"
-  | "Digital Literacy & Productivity"
-  | "Coding & Software"
-  | "Data & Analytics"
-  | "Artificial Intelligence"
-  | "Design & UI/UX"
-  | "Digital Marketing & Content"
-  | "Cybersecurity & Safety"
-  | "Robotics & IoT";
+// --- Shared enums -------------------------------------------------------------
 
-export interface CourseCurriculumModule {
-  moduleNumber: number;
-  title: string;
-  duration: string;
-  lessonsCount: number;
-  topics: string[];
-}
+export type CourseStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type CourseLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
+export type EnrollmentStatus =
+  | "ENROLLED"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "DROPPED";
 
-export interface CourseInstructor {
-  name: string;
-  role: string;
-  avatar: string;
-  organization?: string;
-}
+// --- Core course object (from backend) ----------------------------------------
 
 export interface DigitalCourse {
-  id: string | number;
+  id: number;
   title: string;
-  slug: string;
-  category: string;
-  term?: "First Term" | "Second Term" | "Third Term" | string;
-  pathway?: string;
-  shortDescription: string;
-  fullDescription: string;
-  targetLevel: string; // e.g. "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"
-  eligibleClassLevels: string[]; // Normalized lowercase class names
-  duration: string; // e.g. "10 Weeks (20 Hours)"
-  lessonsCount: number;
-  modulesCount: number;
-  thumbnail: string;
-  instructor: CourseInstructor;
-  rating: number;
-  reviewsCount: number;
-  enrolledCount: number;
-  badge?: "Recommended" | "New" | "Featured" | "Trending" | "Popular";
-  accentColor: "indigo" | "emerald" | "amber" | "rose" | "sky" | "violet";
-  skills: string[];
-  prerequisites: string;
-  learningOutcomes: string[];
-  curriculum: CourseCurriculumModule[];
-  isEnrolled?: boolean;
-  enrolledAt?: string;
-  progress?: number;
-  certificateOffered: boolean;
+  description: string | null;
+  thumbnailUrl: string | null;
+  videoUrl: string | null;
+  externalUrl: string | null;
+  durationMinutes: number | null;
+  term: "First Term" | "Second Term" | "Third Term" | null;
+  pathway: string | null;
+  level: CourseLevel;
+  status: CourseStatus;
+  deletedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  /** Count of school assignments (Super Admin list only) */
+  _count?: {
+    schoolDigitalCourses?: number;
+  };
+  /** Full school assignments (Super Admin single-course view only) */
+  schoolDigitalCourses?: SchoolDigitalCourse[];
 }
 
-export interface DigitalCoursesStats {
-  totalAvailable: number;
-  tailoredForLevel: number;
-  enrolledCount: number;
-  completedCount: number;
-  totalLearningHours: number;
+// --- School assignment --------------------------------------------------------
+
+export interface SchoolDigitalCourse {
+  id: number;
+  courseId: number;
+  schoolId: number;
+  classId: number;
+  createdAt: string;
+  course?: DigitalCourse;
+  school?: { id: number; name: string };
+  class?: { id: number; name: string };
+  _count?: { enrollments: number };
 }
 
-export interface DigitalCoursesQueryParams {
-  classLevel?: string;
-  search?: string;
-  category?: string;
-  onlyMyLevel?: boolean;
-  sortBy?: "recommended" | "popular" | "rating" | "newest";
-  page?: number;
-  limit?: number;
+// --- Enrollment ---------------------------------------------------------------
+
+export interface DigitalEnrollment {
+  id: number;
+  studentId: number;
+  schoolDigitalCourseId: number;
+  status: EnrollmentStatus;
+  progressPercent: number;
+  completedAt: string | null;
+  enrolledAt: string;
+  updatedAt: string;
 }
 
-export interface DigitalCoursesResponse {
-  success: boolean;
-  courses: DigitalCourse[];
-  stats: DigitalCoursesStats;
+export interface DigitalEnrollmentWithStudent extends DigitalEnrollment {
+  student?: {
+    id: number;
+    name: string;
+    studentId: string;
+    classId?: number;
+  };
+  schoolDigitalCourse?: SchoolDigitalCourse & { course?: DigitalCourse };
+}
+
+// --- Pagination ---------------------------------------------------------------
+
+export interface PaginationMeta {
+  currentPage: number;
+  pageSize: number;
   total: number;
-  studentClassLevel?: string;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
-export interface EnrollCourseResponse {
+// --- Student API -------------------------------------------------------------
+
+/** One item returned by GET /student/digital-courses */
+export interface StudentCourseItem {
+  schoolDigitalCourseId: number;
+  course: DigitalCourse;
+  enrollment: DigitalEnrollment | null;
+}
+
+export interface StudentDigitalCoursesResponse {
+  success: boolean;
+  courses: StudentCourseItem[];
+  pagination: PaginationMeta;
+}
+
+export interface StudentEnrollmentResponse {
   success: boolean;
   message: string;
+  enrollment: DigitalEnrollment;
+}
+
+export interface StudentProgressResponse {
+  success: boolean;
+  message: string;
+  enrollment: DigitalEnrollment;
+}
+
+export interface MyEnrollmentsResponse {
+  success: boolean;
+  enrollments: Array<
+    DigitalEnrollment & {
+      schoolDigitalCourse: SchoolDigitalCourse & { course?: DigitalCourse };
+    }
+  >;
+}
+
+// --- Student query params -----------------------------------------------------
+
+export interface StudentCoursesQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  term?: string;
+  pathway?: string;
+}
+
+// --- Super Admin API ---------------------------------------------------------
+
+export interface SuperAdminCoursesResponse {
+  success: boolean;
+  courses: DigitalCourse[];
+  pagination: PaginationMeta;
+}
+
+export interface SuperAdminCourseResponse {
+  success: boolean;
   course: DigitalCourse;
-  enrollmentId?: string;
+}
+
+export interface SuperAdminCoursesQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: CourseStatus;
+  level?: CourseLevel;
+  term?: string;
+  pathway?: string;
+}
+
+export interface CreateCoursePayload {
+  title: string;
+  description?: string | null;
+  thumbnailUrl?: string | null;
+  videoUrl?: string | null;
+  externalUrl?: string | null;
+  durationMinutes?: number | null;
+  term?: "First Term" | "Second Term" | "Third Term" | null;
+  pathway?: string | null;
+  level?: CourseLevel;
+  status?: CourseStatus;
+}
+
+export interface AssignCoursePayload {
+  courseId: number;
+  schoolId: number;
+  classId: number;
+}
+
+export interface BulkAssignPayload {
+  schoolId: number;
+  assignments: Array<{ courseId: number; classId: number }>;
+}
+
+export interface SuperAdminEnrollmentsResponse {
+  success: boolean;
+  enrollments: DigitalEnrollmentWithStudent[];
+  pagination: PaginationMeta;
+}
+
+// --- School Admin API ---------------------------------------------------------
+
+export interface SchoolAdminCoursesResponse {
+  success: boolean;
+  courses: SchoolDigitalCourse[];
+  pagination: PaginationMeta;
+}
+
+export interface SchoolAdminCourseEnrollmentsResponse {
+  success: boolean;
+  enrollments: Array<
+    DigitalEnrollment & {
+      student?: {
+        id: number;
+        name: string;
+        studentId: string;
+        classId: number;
+      };
+    }
+  >;
+  pagination: PaginationMeta;
+}
+
+export interface SchoolAdminDigitalStats {
+  success: boolean;
+  stats: {
+    totalAssigned: number;
+    totalEnrollments: number;
+    completedEnrollments: number;
+  };
+}
+
+export interface SchoolAdminCoursesQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  term?: string;
+  classId?: number;
 }

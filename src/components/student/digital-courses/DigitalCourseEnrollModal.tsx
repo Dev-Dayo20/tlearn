@@ -1,45 +1,25 @@
 import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Sparkles,
-  GraduationCap,
-  Clock,
-  BookOpen,
-  Award,
-  CheckCircle2,
-  Loader2,
-  ShieldCheck,
+  Sparkles, Clock, BookOpen, CheckCircle2, Loader2, ShieldCheck, Video, Link,
 } from "lucide-react";
-import type { DigitalCourse } from "@/types/digitalCourse.types";
+import type { StudentCourseItem } from "@/types/digitalCourse.types";
 
 interface DigitalCourseEnrollModalProps {
-  course: DigitalCourse | null;
+  item: StudentCourseItem | null;
   isOpen: boolean;
   onClose: () => void;
-  onConfirmEnroll: (courseId: string | number) => void;
+  onConfirmEnroll: (courseAssignmentId: number) => void;
   isEnrolling: boolean;
-  studentClassLevel: string;
+  studentClassLevel?: string;
 }
 
-export const DigitalCourseEnrollModal: React.FC<
-  DigitalCourseEnrollModalProps
-> = ({
-  course,
-  isOpen,
-  onClose,
-  onConfirmEnroll,
-  isEnrolling,
-  studentClassLevel,
+export const DigitalCourseEnrollModal: React.FC<DigitalCourseEnrollModalProps> = ({
+  item, isOpen, onClose, onConfirmEnroll, isEnrolling, studentClassLevel,
 }) => {
-  if (!course) return null;
+  if (!item) return null;
+  const { course } = item;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -48,7 +28,6 @@ export const DigitalCourseEnrollModal: React.FC<
           <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner">
             <Sparkles className="h-7 w-7 text-amber-500 fill-amber-500" />
           </div>
-
           <DialogTitle className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
             Confirm Enrollment
           </DialogTitle>
@@ -57,53 +36,64 @@ export const DigitalCourseEnrollModal: React.FC<
           </DialogDescription>
         </div>
 
-        {/* Course Summary Box */}
+        {/* Course Summary */}
         <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={course.thumbnail}
-              alt={course.title}
-              className="h-12 w-12 rounded-xl object-cover border border-primary/20 shrink-0"
-            />
+          <div className="flex items-start gap-3">
+            {course.thumbnailUrl ? (
+              <img
+                src={course.thumbnailUrl}
+                alt={course.title}
+                className="h-12 w-12 rounded-xl object-cover border border-primary/20 shrink-0"
+              />
+            ) : (
+              <div className="h-12 w-12 rounded-xl bg-slate-800 flex items-center justify-center shrink-0">
+                <BookOpen className="h-6 w-6 text-muted-foreground" />
+              </div>
+            )}
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-black text-primary uppercase tracking-wider">
-                {course.category}
-              </p>
-              <h4 className="text-sm font-extrabold text-foreground truncate">
-                {course.title}
-              </h4>
+              <p className="text-xs font-black text-primary uppercase tracking-wider">{course.level}</p>
+              <h4 className="text-sm font-extrabold text-foreground">{course.title}</h4>
+              {course.term && <p className="text-[11px] text-muted-foreground">{course.term}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/60 text-xs font-semibold text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <GraduationCap className="h-3.5 w-3.5 text-primary" />
-              {studentClassLevel}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-primary" />
-              {course.duration}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <BookOpen className="h-3.5 w-3.5 text-primary" />
-              {course.lessonsCount} lessons
-            </span>
-            <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <Award className="h-3.5 w-3.5" />
-              Certificate included
-            </span>
+            {course.durationMinutes && (
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-primary" />
+                {course.durationMinutes} min
+              </span>
+            )}
+            {course.pathway && (
+              <span className="flex items-center gap-1.5 truncate">
+                <BookOpen className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span className="truncate">{course.pathway}</span>
+              </span>
+            )}
+            {course.videoUrl && (
+              <span className="flex items-center gap-1.5">
+                <Video className="h-3.5 w-3.5 text-primary" />
+                Video included
+              </span>
+            )}
+            {course.externalUrl && (
+              <span className="flex items-center gap-1.5">
+                <Link className="h-3.5 w-3.5 text-primary" />
+                External resource
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Benefits List */}
+        {/* Benefits */}
         <div className="space-y-2 text-xs font-semibold text-muted-foreground">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-            <span>Instant access to all modules and practice challenges</span>
+            <span>Instant access to all course materials</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-            <span>Track progress directly from your student dashboard</span>
+            <span>Track your progress directly from your dashboard</span>
           </div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
@@ -111,7 +101,7 @@ export const DigitalCourseEnrollModal: React.FC<
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Actions */}
         <div className="flex items-center gap-3 pt-2">
           <Button
             type="button"
@@ -122,23 +112,16 @@ export const DigitalCourseEnrollModal: React.FC<
           >
             Cancel
           </Button>
-
           <Button
             type="button"
             disabled={isEnrolling}
-            onClick={() => onConfirmEnroll(course.id)}
+            onClick={() => onConfirmEnroll(item.schoolDigitalCourseId)}
             className="flex-1 rounded-xl h-11 font-black bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 gap-2"
           >
             {isEnrolling ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Enrolling...
-              </>
+              <><Loader2 className="h-4 w-4 animate-spin" />Enrolling...</>
             ) : (
-              <>
-                <CheckCircle2 className="h-4 w-4" />
-                Confirm & Start
-              </>
+              <><CheckCircle2 className="h-4 w-4" />Confirm & Start</>
             )}
           </Button>
         </div>

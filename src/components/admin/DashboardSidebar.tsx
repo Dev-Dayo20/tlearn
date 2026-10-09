@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/super-admin/NavLinks";
 import {
   LayoutDashboard,
+  Laptop,
   Users,
   BookOpen,
   Video,
@@ -28,6 +29,7 @@ const navItems = [
     title: "Dashboard",
     path: "/school-admin/dashboard",
     icon: LayoutDashboard,
+    Laptop,
   },
   { title: "Classes", path: "/school-admin/classes", icon: BookOpen },
   { title: "Subjects", path: "/school-admin/subjects", icon: BookOpen },
@@ -44,6 +46,11 @@ const navItems = [
     ],
   },
   { title: "Materials", path: "/school-admin/materials", icon: Video },
+  {
+    title: "Digital Skills",
+    path: "/school-admin/digital-courses",
+    icon: Laptop,
+  },
   { title: "Analytics", path: "/school-admin/analytics", icon: BarChart3 },
   { title: "Settings", path: "/school-admin/settings", icon: Settings },
 ];
